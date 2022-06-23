@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "587759976219",
+    "project_id": "go4lunch-40c53",
+    "storage_bucket": "go4lunch-40c53.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587759976219:android:836bb8c71f9a1e85525dbe",
+        "android_client_info": {
+          "package_name": "com.anne.linger.go4lunch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "587759976219-v93qsdb76h7c21799b7d309lcd1lp9g9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARwxzDjBJouHLESftlsdGIxsWYNTkpCe8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "587759976219-v93qsdb76h7c21799b7d309lcd1lp9g9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
