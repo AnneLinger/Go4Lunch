@@ -20,11 +20,17 @@ public class AuthenticationActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUi();
+        initData();
     }
 
     //Configure the UI
     private void initUi() {
         mBinding = ActivityAuthenticationBinding.inflate(getLayoutInflater());
+    }
+
+    //Configure data
+    private void initData() {
+
     }
 }
 
