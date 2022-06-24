@@ -1,9 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:http="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:http="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/auth_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/authentication_background"
     tools:context="ui.activities.AuthenticationActivity">
+
+    <Button
+        android:id="@+id/bt_mail_login"
+        style="@style/bt_login"
+        android:layout_width="@dimen/width_login"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/top_margin_login"
+        android:layout_marginBottom="@dimen/bottom_margin_login"
+        android:backgroundTint="@color/email"
+        android:text="@string/sign_in_with_mail"
+        http:icon="@drawable/ic_baseline_mail_outline_24"
+        http:iconPadding="8dp"
+        http:iconTint="@color/white"
+        http:layout_constraintBottom_toTopOf="@+id/bt_google_login"
+        http:layout_constraintEnd_toEndOf="parent"
+        http:layout_constraintStart_toStartOf="parent"
+        http:layout_constraintTop_toTopOf="parent">
+    </Button>
+
+    <Button
+        android:id="@+id/bt_google_login"
+        style="@style/bt_login"
+        android:layout_width="@dimen/width_login"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/bottom_margin_login"
+        android:backgroundTint="@color/google"
+        android:text="@string/sign_in_with_google"
+        http:icon="@drawable/google"
+        http:iconPadding="8dp"
+        http:iconTint="@color/white"
+        http:layout_constraintBottom_toTopOf="@id/bt_facebook_login"
+        http:layout_constraintEnd_toEndOf="parent"
+        http:layout_constraintStart_toStartOf="parent"
+        http:layout_constraintTop_toBottomOf="@id/bt_mail_login">
+    </Button>
+
+    <Button
+        android:id="@+id/bt_facebook_login"
+        style="@style/bt_login"
+        android:layout_width="@dimen/width_login"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/bottom_margin_login"
+        android:backgroundTint="@color/facebook"
+        android:text="@string/sign_in_with_facebook"
+        http:icon="@drawable/facebook"
+        http:iconPadding="8dp"
+        http:iconTint="@color/white"
+        http:layout_constraintBottom_toTopOf="@id/bt_twitter_login"
+        http:layout_constraintEnd_toEndOf="parent"
+        http:layout_constraintStart_toStartOf="parent"
+        http:layout_constraintTop_toBottomOf="@id/bt_google_login">
+    </Button>
+
+    <Button
+        android:id="@+id/bt_twitter_login"
+        style="@style/bt_login"
+        android:layout_width="@dimen/width_login"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/bottom_margin_login"
+        android:backgroundTint="@color/twitter"
+        android:text="@string/sign_in_with_twitter"
+        http:icon="@drawable/twitter"
+        http:iconPadding="8dp"
+        http:iconTint="@color/white"
+        http:layout_constraintBottom_toBottomOf="parent"
+        http:layout_constraintEnd_toEndOf="parent"
+        http:layout_constraintStart_toStartOf="parent"
+        http:layout_constraintTop_toBottomOf="@id/bt_facebook_login">
+    </Button>
 </androidx.constraintlayout.widget.ConstraintLayout>

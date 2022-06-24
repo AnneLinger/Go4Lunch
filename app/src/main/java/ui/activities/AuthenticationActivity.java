@@ -26,6 +26,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     //Configure the UI
     private void initUi() {
         mBinding = ActivityAuthenticationBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
     }
 
     //Configure data
