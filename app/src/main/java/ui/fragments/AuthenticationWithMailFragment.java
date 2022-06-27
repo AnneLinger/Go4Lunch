@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.anne.linger.go4lunch.R;
-import com.anne.linger.go4lunch.databinding.FragmentAuthenticationWithMailBinding;
 
 /**
 *DialogFragment for login with mail
@@ -18,11 +17,12 @@ import com.anne.linger.go4lunch.databinding.FragmentAuthenticationWithMailBindin
 public class AuthenticationWithMailFragment extends DialogFragment {
 
     //For UI
-    private FragmentAuthenticationWithMailBinding mBinding;
+    //private FragmentAuthenticationWithMailBinding mBinding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_authentication_with_mail, container, false);
+        return inflater.inflate(R.layout.dialog_authentication_with_mail, container, false);
     }
+
 }
