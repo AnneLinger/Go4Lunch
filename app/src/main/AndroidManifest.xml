@@ -24,6 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ui.activities.MainActivity"/>
+        <activity android:name="ui.activities.PlacesActivity"
+            android:exported="true"
+            android:parentActivityName="ui.activities.AuthenticationActivity"/>
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="ui.activities.AuthenticationActivity" />
     </application>
 </manifest>

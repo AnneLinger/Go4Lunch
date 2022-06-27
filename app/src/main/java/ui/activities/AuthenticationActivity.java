@@ -7,22 +7,14 @@ import android.view.LayoutInflater;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityAuthenticationBinding;
 import com.anne.linger.go4lunch.databinding.DialogAuthenticationWithMailBinding;
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import injections.ViewModelFactory;
-import ui.fragments.AuthenticationWithMailFragment;
 import viewmodel.UserViewModel;
 
 /**
@@ -67,18 +59,11 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void startToNextActivity() {
-        Intent intent = new Intent(AuthenticationActivity.this, MainActivity.class);
+        Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
         startActivity(intent);
         finish();
     }
 
-
-    public void onStart() {
-        super.onStart();
-        if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getUid().length() > 2) {
-            startToNextActivity();
-        }
-    }
 
     //For login with email
     public void showDialogToCreateUserWithMail() {
@@ -91,6 +76,7 @@ public class AuthenticationActivity extends AppCompatActivity {
             String mail = mDialogBinding.inputMail.getText().toString();
             String password = mDialogBinding.inputPassword.getText().toString();
             mAuth.createUserWithEmailAndPassword(mail, password);
+            startToNextActivity();
         });
 
 

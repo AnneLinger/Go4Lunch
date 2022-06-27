@@ -1,11 +1,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:http="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/auth_layout"
+    android:id="@+id/places_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/authentication_background"
-    tools:context="ui.activities.AuthenticationActivity">
+    tools:context="ui.activities.PlacesActivity">
 
     <Button
         android:id="@+id/bt_mail_login"
