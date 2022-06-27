@@ -3,21 +3,21 @@ package model;
 *Model for users of the app
 */
 public class User {
-    private int userId;
+    private String userId;
     private String name;
     private String pictureUrl;
 
-    public User(int userId, String name, String pictureUrl) {
+    public User(String userId, String name, String pictureUrl) {
         this.userId = userId;
         this.name = name;
         this.pictureUrl = pictureUrl;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
