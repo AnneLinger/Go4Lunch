@@ -4,12 +4,15 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.databinding.ActivityAuthenticationBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
 import injections.ViewModelFactory;
+import ui.fragments.AuthenticationWithMailFragment;
 import viewmodel.UserViewModel;
 
 /**
@@ -52,8 +55,12 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     //For login with email
-    private void showDialogToCreateUserWithMail() {
-        //mUserViewModel.createUserWithMail();
+    public void showDialogToCreateUserWithMail() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        AuthenticationWithMailFragment newFragment = new AuthenticationWithMailFragment();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.add(android.R.id.content, newFragment).disallowAddToBackStack().commit();
     }
 }
 
