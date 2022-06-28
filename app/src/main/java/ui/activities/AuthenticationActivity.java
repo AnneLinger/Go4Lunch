@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,16 +13,13 @@ import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityAuthenticationBinding;
 import com.anne.linger.go4lunch.databinding.DialogAuthenticationWithExistingMailBinding;
 import com.anne.linger.go4lunch.databinding.DialogAuthenticationWithNewMailBinding;
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
-import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Objects;
 
 import injections.ViewModelFactory;
 import viewmodel.UserViewModel;
@@ -41,6 +36,8 @@ public class AuthenticationActivity extends AppCompatActivity {
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private UserViewModel mUserViewModel;
 
+    private GoogleSignInClient mGoogleSignInClient;
+
     private static final int RC_SIGN_IN = 123;
 
     @Override
@@ -51,10 +48,22 @@ public class AuthenticationActivity extends AppCompatActivity {
         setupListeners();
     }
 
+    //Check if user is signed in
+    /**@Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser!=null) {
+            navigateToPlacesActivity();
+        }
+    }*/
+
     //Configure the UI
     private void initUi() {
         mBinding = ActivityAuthenticationBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        Objects.requireNonNull(getSupportActionBar()).hide();
     }
 
     //Configure data
@@ -68,34 +77,15 @@ public class AuthenticationActivity extends AppCompatActivity {
         mBinding.btMailLogin.setOnClickListener(view -> {
             showDialogToLoginUserWithMail();
         });
+        mBinding.btGoogleLogin.setOnClickListener(view -> {
+            loginWithGoogle();
+        });
     }
 
-    private void startToNextActivity() {
+    private void navigateToPlacesActivity() {
         Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    // Show Snack Bar with a message
-    private void showSnackBar( String message){
-        Snackbar.make(mBinding.getRoot(), message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    //For login with new mail
-    public void showDialogToCreateUserWithMail() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        DialogAuthenticationWithNewMailBinding mDialogBinding = DialogAuthenticationWithNewMailBinding.inflate(LayoutInflater.from(this));
-        builder.setView(mDialogBinding.getRoot());
-        builder.setTitle(R.string.authentication_new_mail_title);
-
-        mDialogBinding.buttonRegister.setOnClickListener(view -> {
-            String mail = mDialogBinding.inputMail.getText().toString();
-            String password = mDialogBinding.inputPassword.getText().toString();
-            mAuth.createUserWithEmailAndPassword(mail, password);
-            startToNextActivity();
-        });
-
-        builder.create().show();
     }
 
     //For login with existing mail
@@ -108,8 +98,8 @@ public class AuthenticationActivity extends AppCompatActivity {
         mDialogBinding.buttonLogin.setOnClickListener(view -> {
             String mail = mDialogBinding.inputMail.getText().toString();
             String password = mDialogBinding.inputPassword.getText().toString();
-            mAuth.createUserWithEmailAndPassword(mail, password);
-            startToNextActivity();
+            mUserViewModel.loginWithMail(mail, password);
+            navigateToPlacesActivity();
         });
 
         mDialogBinding.buttonRegisterNewUser.setOnClickListener(view -> {
@@ -117,6 +107,29 @@ public class AuthenticationActivity extends AppCompatActivity {
         });
 
         builder.create().show();
+    }
+
+    //For login with new mail
+    public void showDialogToCreateUserWithMail() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        DialogAuthenticationWithNewMailBinding mDialogBinding = DialogAuthenticationWithNewMailBinding.inflate(LayoutInflater.from(this));
+        builder.setView(mDialogBinding.getRoot());
+        builder.setTitle(R.string.authentication_new_mail_title);
+
+        mDialogBinding.buttonRegister.setOnClickListener(view -> {
+            String name = mDialogBinding.inputName.getText().toString();
+            String mail = mDialogBinding.inputMail.getText().toString();
+            String password = mDialogBinding.inputPassword.getText().toString();
+            mUserViewModel.createUserWithMail(name, mail, password);
+            navigateToPlacesActivity();
+        });
+
+        builder.create().show();
+    }
+
+    //For login with Google
+    public void loginWithGoogle() {
+        //TODO Qelle méthode implémenter ! ? ! ? !!!
     }
 
         /**List<AuthUI.IdpConfig> providers = Collections.singletonList(new AuthUI.IdpConfig.EmailBuilder().build());

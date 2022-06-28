@@ -24,6 +24,10 @@ public class UserViewModel extends ViewModel {
 
     //..........................For authentication...............................................
 
+    public void loginWithMail(String mail, String password) {
+        mAuthenticationRepository.loginWithMail(mail, password);
+    }
+
     public void createUserWithMail(String name, String mail, String password) {
         mAuthenticationRepository.createUserWithMail(name, mail, password);
     }
