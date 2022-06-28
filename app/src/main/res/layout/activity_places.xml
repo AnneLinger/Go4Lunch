@@ -7,22 +7,14 @@
     android:background="@drawable/authentication_background"
     tools:context="ui.activities.PlacesActivity">
 
-    <Button
-        android:id="@+id/bt_mail_login"
-        style="@style/bt_login"
-        android:layout_width="@dimen/width_login"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/top_margin_login"
-        android:layout_marginBottom="@dimen/bottom_margin_login"
-        android:backgroundTint="@color/email"
-        android:text="Welcome !!"
-        http:icon="@drawable/ic_baseline_mail_outline_24"
-        http:iconPadding="8dp"
-        http:iconTint="@color/white"
         http:layout_constraintBottom_toBottomOf="parent"
-        http:layout_constraintEnd_toEndOf="parent"
-        http:layout_constraintStart_toStartOf="parent"
-        http:layout_constraintTop_toTopOf="parent">
-    </Button>
+        http:menu="@menu/bottom_nav_menu"
+        http:itemIconTint="@color/black"
+        http:itemTextColor="@color/black">
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

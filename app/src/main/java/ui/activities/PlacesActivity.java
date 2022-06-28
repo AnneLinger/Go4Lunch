@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityAuthenticationBinding;
 import com.anne.linger.go4lunch.databinding.ActivityPlacesBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -40,6 +42,11 @@ public class PlacesActivity extends AppCompatActivity {
     private void initUi() {
         mBinding = ActivityPlacesBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+    }
+
+    //Configure bottom nav
+    private void configureBottomNav() {
+        //TODO complete with method no deprecated
     }
 
     //Configure data
