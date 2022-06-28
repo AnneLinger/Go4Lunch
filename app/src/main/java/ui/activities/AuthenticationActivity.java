@@ -16,6 +16,7 @@ import com.anne.linger.go4lunch.databinding.DialogAuthenticationWithNewMailBindi
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -86,6 +87,11 @@ public class AuthenticationActivity extends AppCompatActivity {
         Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    // Show Snack Bar with a message
+    private void showSnackBar( String message){
+        Snackbar.make(mBinding.getRoot(), message, Snackbar.LENGTH_SHORT).show();
     }
 
     //For login with existing mail

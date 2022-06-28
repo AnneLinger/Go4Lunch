@@ -23,8 +23,11 @@ public class AuthenticationRepository {
     public void createUserWithMail (String name, String mail, String password) {
         mFirebaseAuth.createUserWithEmailAndPassword(mail, password).addOnCompleteListener(task -> {
             String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            User user = new User(userId, name, "https://gravatar.com/avatar/f91aabd46a5c3abef7fe229434346b38?s=400&d=identicon&r=x");
+            User user = new User(userId, name, "https://picsum.photos/200");
         });
     }
-    
+
+    public void logOut() {
+        mFirebaseAuth.signOut();
+    }
 }
