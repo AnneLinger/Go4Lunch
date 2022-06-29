@@ -56,7 +56,7 @@ public class AuthenticationActivity extends AppCompatActivity {
      @Override
      public void onStart() {
          super.onStart();
-         FirebaseUser currentUser = mAuth.getCurrentUser();
+         User currentUser = mUserViewModel.getCurrentUser();
          if(currentUser!=null) {
              navigateToPlacesActivity();
          }
@@ -126,14 +126,11 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private void createUser() {
-        String name = getCurrentUser().getDisplayName();
-        String userId = getCurrentUser().getProviderId();
-        String pictureUrl = getCurrentUser().getPhotoUrl().toString();
-        User user = new User(userId, name, pictureUrl);
+        mUserViewModel.createUser();
     }
 
     private FirebaseUser getCurrentUser() {
-        return mAuth.getCurrentUser();
+        return mUserViewModel.getCurrentUser();
     }
 }
 

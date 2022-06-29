@@ -1,6 +1,7 @@
 package repository;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
@@ -16,15 +17,15 @@ public class AuthenticationRepository {
     public AuthenticationRepository() {
     }
 
-    public void loginWithMail(String mail, String password){
-        mFirebaseAuth.signInWithEmailAndPassword(mail, password);
+    public FirebaseUser getCurrentUser() {
+        return mFirebaseAuth.getCurrentUser();
     }
 
-    public void createUserWithMail (String name, String mail, String password) {
-        mFirebaseAuth.createUserWithEmailAndPassword(mail, password).addOnCompleteListener(task -> {
-            String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            User user = new User(userId, name, "https://picsum.photos/200");
-        });
+    public void createUser() {
+        String name = getCurrentUser().getDisplayName();
+        String userId = getCurrentUser().getProviderId();
+        String pictureUrl = getCurrentUser().getPhotoUrl().toString();
+        User user = new User(userId, name, pictureUrl);
     }
 
     public void logOut() {

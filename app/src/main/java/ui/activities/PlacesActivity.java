@@ -34,7 +34,7 @@ public class PlacesActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUi();
-        configureViewModel();
+        //configureViewModel();
         showSnackBar(getString(R.string.successful_auth));
     }
 

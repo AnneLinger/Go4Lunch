@@ -5,6 +5,5 @@
     android:id="@+id/auth_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/authentication_background"
     tools:context="ui.activities.AuthenticationActivity">
 </androidx.constraintlayout.widget.ConstraintLayout>

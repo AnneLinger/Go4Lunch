@@ -2,6 +2,8 @@ package viewmodel;
 
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.concurrent.Executor;
 
 import repository.AuthenticationRepository;
@@ -24,12 +26,12 @@ public class UserViewModel extends ViewModel {
 
     //..........................For authentication...............................................
 
-    public void loginWithMail(String mail, String password) {
-        mAuthenticationRepository.loginWithMail(mail, password);
+    public FirebaseUser getCurrentUser() {
+        return mAuthenticationRepository.getCurrentUser();
     }
 
-    public void createUserWithMail(String name, String mail, String password) {
-        mAuthenticationRepository.createUserWithMail(name, mail, password);
+    public void createUser() {
+        mAuthenticationRepository.createUser();
     }
 
     public void logOut() {
