@@ -18,4 +18,7 @@
     <string name="bottom_nav_menu_map_view">Map View</string>
     <string name="bottom_nav_menu_list_view">List View</string>
     <string name="bottom_nav_menu_workmates">Workmates</string>
+    <string name="canceled_authentication">Authentication canceled</string>
+    <string name="no_connection">No internet connection</string>
+    <string name="unknown_error">Unknown error</string>
 </resources>
