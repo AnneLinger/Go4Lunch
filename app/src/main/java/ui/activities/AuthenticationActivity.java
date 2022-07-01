@@ -73,7 +73,7 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     //Configure data
     private void configureViewModel() {
-        mUserViewModel = new ViewModelProvider(this, ViewModelFactory.getInstance()).get(UserViewModel.class);
+        mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
     private void navigateToPlacesActivity() {

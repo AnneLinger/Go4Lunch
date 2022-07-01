@@ -18,7 +18,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     private final UserRepositoryImpl mUserRepositoryImpl;
 
     //for threads
-    private final Executor mExecutor;
+    //private final Executor mExecutor;
 
     //For constructor
     private static ViewModelFactory sViewModelFactory;
@@ -38,14 +38,14 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     //Factory
     private ViewModelFactory(UserRepositoryImpl userRepositoryImpl) {
         mUserRepositoryImpl = new UserRepositoryImpl();
-        mExecutor = Executors.newSingleThreadExecutor();
+        //mExecutor = Executors.newSingleThreadExecutor();
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(UserViewModel.class)) {
-            return (T) new UserViewModel(mUserRepositoryImpl, mExecutor);
+            return (T) new UserViewModel(mUserRepositoryImpl);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

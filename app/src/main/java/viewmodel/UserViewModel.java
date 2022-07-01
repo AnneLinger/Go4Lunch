@@ -21,13 +21,13 @@ public class UserViewModel extends ViewModel {
     private final UserRepositoryImpl mUserRepositoryImpl;
 
     //For threads
-    private final Executor mExecutor;
+    //private final Executor mExecutor;
 
     //Constructor
     @Inject
-    public UserViewModel(UserRepositoryImpl userRepositoryImpl, Executor executor) {
+    public UserViewModel(UserRepositoryImpl userRepositoryImpl) {
         mUserRepositoryImpl = userRepositoryImpl;
-        mExecutor = executor;
+        //mExecutor = executor;
     }
 
     //..........................For authentication...............................................
