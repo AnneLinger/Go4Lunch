@@ -7,19 +7,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
-import com.anne.linger.go4lunch.databinding.ActivityAuthenticationBinding;
 import com.anne.linger.go4lunch.databinding.ActivityPlacesBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
-import injections.ViewModelFactory;
+import dagger.hilt.android.AndroidEntryPoint;
+import di.ViewModelFactory;
 import viewmodel.UserViewModel;
 
 /**
 *Main activity of the app
 */
+
+@AndroidEntryPoint
 public class PlacesActivity extends AppCompatActivity {
 
     //For UI
@@ -34,7 +34,7 @@ public class PlacesActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUi();
-        //configureViewModel();
+        configureViewModel();
         showSnackBar(getString(R.string.successful_auth));
     }
 
@@ -51,7 +51,7 @@ public class PlacesActivity extends AppCompatActivity {
 
     //Configure data
     private void configureViewModel() {
-        mUserViewModel = new ViewModelProvider(mAuthenticationActivity, ViewModelFactory.getInstance()).get(UserViewModel.class);
+        mUserViewModel = new ViewModelProvider(mAuthenticationActivity).get(UserViewModel.class);
     }
 
     // Show Snack Bar with a message

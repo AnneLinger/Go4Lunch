@@ -1,6 +1,4 @@
-package injections;
-
-import android.content.Context;
+package di;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -9,8 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import model.User;
-import repository.AuthenticationRepository;
+import repositories.UserRepositoryImpl;
 import viewmodel.UserViewModel;
 
 /**
@@ -18,7 +15,7 @@ import viewmodel.UserViewModel;
 */
 public class ViewModelFactory implements ViewModelProvider.Factory {
     //For data
-    private final AuthenticationRepository mAuthenticationRepository;
+    private final UserRepositoryImpl mUserRepositoryImpl;
 
     //for threads
     private final Executor mExecutor;
@@ -31,7 +28,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         if (sViewModelFactory == null) {
             synchronized (ViewModelFactory.class) {
                 if (sViewModelFactory == null) {
-                    sViewModelFactory = new ViewModelFactory(new AuthenticationRepository());
+                    sViewModelFactory = new ViewModelFactory(new UserRepositoryImpl());
                 }
             }
         }
@@ -39,8 +36,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     }
 
     //Factory
-    private ViewModelFactory(AuthenticationRepository authenticationRepository) {
-        mAuthenticationRepository = new AuthenticationRepository();
+    private ViewModelFactory(UserRepositoryImpl userRepositoryImpl) {
+        mUserRepositoryImpl = new UserRepositoryImpl();
         mExecutor = Executors.newSingleThreadExecutor();
     }
 
@@ -48,7 +45,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(UserViewModel.class)) {
-            return (T) new UserViewModel(mAuthenticationRepository, mExecutor);
+            return (T) new UserViewModel(mUserRepositoryImpl, mExecutor);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

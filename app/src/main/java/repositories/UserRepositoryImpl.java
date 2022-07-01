@@ -1,26 +1,29 @@
-package repository;
+package repositories;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Objects;
+import javax.inject.Inject;
 
 import model.User;
 
 /**
-*Repository for authentication of the users
+*Implementation of UserRepository interface
 */
 
-public class AuthenticationRepository {
+public class UserRepositoryImpl implements UserRepository {
     private final FirebaseAuth mFirebaseAuth = FirebaseAuth.getInstance();
 
-    public AuthenticationRepository() {
+    @Inject
+    public UserRepositoryImpl() {
     }
 
+    @Override
     public FirebaseUser getCurrentUser() {
         return mFirebaseAuth.getCurrentUser();
     }
 
+    @Override
     public void createUser() {
         String name = getCurrentUser().getDisplayName();
         String userId = getCurrentUser().getProviderId();
@@ -28,6 +31,7 @@ public class AuthenticationRepository {
         User user = new User(userId, name, pictureUrl);
     }
 
+    @Override
     public void logOut() {
         mFirebaseAuth.signOut();
     }

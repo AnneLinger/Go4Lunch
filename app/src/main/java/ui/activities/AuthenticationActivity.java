@@ -20,16 +20,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import injections.ViewModelFactory;
-import model.User;
+import dagger.hilt.android.AndroidEntryPoint;
+import di.ViewModelFactory;
 import viewmodel.UserViewModel;
-
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 
 /**
 *Activity for the authentication of the user
 */
+
+@AndroidEntryPoint
 public class AuthenticationActivity extends AppCompatActivity {
     //For UI
     private ActivityAuthenticationBinding mBinding;

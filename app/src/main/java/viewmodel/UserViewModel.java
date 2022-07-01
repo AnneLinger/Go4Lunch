@@ -6,35 +6,41 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.concurrent.Executor;
 
-import repository.AuthenticationRepository;
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import repositories.UserRepositoryImpl;
 
 /**
 *ViewModel for users
 */
+
+@HiltViewModel
 public class UserViewModel extends ViewModel {
     //For data
-    private final AuthenticationRepository mAuthenticationRepository;
+    private final UserRepositoryImpl mUserRepositoryImpl;
 
     //For threads
     private final Executor mExecutor;
 
     //Constructor
-    public UserViewModel(AuthenticationRepository authenticationRepository, Executor executor) {
-        mAuthenticationRepository = authenticationRepository;
+    @Inject
+    public UserViewModel(UserRepositoryImpl userRepositoryImpl, Executor executor) {
+        mUserRepositoryImpl = userRepositoryImpl;
         mExecutor = executor;
     }
 
     //..........................For authentication...............................................
 
     public FirebaseUser getCurrentUser() {
-        return mAuthenticationRepository.getCurrentUser();
+        return mUserRepositoryImpl.getCurrentUser();
     }
 
     public void createUser() {
-        mAuthenticationRepository.createUser();
+        mUserRepositoryImpl.createUser();
     }
 
     public void logOut() {
-        mAuthenticationRepository.logOut();
+        mUserRepositoryImpl.logOut();
     }
 }
