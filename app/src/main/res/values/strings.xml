@@ -21,4 +21,7 @@
     <string name="canceled_authentication">Authentication canceled</string>
     <string name="no_connection">No internet connection</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="facebook_application_id">1133411974182589</string>
+    <string name="fb_login_protocol_scheme">fb1133411974182589</string>
+    <string name="facebook_client_token">c0a024eaf6f33dc69dc3e053865a1470</string>
 </resources>

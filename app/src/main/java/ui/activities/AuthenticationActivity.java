@@ -24,6 +24,9 @@ import injections.ViewModelFactory;
 import model.User;
 import viewmodel.UserViewModel;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
 /**
 *Activity for the authentication of the user
 */
@@ -88,8 +91,9 @@ public class AuthenticationActivity extends AppCompatActivity {
     private void startSignInActivity() {
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.EmailBuilder().build()
+                new AuthUI.IdpConfig.FacebookBuilder().build()
         );
 
         // Launch the activity
@@ -132,6 +136,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     private FirebaseUser getCurrentUser() {
         return mUserViewModel.getCurrentUser();
     }
+
 }
 
 
