@@ -1,13 +1,17 @@
 package model;
+
+import javax.annotation.Nullable;
+
 /**
 *Model for users of the app
 */
 public class User {
     private String userId;
     private String name;
+    @Nullable
     private String pictureUrl;
 
-    public User(String userId, String name, String pictureUrl) {
+    public User(String userId, String name, @androidx.annotation.Nullable String pictureUrl) {
         this.userId = userId;
         this.name = name;
         this.pictureUrl = pictureUrl;
@@ -29,11 +33,12 @@ public class User {
         this.name = name;
     }
 
+    @androidx.annotation.Nullable
     public String getPictureUrl() {
         return pictureUrl;
     }
 
-    public void setPictureUrl(String pictureUrl) {
+    public void setPictureUrl(@androidx.annotation.Nullable String pictureUrl) {
         this.pictureUrl = pictureUrl;
     }
 }

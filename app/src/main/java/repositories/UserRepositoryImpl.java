@@ -3,6 +3,9 @@ package repositories;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import model.User;
@@ -27,7 +30,7 @@ public class UserRepositoryImpl implements UserRepository {
     public void createUser() {
         String name = getCurrentUser().getDisplayName();
         String userId = getCurrentUser().getProviderId();
-        String pictureUrl = getCurrentUser().getPhotoUrl().toString();
+        String pictureUrl = (getCurrentUser().getPhotoUrl() != null ? getCurrentUser().getPhotoUrl().toString() : null);
         User user = new User(userId, name, pictureUrl);
     }
 
