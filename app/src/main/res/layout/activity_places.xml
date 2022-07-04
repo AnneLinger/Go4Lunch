@@ -4,8 +4,15 @@
     android:id="@+id/places_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/authentication_background"
     tools:context="ui.activities.PlacesActivity">
+
+    <FrameLayout
+        android:id="@+id/activity_places_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        http:layout_constraintTop_toTopOf="parent"
+        http:layout_constraintBottom_toTopOf="@id/bottom_nav">
+    </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"

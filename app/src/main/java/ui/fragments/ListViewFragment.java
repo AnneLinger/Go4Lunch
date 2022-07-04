@@ -15,15 +15,16 @@ import com.anne.linger.go4lunch.databinding.FragmentListViewBinding;
 *Fragment to display a list of places
 */
 public class ListViewFragment extends Fragment {
+
     //For UI
     private FragmentListViewBinding mBinding;
 
     //For data
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinding = FragmentListViewBinding.inflate(getLayoutInflater());
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mBinding = FragmentListViewBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
+
     }
 }
