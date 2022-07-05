@@ -24,4 +24,7 @@
     <string name="facebook_application_id">1133411974182589</string>
     <string name="fb_login_protocol_scheme">fb1133411974182589</string>
     <string name="facebook_client_token">c0a024eaf6f33dc69dc3e053865a1470</string>
+    <string name="toolbar_title">I\'m hungry!</string>
+    <string name="search_icon">Search icon</string>
+    <string name="search">Search</string>
 </resources>
