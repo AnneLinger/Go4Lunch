@@ -1,5 +1,6 @@
 package ui.activities;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -30,7 +31,6 @@ public class PlacesActivity extends AppCompatActivity {
 
     //For UI
     private ActivityPlacesBinding mBinding;
-    private BottomNavigationView mBottomNavigationView;
 
     //For data
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -54,9 +54,7 @@ public class PlacesActivity extends AppCompatActivity {
 
     //Configure bottom nav
     private void configureBottomNav() {
-        //TODO complete with method no deprecated
         mBinding.bottomNav.setOnItemSelectedListener(this::select);
-        //mBottomNavigationView.setOnNavigationItemSelectedListener(item -> updateFragment(item.getItemId()));
     }
 
     public boolean select(MenuItem item) {
@@ -73,45 +71,6 @@ public class PlacesActivity extends AppCompatActivity {
         }
         return false;
     }
-
-    /**public void setOnItemSelectedListener(@Nullable NavigationBarView.OnItemSelectedListener listener) {
-        Fragment selectedFragment = null;
-        if (R.id.item_map_view == (listener)) {
-            selectedFragment = new MapViewFragment();
-
-            selectedFragment = new ListViewFragment();
-
-            selectedFragment = new WorkmatesFragment();
-        } else if (R.id.item_list_view.equals(listener)) {
-            selectedFragment = new ListViewFragment();
-
-            selectedFragment = new WorkmatesFragment();
-        } else if (R.id.item_workmates.equals(listener)) {
-            selectedFragment = new WorkmatesFragment();
-        }
-
-        assert selectedFragment != null;
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_places_frame_layout, selectedFragment).commit();
-
-        return true
-    }
-
-    private Boolean updateFragment(Integer integer) {
-        Fragment selectedFragment = null;
-        switch (integer) {
-            case R.id.item_map_view:
-                selectedFragment = new MapViewFragment();
-            case R.id.item_list_view:
-                selectedFragment = new ListViewFragment();
-            case R.id.item_workmates:
-                selectedFragment = new WorkmatesFragment();
-        }
-
-        assert selectedFragment != null;
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_places_frame_layout, selectedFragment).commit();
-
-        return true;
-    }*/
 
     //Configure data
     private void configureViewModel() {

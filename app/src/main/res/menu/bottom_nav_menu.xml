@@ -5,18 +5,15 @@
         android:id="@+id/item_map_view"
         android:enabled="true"
         android:title="@string/bottom_nav_menu_map_view"
-        android:icon="@drawable/ic_baseline_map_24"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_baseline_map_24"/>
     <item
         android:id="@+id/item_list_view"
         android:enabled="true"
         android:title="@string/bottom_nav_menu_list_view"
-        android:icon="@drawable/ic_baseline_format_list_bulleted_24"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_baseline_format_list_bulleted_24"/>
     <item
         android:id="@+id/item_workmates"
         android:enabled="true"
         android:title="@string/bottom_nav_menu_workmates"
-        android:icon="@drawable/ic_baseline_group_24"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_baseline_group_24"/>
 </menu>

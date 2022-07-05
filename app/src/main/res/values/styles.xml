@@ -17,4 +17,9 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowBackground">@drawable/authentication_background</item>
     </style>
+    <style name="bottomNav" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="android:background">@color/white</item>
+        <item name="colorOnPrimary">@color/menus</item>
+        <item name="colorOnSecondary">@color/black</item>
+    </style>
 </resources>
