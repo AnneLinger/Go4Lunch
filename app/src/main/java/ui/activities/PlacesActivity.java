@@ -3,6 +3,7 @@ package ui.activities;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.Window;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,13 +45,13 @@ public class PlacesActivity extends AppCompatActivity {
         configureViewModel();
         showSnackBar(getString(R.string.successful_auth));
         configureBottomNav();
+        mBinding.bottomNav.setSelectedItemId(R.id.item_map_view);
     }
 
     //Configure the UI
     private void initUi() {
         mBinding = ActivityPlacesBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
-        mBinding.bottomNav.setSelectedItemId(R.id.item_map_view);
     }
 
     //Configure bottom nav
