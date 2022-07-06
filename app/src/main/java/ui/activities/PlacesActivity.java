@@ -50,6 +50,7 @@ public class PlacesActivity extends AppCompatActivity {
     private void initUi() {
         mBinding = ActivityPlacesBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        mBinding.bottomNav.setSelectedItemId(R.id.item_map_view);
     }
 
     //Configure bottom nav

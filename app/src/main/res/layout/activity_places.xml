@@ -40,6 +40,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         http:layout_constraintBottom_toBottomOf="parent"
+        http:itemIconTint="@color/bottom_nav_color"
+        http:itemTextColor="@color/bottom_nav_color"
         http:menu="@menu/bottom_nav_menu">
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
