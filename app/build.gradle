@@ -63,7 +63,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
 
     //Easy permission
-    //implementation 'pub.devrel:easypermissions:1.1.1'
+    implementation 'pub.devrel:easypermissions:3.0.0'
 }
 
 
