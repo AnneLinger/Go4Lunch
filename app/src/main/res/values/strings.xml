@@ -35,4 +35,6 @@
     <string name="no">No</string>
     <string name="search_icon">Search icon</string>
     <string name="search">Search</string>
+    <string name="open_drawer_menu">Open the menu</string>
+    <string name="close_drawer_menu">Close the menu</string>
 </resources>

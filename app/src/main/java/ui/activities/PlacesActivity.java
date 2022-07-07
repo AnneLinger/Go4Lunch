@@ -5,12 +5,14 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -18,7 +20,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityPlacesBinding;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.snackbar.Snackbar;
@@ -45,6 +51,7 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
 
     //For UI
     private ActivityPlacesBinding mBinding;
+    private ActionBarDrawerToggle mActionBarDrawerToggle;
 
     //For data
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -58,6 +65,9 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
     private static final int DEFINE_LOCATION_REQUEST_CODE = 1;
     private String fineLocation = Manifest.permission.ACCESS_FINE_LOCATION;
     private String coarseLocation = Manifest.permission.ACCESS_COARSE_LOCATION;
+
+    //For location
+    private Location mUserLocation;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,6 +119,7 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
     //TODO : configure in the drawer
     //To log out
     private void logOut() {
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mBinding.placesLayout, R.string.open_drawer_menu, R.string.close_drawer_menu);
         mUserViewModel.logOut();
     }
 
@@ -116,11 +127,26 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
     @AfterPermissionGranted(DEFINE_LOCATION_REQUEST_CODE)
     private void checkUserLocation() {
         if (EasyPermissions.hasPermissions(this, fineLocation) || EasyPermissions.hasPermissions(this, coarseLocation)) {
-            //mGoogleMap.setMyLocationEnabled(true);
+            getUserLocation();
         }
         else {
             requestPermission();
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getUserLocation() {
+        //For location
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                mUserLocation = location;
+                double latitude = mUserLocation.getLatitude();
+                double longitude = mUserLocation.getLongitude();
+            }
+        });
+        mGoogleMap.setMyLocationEnabled(true);
     }
 
     private void requestPermission() {
