@@ -8,6 +8,7 @@ import android.content.res.ColorStateList;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -78,9 +80,10 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
         configureBottomNav();
         mBinding.bottomNav.setSelectedItemId(R.id.item_map_view);
         checkUserLocation();
+        configureDrawer();
     }
 
-    //Configure the UI
+    //Configure UI
     private void initUi() {
         mBinding = ActivityPlacesBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
@@ -116,10 +119,31 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
         return false;
     }
 
+    private void configureDrawer() {
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mBinding.placesLayout, R.string.open_drawer_menu, R.string.close_drawer_menu);
+        mBinding.placesLayout.addDrawerListener(mActionBarDrawerToggle);
+        mActionBarDrawerToggle.syncState();
+        drawerListener();
+    }
+
+    private void drawerListener() {
+
+        mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBinding.placesLayout.open();           }
+        });
+        mBinding.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                return false;
+            }
+        });
+    }
+
     //TODO : configure in the drawer
     //To log out
     private void logOut() {
-        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mBinding.placesLayout, R.string.open_drawer_menu, R.string.close_drawer_menu);
         mUserViewModel.logOut();
     }
 
