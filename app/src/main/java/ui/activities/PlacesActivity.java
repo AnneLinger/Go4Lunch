@@ -2,6 +2,7 @@ package ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -125,7 +126,7 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
                         Snackbar.make(mBinding.getRoot(), "TODO", Snackbar.LENGTH_SHORT).show();
                         return true;
                     case R.id.item2:
-                        Snackbar.make(mBinding.getRoot(), "TODO settings", Snackbar.LENGTH_SHORT).show();
+                        navigateToSettingsActivity();
                         return true;
                     case R.id.item3:
                         logOut();
@@ -135,6 +136,12 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
                 return false;
             }
         });
+    }
+
+    private void navigateToSettingsActivity() {
+        Intent intent = new Intent(PlacesActivity.this, SettingsActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     //TODO : configure in the drawer
@@ -147,7 +154,7 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
     @AfterPermissionGranted(DEFINE_LOCATION_REQUEST_CODE)
     private void checkUserLocation() {
         if (EasyPermissions.hasPermissions(this, fineLocation) || EasyPermissions.hasPermissions(this, coarseLocation)) {
-            getUserLocation();
+            //getUserLocation();
         }
         else {
             requestPermission();
@@ -166,7 +173,7 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
                 double longitude = mUserLocation.getLongitude();
             }
         });
-        mGoogleMap.setMyLocationEnabled(true);
+        //mGoogleMap.setMyLocationEnabled(true);
     }
 
     private void requestPermission() {
