@@ -37,4 +37,9 @@
     <string name="search">Search</string>
     <string name="open_drawer_menu">Open the menu</string>
     <string name="close_drawer_menu">Close the menu</string>
+    <string name="your_lunch">YOUR LUNCH</string>
+    <string name="settings">SETTINGS</string>
+    <string name="logout">LOGOUT</string>
+    <string name="john_smith">John SMITH</string>
+    <string name="john_smith_gmail_com">john.smith@gmail.com</string>
 </resources>

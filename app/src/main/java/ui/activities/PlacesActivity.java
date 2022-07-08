@@ -2,21 +2,15 @@ package ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
@@ -26,8 +20,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +27,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import kotlin.contracts.SimpleEffect;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -101,10 +92,10 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
 
     //Configure bottom nav
     private void configureBottomNav() {
-        mBinding.bottomNav.setOnItemSelectedListener(this::select);
+        mBinding.bottomNav.setOnItemSelectedListener(this::selectBottomNavItem);
     }
 
-    public boolean select(MenuItem item) {
+    public boolean selectBottomNavItem(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_map_view:
                 getSupportFragmentManager().beginTransaction().replace(R.id.activity_places_frame_layout, new MapViewFragment()).commit();
@@ -120,13 +111,6 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
     }
 
     private void configureDrawer() {
-        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mBinding.placesLayout, R.string.open_drawer_menu, R.string.close_drawer_menu);
-        mBinding.placesLayout.addDrawerListener(mActionBarDrawerToggle);
-        mActionBarDrawerToggle.syncState();
-        drawerListener();
-    }
-
-    private void drawerListener() {
 
         mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,6 +120,18 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
         mBinding.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.your_lunch:
+                        Snackbar.make(mBinding.getRoot(), "TODO", Snackbar.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.item2:
+                        Snackbar.make(mBinding.getRoot(), "TODO settings", Snackbar.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.item3:
+                        logOut();
+                        return true;
+                }
+                mBinding.placesLayout.close();
                 return false;
             }
         });
