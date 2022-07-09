@@ -39,7 +39,14 @@
     <string name="close_drawer_menu">Close the menu</string>
     <string name="your_lunch">YOUR LUNCH</string>
     <string name="settings">SETTINGS</string>
+    <string name="settings_toolbar">Settings</string>
     <string name="logout">LOGOUT</string>
     <string name="john_smith">John SMITH</string>
     <string name="john_smith_gmail_com">john.smith@gmail.com</string>
+    <string name="delete_my_account">Delete my account</string>
+    <string name="save_changes">Save changes</string>
+    <string name="delete">Delete</string>
+    <string name="allow_notifications">Allow notifications</string>
+    <string name="radius_used_in_the_map">Radius used in the map</string>
+    <string name="zoom_used_in_the_map">Zoom used in the map</string>
 </resources>
