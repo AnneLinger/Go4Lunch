@@ -1,5 +1,7 @@
 package ui.fragments;
 
+import android.annotation.SuppressLint;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.FragmentMapViewBinding;
@@ -18,6 +21,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import viewmodel.UserViewModel;
+
 /**
 *Fragment to display a map for places
 */
@@ -25,8 +30,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
 
     //For UI
     private FragmentMapViewBinding mBinding;
+    private GoogleMap mGoogleMap;
 
     //For data
+    private Location mUserLocation;
+    private UserViewModel mUserViewModel;
 
 
     @Override
@@ -49,5 +57,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
        googleMap.addMarker(new MarkerOptions()
                .position(new LatLng(0, 0))
                .title("Marker"));
+       googleMap = mGoogleMap;
     }
+
+    private void configureGoogleMap() {
+
+    }
+
 }

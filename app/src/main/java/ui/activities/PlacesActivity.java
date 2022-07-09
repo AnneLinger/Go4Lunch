@@ -154,7 +154,7 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
     @AfterPermissionGranted(DEFINE_LOCATION_REQUEST_CODE)
     private void checkUserLocation() {
         if (EasyPermissions.hasPermissions(this, fineLocation) || EasyPermissions.hasPermissions(this, coarseLocation)) {
-            //getUserLocation();
+            getUserLocation();
         }
         else {
             requestPermission();
@@ -163,17 +163,13 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
 
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
-        //For location
-        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                mUserLocation = location;
-                double latitude = mUserLocation.getLatitude();
-                double longitude = mUserLocation.getLongitude();
-            }
-        });
-        //mGoogleMap.setMyLocationEnabled(true);
+        mUserViewModel.instantiateFusedProviderLocationClient(this);
+        mUserViewModel.updateLocation(this);
+        mUserViewModel.getCurrentLocation().observe(this, this::updateLocation);
+    }
+
+    private void updateLocation(Location location) {
+        mUserLocation = location;
     }
 
     private void requestPermission() {
