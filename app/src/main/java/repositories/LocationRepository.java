@@ -10,15 +10,26 @@ import androidx.lifecycle.LiveData;
  */
 public interface LocationRepository {
 
-    LiveData<Location> getCurrentLocation();
+    LiveData<Location> getLocationLiveData();
 
-    void instantiateFusedProviderLocationClient (Context context);
+    void instantiateFusedLocationProviderClient(Context context);
 
-    void configureLocationRequest();
+    void startLocationRequest(Context context);
 
-    void configureLocationCallback();
+    void stopLocationRequest(Context context);
 
-    void updateLocation(Context context);
 
-    void stopLocationUpdates();
+
+
+        /**LiveData<Location> getCurrentLocation();
+
+        void instantiateFusedProviderLocationClient (Context context);
+
+        void configureLocationRequest();
+
+        void configureLocationCallback();
+
+        void updateLocation(Context context);
+
+        void stopLocationUpdates();*/
 }

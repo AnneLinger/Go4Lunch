@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
@@ -28,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -41,7 +43,7 @@ import viewmodel.UserViewModel;
 */
 
 @AndroidEntryPoint
-public class PlacesActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class PlacesActivity extends AppCompatActivity {
 
     //For UI
     private ActivityPlacesBinding mBinding;
@@ -71,7 +73,8 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
         showSnackBar(getString(R.string.successful_auth));
         configureBottomNav();
         mBinding.bottomNav.setSelectedItemId(R.id.item_map_view);
-        checkUserLocation();
+        //requestLocationPermission();
+        //checkUserLocation();
         configureDrawer();
     }
 
@@ -144,17 +147,24 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
         finish();
     }
 
-    //TODO : configure in the drawer
+    /**private void requestLocationPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+    }
+
+    private void getUserLocation() {
+        mUserViewModel.getGpsMessageLiveData().observe(this, message -> message);
+    }*/
+
     //To log out
     private void logOut() {
         mUserViewModel.logOut();
     }
 
-    @SuppressLint("MissingPermission")
+    /**@SuppressLint("MissingPermission")
     @AfterPermissionGranted(DEFINE_LOCATION_REQUEST_CODE)
     private void checkUserLocation() {
         if (EasyPermissions.hasPermissions(this, fineLocation) || EasyPermissions.hasPermissions(this, coarseLocation)) {
-            getUserLocation();
+            //getUserLocation();
         }
         else {
             requestPermission();
@@ -195,5 +205,5 @@ public class PlacesActivity extends AppCompatActivity implements EasyPermissions
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
+    }*/
 }
