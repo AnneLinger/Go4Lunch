@@ -147,14 +147,6 @@ public class PlacesActivity extends AppCompatActivity {
         finish();
     }
 
-    /**private void requestLocationPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
-    }
-
-    private void getUserLocation() {
-        mUserViewModel.getGpsMessageLiveData().observe(this, message -> message);
-    }*/
-
     //To log out
     private void logOut() {
         mUserViewModel.logOut();

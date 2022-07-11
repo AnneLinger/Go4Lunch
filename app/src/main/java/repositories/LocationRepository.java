@@ -18,18 +18,4 @@ public interface LocationRepository {
 
     void stopLocationRequest(Context context);
 
-
-
-
-        /**LiveData<Location> getCurrentLocation();
-
-        void instantiateFusedProviderLocationClient (Context context);
-
-        void configureLocationRequest();
-
-        void configureLocationCallback();
-
-        void updateLocation(Context context);
-
-        void stopLocationUpdates();*/
 }

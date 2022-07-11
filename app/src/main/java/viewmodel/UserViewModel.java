@@ -30,7 +30,6 @@ public class UserViewModel extends ViewModel {
     private final LocationRepositoryImpl mLocationRepositoryImpl;
 
     private final PermissionChecker mPermissionChecker;
-    private final MediatorLiveData<String> locationMessageLiveData = new MediatorLiveData<>();
     private final MutableLiveData<Boolean> hasLocationPermissionLiveData = new MutableLiveData<>();
 
     //For threads
@@ -45,13 +44,6 @@ public class UserViewModel extends ViewModel {
         mPermissionChecker = permissionChecker;
 
         LiveData<Location> locationLiveData = mLocationRepositoryImpl.getLocationLiveData();
-
-        locationMessageLiveData.addSource(locationLiveData, location ->
-                combine(location, hasLocationPermissionLiveData.getValue())
-        );
-
-        locationMessageLiveData.addSource(hasLocationPermissionLiveData, hasLocationPermission ->
-                combine(locationLiveData.getValue(), hasLocationPermission));
     }
 
     //..........................For authentication...............................................
@@ -70,19 +62,6 @@ public class UserViewModel extends ViewModel {
 
     //..........................For location.....................................................
 
-    private void combine(@Nullable Location location, @Nullable Boolean hasTheLocationPermission) {
-        if (location == null) {
-            if (hasTheLocationPermission == null || !hasTheLocationPermission) {
-                // Never hardcode translatable Strings, always use Context.getString(R.string.my_string) instead !
-                locationMessageLiveData.setValue("I am lost... Should I click the permission button ?!");
-            } else {
-                locationMessageLiveData.setValue("Querying location, please wait for a few seconds...");
-            }
-        } else {
-            locationMessageLiveData.setValue("I am at coordinates (lat:" + location.getLatitude() + ", long:" + location.getLongitude() + ")");
-        }
-    }
-
     @SuppressLint("MissingPermission")
     public void refresh(Context context) {
         boolean hasTheLocationPermission = mPermissionChecker.hasLocationPermission();
@@ -95,21 +74,10 @@ public class UserViewModel extends ViewModel {
         }
     }
 
-    public LiveData<String> getGpsMessageLiveData() {
-        return locationMessageLiveData;
+    public LiveData<Location> getCurrentLocation() {
+        return mLocationRepositoryImpl.getLocationLiveData();
     }
 
-    /**public LiveData<Location> getCurrentLocation() {
-        return mLocationRepositoryImpl.getCurrentLocation();
-    }
-
-    public void instantiateFusedProviderLocationClient(Context context) {
-        mLocationRepositoryImpl.instantiateFusedProviderLocationClient(context);
-    }
-
-    public void updateLocation(Context context) {
-        mLocationRepositoryImpl.updateLocation(context);
-    }*/
 }
 
 
