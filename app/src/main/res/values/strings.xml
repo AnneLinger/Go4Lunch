@@ -49,4 +49,5 @@
     <string name="allow_notifications">Allow notifications</string>
     <string name="radius_used_in_the_map">Radius used in the map</string>
     <string name="zoom_used_in_the_map">Zoom used in the map</string>
+    <string name="marker_title">My location</string>
 </resources>

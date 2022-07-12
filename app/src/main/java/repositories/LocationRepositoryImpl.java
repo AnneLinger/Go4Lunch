@@ -39,24 +39,22 @@ public class LocationRepositoryImpl implements LocationRepository {
     public LocationRepositoryImpl() {
     }
 
+    //To init FusedLocationProviderClient
     public void instantiateFusedLocationProviderClient(Context context) {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
     }
 
-    @SuppressLint("MissingPermission")
-    //@RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
+    //To get the user location
+    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     public void startLocationRequest(Context context) {
-        Log.d("Anne", "startLocOK");
+
         instantiateFusedLocationProviderClient(context);
+
         callback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                Log.d("Anne", "onLocResultOK");
                 Location location = locationResult.getLastLocation();
-                Log.d("Anne", "startLocOK");
-                Double latitude = location.getLatitude();
-
                 locationMutableLiveData.setValue(location);
             }
         };
@@ -73,14 +71,8 @@ public class LocationRepositoryImpl implements LocationRepository {
         );
     }
 
-    public LiveData<Location> getLocationLiveData() {
+    //To get the location as livedata for observable
+    public LiveData<Location> getLiveDataLocation() {
         return locationMutableLiveData;
-    }
-
-    public void stopLocationRequest(Context context) {
-        instantiateFusedLocationProviderClient(context);
-        if (callback != null) {
-            mFusedLocationProviderClient.removeLocationUpdates(callback);
-        }
     }
 }
