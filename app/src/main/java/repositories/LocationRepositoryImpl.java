@@ -1,8 +1,10 @@
 package repositories;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
@@ -29,7 +31,7 @@ public class LocationRepositoryImpl implements LocationRepository {
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @NonNull
-    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>(null);
+    private final MutableLiveData<Location> locationMutableLiveData = new MutableLiveData<>();
 
     private LocationCallback callback;
 
@@ -41,23 +43,23 @@ public class LocationRepositoryImpl implements LocationRepository {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
     }
 
-    public LiveData<Location> getLocationLiveData() {
-        return locationMutableLiveData;
-    }
-
-    @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
+    @SuppressLint("MissingPermission")
+    //@RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     public void startLocationRequest(Context context) {
+        Log.d("Anne", "startLocOK");
         instantiateFusedLocationProviderClient(context);
-        if (callback == null) {
-            callback = new LocationCallback() {
-                @Override
-                public void onLocationResult(@NonNull LocationResult locationResult) {
-                    Location location = locationResult.getLastLocation();
+        callback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                Log.d("Anne", "onLocResultOK");
+                Location location = locationResult.getLastLocation();
+                Log.d("Anne", "startLocOK");
+                Double latitude = location.getLatitude();
 
-                    locationMutableLiveData.setValue(location);
-                }
-            };
-        }
+                locationMutableLiveData.setValue(location);
+            }
+        };
 
         mFusedLocationProviderClient.removeLocationUpdates(callback);
 
@@ -69,6 +71,10 @@ public class LocationRepositoryImpl implements LocationRepository {
                 callback,
                 Looper.getMainLooper()
         );
+    }
+
+    public LiveData<Location> getLocationLiveData() {
+        return locationMutableLiveData;
     }
 
     public void stopLocationRequest(Context context) {

@@ -2,8 +2,11 @@ package ui.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
@@ -24,12 +28,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.Objects;
+
+import pub.devrel.easypermissions.EasyPermissions;
+import ui.activities.PlacesActivity;
 import viewmodel.UserViewModel;
 
 /**
 *Fragment to display a map for places
 */
-public class MapViewFragment extends Fragment implements OnMapReadyCallback {
+public class MapViewFragment extends Fragment implements OnMapReadyCallback, LocationListener {
 
     //For UI
     private FragmentMapViewBinding mBinding;
@@ -39,6 +47,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
     //For data
     private Location mUserLocation;
     private UserViewModel mUserViewModel;
+    private boolean locationPermissionGranted;
+    private static final String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
     @Nullable
     @Override
@@ -54,42 +64,62 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback {
         assert supportMapFragment != null;
         supportMapFragment.getMapAsync(this);
         configureViewModel();
-        requestLocationPermission();
-        //getUserLocation();
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        googleMap.addMarker(new MarkerOptions()
-               .position(new LatLng(0, 0))
-               .title("Marker"));
         mGoogleMap = googleMap;
-        getUserLocation();
+        requestLocationPermission();
+        Log.d("Anne", "requestPermissionOK");
+        if (checkPermission()) {
+            Log.d("Anne", "checkPermissionOK");
+            mGoogleMap.setMyLocationEnabled(true);
+            Log.d("Anne", "setMyLocOK");
+            getUserLocation();
+            Log.d("Anne", "getLocOK");
+        }
     }
 
     private void configureViewModel() {
         mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
     }
 
-    private void configureGoogleMap() {
-
+    private boolean checkPermission() {
+        return EasyPermissions.hasPermissions(requireContext(), perms);
     }
 
     private void requestLocationPermission() {
-        ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+        ActivityCompat.requestPermissions(requireActivity(), perms, 0);
     }
 
     private void getUserLocation() {
-        mUserViewModel.getCurrentLocation().observe(getViewLifecycleOwner(), location -> updateLocationUI(location));
-        //mUserViewModel.getGpsMessageLiveData().observe(getViewLifecycleOwner(), message -> updateLocation(message));
+        Context context = this.getContext();
+        mUserViewModel.refresh(context);
+        mUserViewModel.getCurrentLocation().observe(requireActivity(), this::updateLocationUI);
+        Log.d("Anne", "observeOK");
     }
 
-    @SuppressLint("MissingPermission")
     private void updateLocationUI(Location location) {
-        Snackbar.make(mBinding.getRoot(), "Nous avons la loc !", Snackbar.LENGTH_SHORT).show();
-        mGoogleMap.setMyLocationEnabled(true);
+        mUserLocation = location;
+        Log.d("Anne", "locationOK");
+        //Double latitude = mUserLocation.getLatitude();
+        Log.d("Anne", "latitude OK");
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), DEFAULT_ZOOM));
+        Log.d("Anne", "getUiSettingsOK");
+        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), DEFAULT_ZOOM));
+        mGoogleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .title("Marker"));
+        Log.d("Anne", "AddMarkerOK");
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
+        Log.d("Anne", "moveCameraOK");
+        //mGoogleMap.setMyLocationEnabled(true);
+
     }
 
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        //updateLocationUI(location);
+    }
 }

@@ -3,6 +3,7 @@ package viewmodel;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -64,14 +65,15 @@ public class UserViewModel extends ViewModel {
 
     @SuppressLint("MissingPermission")
     public void refresh(Context context) {
-        boolean hasTheLocationPermission = mPermissionChecker.hasLocationPermission();
-        hasLocationPermissionLiveData.setValue(hasTheLocationPermission);
+       // boolean hasTheLocationPermission = mPermissionChecker.hasLocationPermission();
+        //hasLocationPermissionLiveData.setValue(hasTheLocationPermission);
 
-        if (hasTheLocationPermission) {
+        //if (hasTheLocationPermission) {
+            Log.d("Anne", "refreshOK");
             mLocationRepositoryImpl.startLocationRequest(context);
-        } else {
-            mLocationRepositoryImpl.stopLocationRequest(context);
-        }
+        //} else {
+          //  mLocationRepositoryImpl.stopLocationRequest(context);
+        //}
     }
 
     public LiveData<Location> getCurrentLocation() {
