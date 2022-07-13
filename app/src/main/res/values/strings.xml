@@ -50,4 +50,9 @@
     <string name="radius_used_in_the_map">Radius used in the map</string>
     <string name="zoom_used_in_the_map">Zoom used in the map</string>
     <string name="marker_title">My location</string>
+    <string name="access_denied_text">You can\'t access to Go4Lunch without your location permission !</string>
+    <string name="access_denied_title">Access denied</string>
+    <string name="allow">Allow</string>
+    <string name="close_go4lunch">Close Go4Lunch</string>
+    <string name="go_to_settings">Settings</string>
 </resources>

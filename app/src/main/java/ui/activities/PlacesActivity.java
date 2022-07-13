@@ -54,17 +54,6 @@ public class PlacesActivity extends AppCompatActivity {
     private UserViewModel mUserViewModel;
     private final AuthenticationActivity mAuthenticationActivity = new AuthenticationActivity();
 
-    //For permission
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 124;
-    private boolean permissionDenied = false;
-    private GoogleMap mGoogleMap;
-    private static final int DEFINE_LOCATION_REQUEST_CODE = 1;
-    private String fineLocation = Manifest.permission.ACCESS_FINE_LOCATION;
-    private String coarseLocation = Manifest.permission.ACCESS_COARSE_LOCATION;
-
-    //For location
-    private Location mUserLocation;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,8 +62,6 @@ public class PlacesActivity extends AppCompatActivity {
         showSnackBar(getString(R.string.successful_auth));
         configureBottomNav();
         mBinding.bottomNav.setSelectedItemId(R.id.item_map_view);
-        //requestLocationPermission();
-        //checkUserLocation();
         configureDrawer();
     }
 
@@ -90,7 +77,7 @@ public class PlacesActivity extends AppCompatActivity {
     }
 
     // Show Snack Bar with a message
-    private void showSnackBar( String message){
+    private void showSnackBar(String message){
         Snackbar.make(mBinding.getRoot(), message, Snackbar.LENGTH_SHORT).show();
     }
 
@@ -151,51 +138,4 @@ public class PlacesActivity extends AppCompatActivity {
     private void logOut() {
         mUserViewModel.logOut();
     }
-
-    /**@SuppressLint("MissingPermission")
-    @AfterPermissionGranted(DEFINE_LOCATION_REQUEST_CODE)
-    private void checkUserLocation() {
-        if (EasyPermissions.hasPermissions(this, fineLocation) || EasyPermissions.hasPermissions(this, coarseLocation)) {
-            //getUserLocation();
-        }
-        else {
-            requestPermission();
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private void getUserLocation() {
-        mUserViewModel.instantiateFusedProviderLocationClient(this);
-        mUserViewModel.updateLocation(this);
-        mUserViewModel.getCurrentLocation().observe(this, this::updateLocation);
-    }
-
-    private void updateLocation(Location location) {
-        mUserLocation = location;
-    }
-
-    private void requestPermission() {
-        EasyPermissions.requestPermissions(this, String.valueOf(R.string.rationale_location), LOCATION_PERMISSION_REQUEST_CODE, fineLocation, coarseLocation);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this).build().show();
-        }
-        else {
-            requestPermission();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }*/
 }
