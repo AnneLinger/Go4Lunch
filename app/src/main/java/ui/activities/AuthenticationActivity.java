@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import model.User;
 import viewmodel.UserViewModel;
 
 /**
@@ -53,15 +54,14 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     //Check if user is signed in
-    /**
      @Override
      public void onStart() {
          super.onStart();
-         User currentUser = mUserViewModel.getCurrentUser();
+         FirebaseUser currentUser = mUserViewModel.getCurrentUser();
          if(currentUser!=null) {
              navigateToPlacesActivity();
          }
-     }*/
+     }
 
     //Configure the UI
     private void initUi() {
