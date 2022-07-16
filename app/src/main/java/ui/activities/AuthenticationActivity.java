@@ -2,6 +2,7 @@ package ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -111,6 +112,7 @@ public class AuthenticationActivity extends AppCompatActivity {
             // SUCCESS
             if (resultCode == RESULT_OK) {
                 createUser();
+                Toast.makeText(AuthenticationActivity.this, getString(R.string.successful_auth), Toast.LENGTH_SHORT).show();
                 navigateToPlacesActivity();
             } else {
                 // ERRORS

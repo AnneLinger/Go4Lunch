@@ -53,7 +53,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //For UI
     private FragmentMapViewBinding mBinding;
     private GoogleMap mGoogleMap;
-    private static int DEFAULT_ZOOM = 12;
+    private static int DEFAULT_ZOOM = 15;
 
     //For data
     private Location mUserLocation;
@@ -77,7 +77,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         assert supportMapFragment != null;
         supportMapFragment.getMapAsync(this);
         configureViewModel();
-        checkIfUserIsSignIn();
+        //checkIfUserIsSignIn();
     }
 
     @SuppressLint("MissingPermission")
@@ -103,8 +103,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         if(currentUser!=null) {
             mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
-                DEFAULT_ZOOM = mSharedPreferences.getInt(getString(R.string.zoom), DEFAULT_ZOOM);
-                mGoogleMap.moveCamera(CameraUpdateFactory.zoomBy(DEFAULT_ZOOM));
+                //DEFAULT_ZOOM = mSharedPreferences.getInt(getString(R.string.zoom), DEFAULT_ZOOM);
+                //mGoogleMap.moveCamera(CameraUpdateFactory.zoomBy(DEFAULT_ZOOM));
             }
         }
     }
@@ -119,10 +119,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         if (permission) {
             Log.d("Anne", "checkPermTrue");
             getUserLocation();
-        } else {
+        } /**else {
             Log.d("Anne", "checkPermFalse");
             showDialogToDenyAccessApp();
-        }
+        }*/
     }
 
     //Get the user location

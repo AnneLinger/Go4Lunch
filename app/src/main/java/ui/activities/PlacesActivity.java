@@ -62,7 +62,6 @@ public class PlacesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initUi();
         configureViewModel();
-        showSnackBar(getString(R.string.successful_auth));
         configureBottomNav();
         mBinding.bottomNav.setSelectedItemId(R.id.item_map_view);
         configureDrawer();

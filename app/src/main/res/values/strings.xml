@@ -59,4 +59,5 @@
     <string name="settings_saved">Settings saved !</string>
     <string name="radius">Radius</string>
     <string name="zoom">Zoom</string>
+    <string name="notifications">Notifications</string>
 </resources>
