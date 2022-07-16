@@ -24,11 +24,10 @@
                 android:layout_height="wrap_content"
                 http:title="@string/toolbar_title"
                 http:navigationIcon="@drawable/ic_baseline_menu_24"
-                http:menu="@menu/toolbar_menu"
                 http:titleTextColor="@color/white"
-                android:backgroundTint="@color/menus"
-                android:background="@color/white">
-
+                android:backgroundTint="@color/color_accent"
+                android:background="@color/white"
+                http:menu="@menu/toolbar_menu">
             </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -47,8 +46,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             http:layout_constraintBottom_toBottomOf="parent"
-            http:itemIconTint="@color/bottom_nav_color"
-            http:itemTextColor="@color/bottom_nav_color"
             http:menu="@menu/bottom_nav_menu">
         </com.google.android.material.bottomnavigation.BottomNavigationView>
 
@@ -60,8 +57,10 @@
         android:layout_height="match_parent"
         app:headerLayout="@layout/drawer_layout"
         app:menu="@menu/drawer_menu"
-        android:backgroundTint="@color/menus"
-        android:layout_gravity="start" >
+        http:itemTextColor="@color/white"
+        http:itemIconTint="@color/white"
+        android:backgroundTint="@color/color_accent"
+        android:layout_gravity="start">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

@@ -12,6 +12,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -71,6 +72,7 @@ public class PlacesActivity extends AppCompatActivity {
     private void initUi() {
         mBinding = ActivityPlacesBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        getSupportActionBar().hide();
     }
 
     //Configure data

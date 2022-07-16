@@ -75,6 +75,10 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    private void initSharedPreferences() {
+        mSharedPreferences = SettingsActivity.this.getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
+    }
+
     //When click on action bar for back
     private void navigateToPlacesActivity() {
         Intent intent = new Intent(SettingsActivity.this, PlacesActivity.class);
@@ -89,24 +93,19 @@ public class SettingsActivity extends AppCompatActivity {
         Log.d("Anne", "getCurrentUser");
         if(currentUser!=null) {
             Log.d("Anne", "currentUserOK");
-            //mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            mSharedPreferences = this.getPreferences(MODE_PRIVATE);
+            initSharedPreferences();
             if (mSharedPreferences != null) {
                 Log.d("Anne", "sharedPrefOK");
-                float newRadius = mSharedPreferences.getFloat(getString(R.string.radius), DEFAULT_RADIUS);
+                mSharedPreferences.getFloat(getString(R.string.radius), DEFAULT_RADIUS);
                 DEFAULT_ZOOM = mSharedPreferences.getFloat(getString(R.string.zoom), DEFAULT_ZOOM);
                 DEFAULT_NOTIFICATIONS = mSharedPreferences.getBoolean(getString(R.string.notifications), DEFAULT_NOTIFICATIONS);
-
-                mBinding.sliderRadius.setValue(newRadius);
-                mBinding.sliderZoom.setValue(DEFAULT_ZOOM);
-                mBinding.switchNotifications.setChecked(DEFAULT_NOTIFICATIONS);
             }
             else {
                 Log.d("Anne", "noSharedPref");
-                mBinding.sliderRadius.setValue(DEFAULT_RADIUS);
-                mBinding.sliderZoom.setValue(DEFAULT_ZOOM);
-                mBinding.switchNotifications.setChecked(DEFAULT_NOTIFICATIONS);
             }
+            mBinding.sliderRadius.setValue(DEFAULT_RADIUS);
+            mBinding.sliderZoom.setValue(DEFAULT_ZOOM);
+            mBinding.switchNotifications.setChecked(DEFAULT_NOTIFICATIONS);
         }
     }
 
@@ -115,16 +114,13 @@ public class SettingsActivity extends AppCompatActivity {
         mBinding.btSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
-                mSharedPreferences = SettingsActivity.this.getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
+                initSharedPreferences();
                 SharedPreferences.Editor editor = mSharedPreferences.edit();
-
                 mBinding.sliderRadius.addOnChangeListener(new Slider.OnChangeListener() {
                     @Override
                     public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                        mSharedPreferences.edit().putFloat(getString(R.string.radius), value).apply();
-                        //editor.putFloat(getString(R.string.radius), value);
-                        //editor.apply();
+                        editor.putFloat(getString(R.string.radius), value);
+                        editor.apply();
                     }
                 });
 

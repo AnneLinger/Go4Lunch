@@ -19,12 +19,11 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/settings_toolbar"
-            http:titleTextColor="@color/white"
             app:titleCentered="true"
-            app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
-            android:backgroundTint="@color/menus"
+            android:backgroundTint="@color/color_accent"
             android:background="@color/white"
-            />
+            http:titleTextColor="@color/white"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -45,15 +44,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/slider_radius"
-        app:trackColor="@color/email"
-        app:trackColorActive="@color/menus"
-        app:thumbColor="@color/menus"
         android:valueFrom="10.0"
         android:valueTo="20.0"
         android:stepSize="1.0"
         android:value="15.0"
         app:tickColor="@color/black"
         app:tickVisible="true"
+        app:trackColor="@color/grey"
+        app:trackColorActive="@color/color_accent"
+        app:thumbColor="@color/color_accent"
         app:layout_constraintTop_toBottomOf="@id/tv_radius"
         app:layout_constraintBottom_toTopOf="@id/tv_zoom"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,18 +86,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/slider_radius"
         app:layout_constraintVertical_bias="0.401"
-        app:thumbColor="@color/menus"
-        app:trackColor="@color/email"
-        app:trackColorActive="@color/menus" />
+        app:thumbColor="@color/color_accent"
+        app:trackColor="@color/grey"
+        app:trackColorActive="@color/color_accent" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_notifications"
+        style="@style/switch_theme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:checked="true"
-        app:thumbTint="@color/menus"
         android:text="@string/allow_notifications"
+        app:thumbTint="@color/custom_thumb_selector"
         app:layout_constraintTop_toBottomOf="@id/app_bar"
         app:layout_constraintBottom_toTopOf="@id/tv_delete_account"
         app:layout_constraintStart_toStartOf="parent"
@@ -123,7 +123,7 @@
         android:text="@string/delete"
         app:layout_constraintTop_toTopOf="@id/tv_delete_account"
         android:layout_marginRight="32dp"
-        android:backgroundTint="@color/menus"
+        android:backgroundTint="@color/color_accent"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@id/tv_delete_account"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -133,7 +133,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save_changes"
-        android:backgroundTint="@color/menus"
+        android:backgroundTint="@color/color_accent"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/tv_delete_account"
         app:layout_constraintBottom_toBottomOf="parent"
