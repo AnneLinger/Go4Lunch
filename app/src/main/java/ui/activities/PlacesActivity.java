@@ -80,11 +80,6 @@ public class PlacesActivity extends AppCompatActivity {
         mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
-    // Show Snack Bar with a message
-    private void showSnackBar(String message){
-        Snackbar.make(mBinding.getRoot(), message, Snackbar.LENGTH_SHORT).show();
-    }
-
     //Configure bottom nav
     private void configureBottomNav() {
         mBinding.bottomNav.setOnItemSelectedListener(this::selectBottomNavItem);
