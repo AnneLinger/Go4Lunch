@@ -16,6 +16,11 @@ import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.FragmentListViewBinding;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.util.List;
+
+import model.Place;
+import ui.adapter.PlaceListAdapter;
+
 /**
 *Fragment to display a list of places
 */
@@ -26,6 +31,7 @@ public class ListViewFragment extends Fragment {
     private RecyclerView mRecyclerView;
 
     //For data
+    private static List<Place> mPlaceList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,5 +50,10 @@ public class ListViewFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.HORIZONTAL));
+    }
+
+    private void initPlaceList() {
+        //mPlaceList = .getPlaceList;
+        mRecyclerView.setAdapter(new PlaceListAdapter(mPlaceList));
     }
 }

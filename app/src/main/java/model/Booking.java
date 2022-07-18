@@ -7,13 +7,13 @@ import java.util.Date;
 */
 public class Booking {
     private int bookingId;
-    private int restaurantId;
+    private int placeId;
     private int userId;
     private Date date;
 
     public Booking(int bookingId, int restaurantId, int userId, Date date) {
         this.bookingId = bookingId;
-        this.restaurantId = restaurantId;
+        this.placeId = restaurantId;
         this.userId = userId;
         this.date = date;
     }
@@ -26,12 +26,12 @@ public class Booking {
         this.bookingId = bookingId;
     }
 
-    public int getRestaurantId() {
-        return restaurantId;
+    public int getPlaceId() {
+        return placeId;
     }
 
-    public void setRestaurantId(int restaurantId) {
-        this.restaurantId = restaurantId;
+    public void setPlaceId(int placeId) {
+        this.placeId = placeId;
     }
 
     public int getUserId() {
