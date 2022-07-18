@@ -43,6 +43,7 @@ public class ListViewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
+        initPlaceList();
     }
 
     private void initRecyclerView() {
@@ -53,7 +54,7 @@ public class ListViewFragment extends Fragment {
     }
 
     private void initPlaceList() {
-        //mPlaceList = .getPlaceList;
+        //TODO complete with API (mPlaceList = ... .getPlaceList; ?)
         mRecyclerView.setAdapter(new PlaceListAdapter(mPlaceList));
     }
 }
