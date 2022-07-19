@@ -24,8 +24,4 @@ public class ApiRepositoryImpl implements ApiRepository {
     public ApiRepositoryImpl() {
     }
 
-    @Override
-    public Retrofit getClient() {
-        return null;
-    }
 }

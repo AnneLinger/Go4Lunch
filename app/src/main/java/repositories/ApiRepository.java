@@ -8,6 +8,4 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public interface ApiRepository {
-
-    Retrofit getClient();
 }
