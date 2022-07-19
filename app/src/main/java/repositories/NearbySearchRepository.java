@@ -4,8 +4,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- *Interface repository for the places API
+ *Interface repository for the nearby search places
  */
 
-public interface ApiRepository {
+public interface NearbySearchRepository {
 }
