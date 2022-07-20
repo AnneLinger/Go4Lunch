@@ -19,19 +19,21 @@ import com.google.android.gms.maps.SupportMapFragment;
 import java.util.List;
 
 import model.Place;
+import model.nearbysearchpojo.NearbySearchResponse;
 import ui.adapter.PlaceListAdapter;
+import utils.PlacesApiCalls;
 
 /**
 *Fragment to display a list of places
 */
-public class ListViewFragment extends Fragment {
+public class ListViewFragment extends Fragment implements PlacesApiCalls.Callbacks {
 
     //For UI
     private FragmentListViewBinding mBinding;
     private RecyclerView mRecyclerView;
 
     //For data
-    private static List<Place> mPlaceList;
+    private static List<NearbySearchResponse> mPlaceList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,7 +45,7 @@ public class ListViewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecyclerView();
-        initPlaceList();
+        initPlaceList(mPlaceList);
     }
 
     private void initRecyclerView() {
@@ -53,8 +55,19 @@ public class ListViewFragment extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.HORIZONTAL));
     }
 
-    private void initPlaceList() {
+    private void initPlaceList(List<NearbySearchResponse> placeList) {
         //TODO complete with API (mPlaceList = ... .getPlaceList; ?)
+
         mRecyclerView.setAdapter(new PlaceListAdapter(mPlaceList));
+    }
+
+    @Override
+    public void onResponse(@Nullable List<NearbySearchResponse> nearbySearchResponseList) {
+
+    }
+
+    @Override
+    public void onFailure() {
+
     }
 }

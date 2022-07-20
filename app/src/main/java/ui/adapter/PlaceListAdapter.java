@@ -15,6 +15,8 @@ import com.anne.linger.go4lunch.R;
 import java.util.List;
 
 import model.Place;
+import model.nearbysearchpojo.NearbySearchResponse;
+import repositories.NearbySearchRepositoryImpl;
 
 /**
 *Adapter and ViewHolder to display a recycler view for the place list
@@ -22,9 +24,9 @@ import model.Place;
 
 public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.ViewHolder> {
 
-    private static List<Place> mPlaceList;
+    private static List<NearbySearchResponse> mPlaceList;
 
-    public PlaceListAdapter(List<Place> placeList) {
+    public PlaceListAdapter(List<NearbySearchResponse> placeList) {
         mPlaceList = placeList;
     }
 
@@ -73,7 +75,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
             placeImage = itemView.findViewById(R.id.im_place);
         }
 
-        private void displayPlace(Place place) {
+        private void displayPlace(NearbySearchResponse place) {
             //TODO complete with API
         }
 

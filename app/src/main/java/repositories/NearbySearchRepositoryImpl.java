@@ -17,16 +17,13 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
     public  static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
     public static String base_url = "https://maps.googleapis.com/maps/api/";
 
-
-
     @Inject
     public NearbySearchRepositoryImpl() {
     }
 
-    final Retrofit mRetrofit = new Retrofit.Builder()
+    /**public static final Retrofit mRetrofit = new Retrofit.Builder()
             .baseUrl(base_url)
             .addConverterFactory(GsonConverterFactory.create())
-            .build();
+            .build();*/
 
-    final PlacesApi mPlacesApi = mRetrofit.create(PlacesApi.class);
 }
