@@ -77,6 +77,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
 
         private void displayPlace(NearbySearchResponse place) {
             //TODO complete with API
+            //name.setText(place.);
         }
 
         private void navigateToPlaceDetails() {

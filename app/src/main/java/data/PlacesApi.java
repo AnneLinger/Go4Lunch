@@ -1,5 +1,7 @@
 package data;
 
+import android.location.Location;
+
 import java.util.List;
 
 import model.Place;
@@ -26,9 +28,9 @@ public interface PlacesApi {
             .build();
 
     @GET("nearbysearch/json?")
-    Call<List<NearbySearchResponse>> getNearbySearchResponse(
+    Call<NearbySearchResponse> getNearbySearchResponse(
             @Query("location") String location,
-            @Query("radius") int radius,
+            @Query("radius") float radius,
             @Query("type") String type,
             @Query("key") String key);
 }

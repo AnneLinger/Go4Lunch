@@ -1,5 +1,8 @@
 package utils;
 
+import android.location.Location;
+import android.util.Log;
+
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -23,7 +26,9 @@ public class PlacesApiCalls {
         void onFailure();
     }
 
-    public static void fetchNearbySearchPlaces(Callbacks callbacks, String location, int radius, String type, String key) {
+    public static void fetchNearbySearchPlaces(Callbacks callbacks, String location, float radius, String type, String key) {
+        Log.d("Anne", "fetchNearbyInAPI");
+
 
         //Weak reference to avoid memory leaks
         final WeakReference<Callbacks> mCallbacksWeakReference = new WeakReference<Callbacks>(callbacks);
@@ -32,19 +37,19 @@ public class PlacesApiCalls {
         PlacesApi mPlacesApi = PlacesApi.mRetrofit.create(PlacesApi.class);
 
         //Create the call
-        Call<List<NearbySearchResponse>> call = mPlacesApi.getNearbySearchResponse(location, radius, type, key);
+        Call<NearbySearchResponse> call = mPlacesApi.getNearbySearchResponse(location, radius, type, key);
 
         //Start the call
-        call.enqueue(new Callback<List<NearbySearchResponse>>() {
+        call.enqueue(new Callback<NearbySearchResponse>() {
             @Override
-            public void onResponse(Call<List<NearbySearchResponse>> call, Response<List<NearbySearchResponse>> response) {
+            public void onResponse(Call<NearbySearchResponse> call, Response<NearbySearchResponse> response) {
                 if(mCallbacksWeakReference.get() != null) {
-                    mCallbacksWeakReference.get().onResponse(response.body());
+                    //mCallbacksWeakReference.get().onResponse(response.body());
                 }
             }
 
             @Override
-            public void onFailure(Call<List<NearbySearchResponse>> call, Throwable t) {
+            public void onFailure(Call<NearbySearchResponse> call, Throwable t) {
                 if(mCallbacksWeakReference.get() != null) {
                     mCallbacksWeakReference.get().onFailure();
                 }
