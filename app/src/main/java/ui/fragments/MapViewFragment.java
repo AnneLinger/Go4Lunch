@@ -13,6 +13,7 @@ import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
@@ -33,7 +35,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
+
+import model.nearbysearchpojo.NearbySearchResponse;
+import model.nearbysearchpojo.Result;
 import pub.devrel.easypermissions.EasyPermissions;
+import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
 /**
@@ -46,12 +53,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private GoogleMap mGoogleMap;
 
     //For data
-    private Location mUserLocation;
+    private Location mLocation;
+    private String mLocationString;
     private SharedPreferences mSharedPreferences;
     private UserViewModel mUserViewModel;
+    private PlacesViewModel mPlacesViewModel;
     private static int PERMISSION = 5678;
     private float zoom = 15;
     private float radius = 15;
+    private static List<Result> mPlaceList;
 
     //For permission
     private static final String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -78,10 +88,12 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mGoogleMap = googleMap;
         checkIfUserIsSignIn();
         requestLocationPermission();
+        initPlacesList();
     }
 
     private void configureViewModel() {
         mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        mPlacesViewModel = new ViewModelProvider(requireActivity()).get(PlacesViewModel.class);
     }
 
     //Check if user is signed in to load SharedPreferences
@@ -134,13 +146,30 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     //Update the map with the user location
     private void updateLocationUI(Location location) {
-        mUserLocation = location;
+        mLocation = location;
+        mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
+        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         mGoogleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
                 .title(String.valueOf(R.string.marker_title)));
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
     }
+
+    private void initPlacesList() {
+        mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
+        if (mSharedPreferences != null) {
+            radius = mSharedPreferences.getFloat(getString(R.string.radius), radius);
+        }
+        Log.d("Anne", "initPlaceList");
+        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<NearbySearchResponse>() {
+            @Override
+            public void onChanged(NearbySearchResponse nearbySearchResponse) {
+                mPlaceList = nearbySearchResponse.getResults();
+            }
+        });
+    }
+
 
     //Update the map when the user location changes
     @Override

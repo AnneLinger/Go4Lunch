@@ -16,6 +16,7 @@ import java.util.List;
 
 import model.Place;
 import model.nearbysearchpojo.NearbySearchResponse;
+import model.nearbysearchpojo.Result;
 import repositories.NearbySearchRepositoryImpl;
 
 /**
@@ -24,9 +25,9 @@ import repositories.NearbySearchRepositoryImpl;
 
 public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.ViewHolder> {
 
-    private static List<NearbySearchResponse> mPlaceList;
+    private static List<Result> mPlaceList;
 
-    public PlaceListAdapter(List<NearbySearchResponse> placeList) {
+    public PlaceListAdapter(List<Result> placeList) {
         mPlaceList = placeList;
     }
 
@@ -75,7 +76,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
             placeImage = itemView.findViewById(R.id.im_place);
         }
 
-        private void displayPlace(NearbySearchResponse place) {
+        private void displayPlace(Result place) {
             //TODO complete with API
             //name.setText(place.);
         }

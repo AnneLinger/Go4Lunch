@@ -9,48 +9,43 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.anne.linger.go4lunch.BuildConfig;
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.FragmentListViewBinding;
-import com.google.android.gms.maps.SupportMapFragment;
 
 import java.util.List;
 
-import model.Place;
 import model.nearbysearchpojo.NearbySearchResponse;
-import ui.activities.SettingsActivity;
+import model.nearbysearchpojo.Result;
 import ui.adapter.PlaceListAdapter;
-import utils.PlacesApiCalls;
 import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
 /**
 *Fragment to display a list of places
 */
-public class ListViewFragment extends Fragment implements PlacesApiCalls.Callbacks {
+public class ListViewFragment extends Fragment {
 
     //For UI
     private FragmentListViewBinding mBinding;
     private RecyclerView mRecyclerView;
 
     //For data
-    private static List<NearbySearchResponse> mPlaceList;
-    //TODO change with user radius reference
-    private float radius = 1000;
+    private static List<Result> mPlaceList;
+    private float radius = 15;
     private SharedPreferences mSharedPreferences;
     private UserViewModel mUserViewModel;
     private PlacesViewModel mPlacesViewModel;
-    private Location mLocation;
+    private String mLocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,7 +59,7 @@ public class ListViewFragment extends Fragment implements PlacesApiCalls.Callbac
         configureViewModels();
         getUserLocation();
         initPlaceList();
-        //initRecyclerView();
+        initRecyclerView();
     }
 
     private void initRecyclerView() {
@@ -87,7 +82,12 @@ public class ListViewFragment extends Fragment implements PlacesApiCalls.Callbac
             radius = mSharedPreferences.getFloat(getString(R.string.radius), radius);
         }
         Log.d("Anne", "initPlaceList");
-        //PlacesApiCalls.fetchNearbySearchPlaces(this, mLocation, radius, "restaurant", BuildConfig.MAPS_API_KEY);
+        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<NearbySearchResponse>() {
+            @Override
+            public void onChanged(NearbySearchResponse nearbySearchResponse) {
+                mPlaceList = nearbySearchResponse.getResults();
+            }
+        });
     }
 
     //Get the user location
@@ -99,20 +99,6 @@ public class ListViewFragment extends Fragment implements PlacesApiCalls.Callbac
 
     private void initLocation(Location location) {
         Log.d("Anne", "initLoc");
-        mLocation = location;
-    }
-
-    @Override
-    public void onResponse(@Nullable List<NearbySearchResponse> nearbySearchResponseList) {
-        Log.d("Anne", "onResponse");
-        //nearbySearchResponseList.getResults
-        mPlaceList = nearbySearchResponseList;
-        initRecyclerView();
-    }
-
-    @Override
-    public void onFailure() {
-        Log.d("Anne", "onFailure");
-        Toast.makeText(requireActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+        mLocation = location.getLatitude() + "," + location.getLongitude();
     }
 }
