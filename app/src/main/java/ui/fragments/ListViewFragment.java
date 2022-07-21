@@ -34,6 +34,8 @@ public class ListViewFragment extends Fragment implements PlacesApiCalls.Callbac
 
     //For data
     private static List<NearbySearchResponse> mPlaceList;
+    //TODO change with user radius reference
+    private int radius = 15;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +59,7 @@ public class ListViewFragment extends Fragment implements PlacesApiCalls.Callbac
 
     private void initPlaceList(List<NearbySearchResponse> placeList) {
         //TODO complete with API (mPlaceList = ... .getPlaceList; ?)
-
+        //PlacesApiCalls.fetchNearbySearchPlaces(this, location, radius, "restaurant", 2);
         mRecyclerView.setAdapter(new PlaceListAdapter(mPlaceList));
     }
 

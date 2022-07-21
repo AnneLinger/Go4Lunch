@@ -1,13 +1,10 @@
 package ui.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Toast;
@@ -15,7 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
@@ -25,7 +21,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import viewmodel.SettingsViewModel;
-import viewmodel.UserViewModel;
 
 /**
 *Activity for the user settings
@@ -44,6 +39,9 @@ public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private Location userLocation;
     private SettingsViewModel mSettingsViewModel;
+    private float zoom;
+    private float radius;
+    private boolean notifications;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +49,9 @@ public class SettingsActivity extends AppCompatActivity {
         initUi();
         configureViewModel();
         configureActionBar();
+        saveRadius();
+        saveZoom();
+        saveNotificationsChoice();
         loadUserSettings();
         saveUserSettings();
     }
@@ -86,26 +87,47 @@ public class SettingsActivity extends AppCompatActivity {
         finish();
     }
 
+    private void saveRadius() {
+        mBinding.sliderRadius.addOnChangeListener(new Slider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                radius = value;
+            }
+        });
+    }
+
+    private void saveZoom() {
+        mBinding.sliderZoom.addOnChangeListener(new Slider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                zoom = value;
+            }
+        });
+    }
+
+    private void saveNotificationsChoice() {
+        mBinding.switchNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+               notifications = b;
+            }
+        });
+    }
+
     //If user settings exist
     private void loadUserSettings() {
-        Log.d("Anne", "loadUserSettings");
         FirebaseUser currentUser = mSettingsViewModel.getCurrentUser();
-        Log.d("Anne", "getCurrentUser");
         if(currentUser!=null) {
-            Log.d("Anne", "currentUserOK");
             initSharedPreferences();
             if (mSharedPreferences != null) {
-                Log.d("Anne", "sharedPrefOK");
-                mSharedPreferences.getFloat(getString(R.string.radius), DEFAULT_RADIUS);
-                DEFAULT_ZOOM = mSharedPreferences.getFloat(getString(R.string.zoom), DEFAULT_ZOOM);
-                DEFAULT_NOTIFICATIONS = mSharedPreferences.getBoolean(getString(R.string.notifications), DEFAULT_NOTIFICATIONS);
-            }
+                mBinding.sliderRadius.setValue(mSharedPreferences.getFloat(getString(R.string.radius), DEFAULT_RADIUS));
+                mBinding.sliderZoom.setValue(mSharedPreferences.getFloat(getString(R.string.zoom), DEFAULT_ZOOM));
+                mBinding.switchNotifications.setChecked(mSharedPreferences.getBoolean(getString(R.string.notifications), DEFAULT_NOTIFICATIONS));            }
             else {
-                Log.d("Anne", "noSharedPref");
+                mBinding.sliderRadius.setValue(DEFAULT_RADIUS);
+                mBinding.sliderZoom.setValue(DEFAULT_ZOOM);
+                mBinding.switchNotifications.setChecked(DEFAULT_NOTIFICATIONS);
             }
-            mBinding.sliderRadius.setValue(DEFAULT_RADIUS);
-            mBinding.sliderZoom.setValue(DEFAULT_ZOOM);
-            mBinding.switchNotifications.setChecked(DEFAULT_NOTIFICATIONS);
         }
     }
 
@@ -115,30 +137,13 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 initSharedPreferences();
+
                 SharedPreferences.Editor editor = mSharedPreferences.edit();
-                mBinding.sliderRadius.addOnChangeListener(new Slider.OnChangeListener() {
-                    @Override
-                    public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                        editor.putFloat(getString(R.string.radius), value);
-                        editor.apply();
-                    }
-                });
+                editor.putFloat(getString(R.string.radius), radius);
+                editor.putFloat(getString(R.string.zoom), zoom);
+                editor.putBoolean(getString(R.string.notifications), notifications);
+                editor.apply();
 
-                mBinding.sliderZoom.addOnChangeListener(new Slider.OnChangeListener() {
-                    @Override
-                    public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                        editor.putFloat(getString(R.string.zoom), value);
-                        editor.apply();
-                    }
-                });
-
-                mBinding.switchNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        editor.putBoolean(getString(R.string.notifications), b);
-                        editor.apply();
-                    }
-                });
                 Toast.makeText(SettingsActivity.this, getString(R.string.settings_saved), Toast.LENGTH_SHORT).show();
                 navigateToPlacesActivity();
             }

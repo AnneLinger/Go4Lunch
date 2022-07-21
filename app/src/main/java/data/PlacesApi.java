@@ -19,6 +19,7 @@ public interface PlacesApi {
 
     String base_url = "https://maps.googleapis.com/maps/api/";
 
+    //TODO à mettre ailleurs dans le repo ?
     Retrofit mRetrofit = new Retrofit.Builder()
             .baseUrl(base_url)
             .addConverterFactory(GsonConverterFactory.create())

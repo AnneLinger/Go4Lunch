@@ -7,20 +7,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -35,14 +31,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.List;
-import java.util.Objects;
-
 import pub.devrel.easypermissions.EasyPermissions;
-import ui.activities.PlacesActivity;
 import viewmodel.UserViewModel;
 
 /**
@@ -53,12 +44,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //For UI
     private FragmentMapViewBinding mBinding;
     private GoogleMap mGoogleMap;
-    private static int DEFAULT_ZOOM = 15;
 
     //For data
     private Location mUserLocation;
     private SharedPreferences mSharedPreferences;
     private UserViewModel mUserViewModel;
+    private static int PERMISSION = 5678;
+    private float zoom = 15;
+    private float radius = 15;
 
     //For permission
     private static final String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -77,24 +70,18 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         assert supportMapFragment != null;
         supportMapFragment.getMapAsync(this);
         configureViewModel();
-        //checkIfUserIsSignIn();
     }
 
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        Log.d("Anne", "onMapReady");
         mGoogleMap = googleMap;
+        checkIfUserIsSignIn();
         requestLocationPermission();
     }
 
     private void configureViewModel() {
         mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-    }
-
-    //Check the user answer about permission to get his location
-    private boolean checkPermission() {
-        return EasyPermissions.hasPermissions(requireContext(), perms);
     }
 
     //Check if user is signed in to load SharedPreferences
@@ -103,34 +90,46 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         if(currentUser!=null) {
             mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
-                //DEFAULT_ZOOM = mSharedPreferences.getInt(getString(R.string.zoom), DEFAULT_ZOOM);
-                //mGoogleMap.moveCamera(CameraUpdateFactory.zoomBy(DEFAULT_ZOOM));
+                zoom = mSharedPreferences.getFloat(getString(R.string.zoom), zoom);
+                radius = mSharedPreferences.getFloat(getString(R.string.radius), radius);
             }
         }
     }
 
-    //Ask permission to the user for location
+    //Check the location permission
     private void requestLocationPermission() {
-        Log.d("Anne", "requestLocPerm");
-        ActivityCompat.requestPermissions(requireActivity(), perms, 0);
-        Log.d("Anne", "requestPerm");
         boolean permission = EasyPermissions.hasPermissions(requireContext(), perms);
-        Log.d("Anne", "hasPerm");
         if (permission) {
-            Log.d("Anne", "checkPermTrue");
+            //Permission ok => display map
             getUserLocation();
-        } /**else {
-            Log.d("Anne", "checkPermFalse");
-            showDialogToDenyAccessApp();
-        }*/
+        } else {
+            //Permission not ok => ask permission to the user for location
+            ActivityCompat.requestPermissions(requireActivity(), perms, PERMISSION);
+        }
+    }
+
+    //Result of the user action in the request permission dialog
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==PERMISSION){
+            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Permission ok => display map
+                getUserLocation();
+            }
+            else {
+                //Permission not ok => denied access dialog
+                showDialogToDenyAccessApp();
+            }
+        }
     }
 
     //Get the user location
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
         mGoogleMap.setMyLocationEnabled(true);
-        mUserViewModel.getUserLocation(this.getContext());
         mUserViewModel.getLivedataLocation().observe(requireActivity(), this::updateLocationUI);
+        mUserViewModel.getUserLocation(this.getContext());
     }
 
     //Update the map with the user location
@@ -140,7 +139,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mGoogleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
                 .title(String.valueOf(R.string.marker_title)));
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), DEFAULT_ZOOM));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
     }
 
     //Update the map when the user location changes
