@@ -19,18 +19,11 @@ import retrofit2.http.Query;
 
 public interface PlacesApi {
 
-    String base_url = "https://maps.googleapis.com/maps/api/";
-
-    //TODO à mettre ailleurs dans le repo ?
-    Retrofit mRetrofit = new Retrofit.Builder()
-            .baseUrl(base_url)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
     @GET("nearbysearch/json?")
     Call<NearbySearchResponse> getNearbySearchResponse(
             @Query("location") String location,
-            @Query("radius") float radius,
+            @Query("rankby") String rankBy,
+            //@Query("radius") int radius,
             @Query("type") String type,
             @Query("key") String key);
 }

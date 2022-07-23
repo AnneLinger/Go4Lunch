@@ -32,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
     //For ui
     private ActivitySettingsBinding mBinding;
     private float DEFAULT_ZOOM = 15;
-    private float DEFAULT_RADIUS = 15;
+    private float DEFAULT_RADIUS = 12000;
     private boolean DEFAULT_NOTIFICATIONS = true;
 
     //For data
@@ -40,7 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Location userLocation;
     private SettingsViewModel mSettingsViewModel;
     private float zoom;
-    private float radius;
+    private float radius = 12000;
     private boolean notifications;
 
     @Override
@@ -92,6 +92,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
                 radius = value;
+
             }
         });
     }

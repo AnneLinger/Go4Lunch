@@ -24,7 +24,6 @@ import com.anne.linger.go4lunch.databinding.FragmentListViewBinding;
 
 import java.util.List;
 
-import model.nearbysearchpojo.NearbySearchResponse;
 import model.nearbysearchpojo.Result;
 import ui.adapter.PlaceListAdapter;
 import viewmodel.PlacesViewModel;
@@ -41,11 +40,12 @@ public class ListViewFragment extends Fragment {
 
     //For data
     private static List<Result> mPlaceList;
-    private float radius = 15;
+    private int radius = 12000;
     private SharedPreferences mSharedPreferences;
     private UserViewModel mUserViewModel;
     private PlacesViewModel mPlacesViewModel;
     private String mLocation;
+    private String mLocationString;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,7 +59,7 @@ public class ListViewFragment extends Fragment {
         configureViewModels();
         getUserLocation();
         initPlaceList();
-        initRecyclerView();
+        //initRecyclerView();
     }
 
     private void initRecyclerView() {
@@ -79,15 +79,26 @@ public class ListViewFragment extends Fragment {
     private void initPlaceList() {
         mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
         if (mSharedPreferences != null) {
-            radius = mSharedPreferences.getFloat(getString(R.string.radius), radius);
+            radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
         }
         Log.d("Anne", "initPlaceList");
-        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<NearbySearchResponse>() {
+        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Result>>() {
+            @Override
+            public void onChanged(List<Result> results) {
+                mPlaceList = results;
+                if(mPlaceList.isEmpty()) {
+                    Log.d("Anne", "=nullList");
+                }
+                else {
+                    Log.d("Anne", "!=nullList");
+                }            }
+        });
+        /**mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<Result>() {
             @Override
             public void onChanged(NearbySearchResponse nearbySearchResponse) {
                 mPlaceList = nearbySearchResponse.getResults();
             }
-        });
+        });*/
     }
 
     //Get the user location

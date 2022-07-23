@@ -8,6 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
@@ -21,6 +24,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,6 +35,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseUser;
@@ -60,10 +66,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private PlacesViewModel mPlacesViewModel;
     private static int PERMISSION = 5678;
     private float zoom = 15;
-    private float radius = 15;
-    private static List<Result> mPlaceList;
+    private int radius = 12000;
+    private List<Result> mPlaceList;
 
-    //For permission
+    //For permissions
     private static final String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
     @Nullable
@@ -80,6 +86,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         assert supportMapFragment != null;
         supportMapFragment.getMapAsync(this);
         configureViewModel();
+        //updateMap();
     }
 
     @SuppressLint("MissingPermission")
@@ -88,7 +95,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mGoogleMap = googleMap;
         checkIfUserIsSignIn();
         requestLocationPermission();
-        initPlacesList();
+        //updateMap();
+        //initPlacesList();
     }
 
     private void configureViewModel() {
@@ -103,7 +111,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
             mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
                 zoom = mSharedPreferences.getFloat(getString(R.string.zoom), zoom);
-                radius = mSharedPreferences.getFloat(getString(R.string.radius), radius);
+                radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
             }
         }
     }
@@ -140,41 +148,52 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
         mGoogleMap.setMyLocationEnabled(true);
-        mUserViewModel.getLivedataLocation().observe(requireActivity(), this::updateLocationUI);
         mUserViewModel.getUserLocation(this.getContext());
-    }
-
-    //Update the map with the user location
-    private void updateLocationUI(Location location) {
-        mLocation = location;
-        mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
-        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
-        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mGoogleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title(String.valueOf(R.string.marker_title)));
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
-    }
-
-    private void initPlacesList() {
-        mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
-        if (mSharedPreferences != null) {
-            radius = mSharedPreferences.getFloat(getString(R.string.radius), radius);
-        }
-        Log.d("Anne", "initPlaceList");
-        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<NearbySearchResponse>() {
+        mUserViewModel.getLivedataLocation().observe(requireActivity(), new Observer<Location>() {
             @Override
-            public void onChanged(NearbySearchResponse nearbySearchResponse) {
-                mPlaceList = nearbySearchResponse.getResults();
+            public void onChanged(Location location) {
+                mLocation = location;
+                mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
+                Log.d("Anne", mLocationString);
+                mPlacesViewModel.fetchNearbySearchPlaces(mLocationString);
+                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                mGoogleMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                        .title(String.valueOf(R.string.marker_title)));
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
+            }
+        });
+        updateMap();
+    }
+
+    private void updateMap() {
+        Log.d("Anne", "updateMap");
+        mGoogleMap.clear();
+        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Result>>() {
+            @Override
+            public void onChanged(List<Result> results) {
+                mPlaceList = results;
+                if(mPlaceList.isEmpty()) {
+                    Log.d("Anne", "=null");
+                }
+                else {
+                    Log.d("Anne", "!=null");
+                }
+                for (Result mResult : mPlaceList) {
+                    LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLatitude(), mResult.getGeometry().getLocation().getLongitude());
+                    mGoogleMap.addMarker(new MarkerOptions()
+                            .position(placeLatLng)
+                            .title(mResult.getName())
+                            .icon(BitmapDescriptorFactory.fromBitmap(setUpMarkerIcon())));
+                }
             }
         });
     }
 
-
     //Update the map when the user location changes
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        updateLocationUI(location);
+        updateMap();
     }
 
     //Dialog to alert about essential permission
@@ -201,5 +220,52 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                 .setCancelable(false)
                 .create()
                 .show();
+    }
+
+    private Bitmap setUpMarkerIcon() {
+        Bitmap markerIcon = BitmapFactory.decodeResource(requireContext().getResources(), R.drawable.ic_baseline_restaurant_24);
+        markerIcon = Bitmap.createScaledBitmap(markerIcon, 100, 100, false);
+        return markerIcon;
+    }
+
+    //Update the map with the user location
+    private void updateLocationUI(Location location) {
+        mLocation = location;
+        mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
+        Log.d("Anne", mLocationString);
+        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString);
+        mPlacesViewModel.getNearbySearchResponseLiveData().observe(requireActivity(), results -> {
+            mPlaceList = results;
+            if(mPlaceList.isEmpty()) {
+                Log.d("Anne", "=null");
+            }
+            else {
+                Log.d("Anne", "!=null");
+            }
+        });
+        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mGoogleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .title(String.valueOf(R.string.marker_title)));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
+    }
+
+    private void initPlacesList() {
+        //mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
+        /**if (mSharedPreferences != null) {
+         radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
+         }*/
+        Log.d("Anne", "initPlaceList");
+        mGoogleMap.clear();
+        //mPlacesViewModel.getNearbySearchResponseLiveData().observe(requireActivity(), this::updateMap);
+        mPlacesViewModel.getNearbySearchResponseLiveData().observe(requireActivity(), results -> {
+            mPlaceList = results;
+            if(mPlaceList.isEmpty()) {
+                Log.d("Anne", "=null");
+            }
+            else {
+                Log.d("Anne", "!=null");
+            }
+        });
     }
 }

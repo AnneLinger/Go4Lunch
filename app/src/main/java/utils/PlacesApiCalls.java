@@ -27,7 +27,7 @@ public class PlacesApiCalls {
     }
 
     public static void fetchNearbySearchPlaces(Callbacks callbacks, String location, float radius, String type, String key) {
-        Log.d("Anne", "fetchNearbyInAPI");
+        /**Log.d("Anne", "fetchNearbyInAPI");
 
 
         //Weak reference to avoid memory leaks
@@ -54,7 +54,7 @@ public class PlacesApiCalls {
                     mCallbacksWeakReference.get().onFailure();
                 }
             }
-        });
+        });*/
     }
 
 }

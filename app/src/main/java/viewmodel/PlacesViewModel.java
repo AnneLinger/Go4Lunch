@@ -1,13 +1,18 @@
 package viewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import data.PlacesApi;
 import model.nearbysearchpojo.NearbySearchResponse;
+import model.nearbysearchpojo.Result;
 import repositories.NearbySearchRepositoryImpl;
 
 /**
@@ -26,11 +31,12 @@ public class PlacesViewModel extends ViewModel {
         mNearbySearchRepositoryImpl = nearbySearchRepository;
     }
 
-    public LiveData<NearbySearchResponse> getNearbySearchResponseLiveData() {
-        return mNearbySearchRepositoryImpl.getNearbySearchResponseLiveData();
+    public void fetchNearbySearchPlaces(String location) {
+        Log.d("Anne", "fetchVM");
+        mNearbySearchRepositoryImpl.fetchNearbySearchPlaces(location);
     }
 
-    public void fetchNearbySearchPlaces(String location, float radius) {
-        mNearbySearchRepositoryImpl.fetchNearbySearchPlaces(location, radius);
+    public LiveData<List<Result>> getNearbySearchResponseLiveData() {
+        return mNearbySearchRepositoryImpl.getNearbySearchResponseLiveData();
     }
 }
