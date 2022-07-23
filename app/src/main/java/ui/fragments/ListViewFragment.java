@@ -76,31 +76,6 @@ public class ListViewFragment extends Fragment {
         mPlacesViewModel = new ViewModelProvider(requireActivity()).get(PlacesViewModel.class);
     }
 
-    private void initPlaceList() {
-        mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
-        if (mSharedPreferences != null) {
-            radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
-        }
-        Log.d("Anne", "initPlaceList");
-        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Result>>() {
-            @Override
-            public void onChanged(List<Result> results) {
-                mPlaceList = results;
-                if(mPlaceList.isEmpty()) {
-                    Log.d("Anne", "=nullList");
-                }
-                else {
-                    Log.d("Anne", "!=nullList");
-                }            }
-        });
-        /**mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<Result>() {
-            @Override
-            public void onChanged(NearbySearchResponse nearbySearchResponse) {
-                mPlaceList = nearbySearchResponse.getResults();
-            }
-        });*/
-    }
-
     //Get the user location
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
@@ -111,5 +86,25 @@ public class ListViewFragment extends Fragment {
     private void initLocation(Location location) {
         Log.d("Anne", "initLoc");
         mLocation = location.getLatitude() + "," + location.getLongitude();
+    }
+
+    private void initPlaceList() {
+        mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
+        /**if (mSharedPreferences != null) {
+            radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
+        }
+        Log.d("Anne", "initPlaceList");*/
+        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Result>>() {
+            @Override
+            public void onChanged(List<Result> results) {
+                mPlaceList = results;
+                if(mPlaceList.isEmpty()) {
+                    Log.d("Anne", "=nullList");
+                }
+                else {
+                    Log.d("Anne", "!=nullList");
+                }
+            }
+        });
     }
 }

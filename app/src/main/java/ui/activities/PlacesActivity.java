@@ -112,7 +112,7 @@ public class PlacesActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.your_lunch:
-                        Snackbar.make(mBinding.getRoot(), "TODO", Snackbar.LENGTH_SHORT).show();
+                        navigateToPlaceDetailsActivity();
                         return true;
                     case R.id.item2:
                         navigateToSettingsActivity();
@@ -136,5 +136,11 @@ public class PlacesActivity extends AppCompatActivity {
     //To log out
     private void logOut() {
         mUserViewModel.logOut();
+    }
+
+    private void navigateToPlaceDetailsActivity() {
+        Intent intent = new Intent(PlacesActivity.this, PlaceDetailsActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
