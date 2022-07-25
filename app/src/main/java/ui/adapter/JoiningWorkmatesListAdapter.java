@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.anne.linger.go4lunch.R;
@@ -26,63 +27,45 @@ import repositories.NearbySearchRepositoryImpl;
 
 public class JoiningWorkmatesListAdapter extends RecyclerView.Adapter<JoiningWorkmatesListAdapter.ViewHolder> {
 
-    private static List<User> mPlaceList;
+    private static List<User> mJoiningWorkmatesList;
 
-    public JoiningWorkmatesListAdapter(List<User> placeList) {
-        mPlaceList = placeList;
+    public JoiningWorkmatesListAdapter(List<User> joiningWorkmatesList) {
+        mJoiningWorkmatesList = joiningWorkmatesList;
     }
 
     @NonNull
     @Override
     public JoiningWorkmatesListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_detail_workmates_view, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
+        holder.displayWorkmates(mJoiningWorkmatesList.get(position));
     }
-    
+
     @Override
     public int getItemCount() {
-        return mPlaceList.size();
+        return mJoiningWorkmatesList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        @Nullable
+        private final ImageView avatar;
+
         private final TextView name;
-        private final TextView range;
-        private final TextView style;
-        private final TextView hyphen;
-        private final TextView address;
-        private final ImageView workmate;
-        private final TextView workmateNumber;
-        private final TextView open;
-        private final ImageView star;
-        private final ImageView placeImage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.tv_place_name);
-            range = itemView.findViewById(R.id.tv_place_range);
-            style = itemView.findViewById(R.id.tv_place_style);
-            hyphen = itemView.findViewById(R.id.tv_hyphen);
-            address = itemView.findViewById(R.id.tv_place_address);
-            workmate = itemView.findViewById(R.id.im_workmate);
-            workmateNumber = itemView.findViewById(R.id.tv_workmate_number);
-            open = itemView.findViewById(R.id.tv_place_open);
-            star = itemView.findViewById(R.id.im_star);
-            placeImage = itemView.findViewById(R.id.im_place);
+            avatar = itemView.findViewById(R.id.im_detail_workmate);
+            name = itemView.findViewById(R.id.tv_joining_workmate);
         }
 
-        private void displayPlace(Result place) {
-            //TODO complete with API
-            //name.setText(place.);
-        }
-
-        private void navigateToPlaceDetails() {
-            //TODO complete with API and new activity
+        private void displayWorkmates(User workmate) {
+            //avatar.set...
+            name.setText(workmate.getName());
         }
     }
 }

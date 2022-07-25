@@ -13,14 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityPlaceDetailsBinding;
-import com.anne.linger.go4lunch.databinding.ActivitySettingsBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import model.User;
 import ui.adapter.JoiningWorkmatesListAdapter;
-import ui.adapter.PlaceListAdapter;
 
 /**
 *Activity to display details of a place
@@ -34,7 +33,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
 
     //For data
-    private List<User> joiningWorkmatesList;
+    private List<User> mJoiningWorkmatesList = new ArrayList<>();
+    //TODO to replace with good data
+    private User fakeWorkmate = new User("1", "Peter", "https://fakeimg.pl/300/");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void initUi() {
         mBinding = ActivityPlaceDetailsBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        initRecyclerView();
     }
 
     private void configureActionBar() {
@@ -61,11 +63,12 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
         Log.d("Anne", "initRV");
+        mJoiningWorkmatesList.add(fakeWorkmate);
         mRecyclerView = mBinding.rvDetailWorkmates;
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.HORIZONTAL));
-        mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(joiningWorkmatesList));
+        mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmatesList));
     }
 
 
