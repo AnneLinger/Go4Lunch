@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
@@ -21,10 +20,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,15 +37,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
+import java.util.Map;
 
-import model.nearbysearchpojo.NearbySearchResponse;
 import model.nearbysearchpojo.Result;
 import pub.devrel.easypermissions.EasyPermissions;
 import viewmodel.PlacesViewModel;
@@ -57,6 +58,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //For UI
     private FragmentMapViewBinding mBinding;
     private GoogleMap mGoogleMap;
+    private float zoom = 15;
+    private int radius = 12000;
 
     //For data
     private Location mLocation;
@@ -64,18 +67,28 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private SharedPreferences mSharedPreferences;
     private UserViewModel mUserViewModel;
     private PlacesViewModel mPlacesViewModel;
-    private static int PERMISSION = 5678;
-    private float zoom = 15;
-    private int radius = 12000;
     private List<Result> mPlaceList;
+    private Context mContext;
 
     //For permissions
     private static final String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+    private static final int PERMISSION = 5678;
+    private ActivityResultLauncher<String[]> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), (Map<String, Boolean> isGranted) -> {
+        boolean granted = true;
+        for (Map.Entry<String, Boolean> x : isGranted.entrySet())
+            if(!x.getValue()) granted = false;
+        if (granted) getUserLocation();
+        else {
+            showDialogToDenyAccessApp();
+        }
+    });
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentMapViewBinding.inflate(getLayoutInflater());
+        configureViewModel();
+        mActivityResultLauncher.launch(perms);
         return mBinding.getRoot();
     }
 
@@ -85,8 +98,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         assert supportMapFragment != null;
         supportMapFragment.getMapAsync(this);
-        configureViewModel();
-        //updateMap();
     }
 
     @SuppressLint("MissingPermission")
@@ -95,8 +106,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mGoogleMap = googleMap;
         checkIfUserIsSignIn();
         requestLocationPermission();
-        //updateMap();
-        //initPlacesList();
     }
 
     private void configureViewModel() {
@@ -118,55 +127,46 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     //Check the location permission
     private void requestLocationPermission() {
-        boolean permission = EasyPermissions.hasPermissions(requireContext(), perms);
-        if (permission) {
+        if (ContextCompat.checkSelfPermission(requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.d("Anne", "requestLocPerm=>getUserLoc");
             //Permission ok => display map
             getUserLocation();
         } else {
             //Permission not ok => ask permission to the user for location
+            Log.d("Anne", "requestLocPerm=>requestPerm");
             ActivityCompat.requestPermissions(requireActivity(), perms, PERMISSION);
         }
     }
 
-    //Result of the user action in the request permission dialog
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==PERMISSION){
-            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Permission ok => display map
-                getUserLocation();
-            }
-            else {
-                //Permission not ok => denied access dialog
-                showDialogToDenyAccessApp();
-            }
-        }
-    }
-
-    //Get the user location
+    //Get the user location when permission is ok
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
+        Log.d("Anne", "getUserLoc");
         mGoogleMap.setMyLocationEnabled(true);
         mUserViewModel.getUserLocation(this.getContext());
-        mUserViewModel.getLivedataLocation().observe(requireActivity(), new Observer<Location>() {
-            @Override
-            public void onChanged(Location location) {
-                mLocation = location;
-                mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
-                Log.d("Anne", mLocationString);
-                mPlacesViewModel.fetchNearbySearchPlaces(mLocationString);
-                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-                mGoogleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                        .title(String.valueOf(R.string.marker_title)));
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
-            }
-        });
-        updateMap();
+        mUserViewModel.getLivedataLocation().observe(requireActivity(), this::updateMapLocation);
     }
 
-    private void updateMap() {
+    //Update map with user location
+    private void updateMapLocation(Location location) {
+        Log.d("Anne", "updateMapLoc");
+        mLocation = location;
+        mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
+        Log.d("Anne", mLocationString);
+        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString);
+        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mGoogleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .title(requireActivity().getString(R.string.marker_title)));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
+        updateMapPlaces();
+    }
+
+    //Update the map with places
+    private void updateMapPlaces() {
         Log.d("Anne", "updateMap");
         mGoogleMap.clear();
         mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Result>>() {
@@ -193,7 +193,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //Update the map when the user location changes
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        updateMap();
+        updateMapPlaces();
     }
 
     //Dialog to alert about essential permission

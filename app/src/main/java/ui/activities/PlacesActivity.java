@@ -118,7 +118,8 @@ public class PlacesActivity extends AppCompatActivity {
                         navigateToSettingsActivity();
                         return true;
                     case R.id.item3:
-                        logOut();
+                        mUserViewModel.logOut();
+                        navigateToAuthenticationActivity();
                         return true;
                 }
                 mBinding.placesLayout.close();
@@ -133,13 +134,14 @@ public class PlacesActivity extends AppCompatActivity {
         finish();
     }
 
-    //To log out
-    private void logOut() {
-        mUserViewModel.logOut();
-    }
-
     private void navigateToPlaceDetailsActivity() {
         Intent intent = new Intent(PlacesActivity.this, PlaceDetailsActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateToAuthenticationActivity() {
+        Intent intent = new Intent(PlacesActivity.this, AuthenticationActivity.class);
         startActivity(intent);
         finish();
     }

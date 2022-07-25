@@ -16,4 +16,6 @@ public interface LocationRepository {
 
     LiveData<Location> getLiveDataLocation();
 
+    void stopLocationRequest();
+
 }

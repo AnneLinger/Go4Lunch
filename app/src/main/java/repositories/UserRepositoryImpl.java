@@ -1,5 +1,7 @@
 package repositories;
 
+import android.content.Intent;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -9,6 +11,8 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import model.User;
+import ui.activities.PlacesActivity;
+import ui.activities.SettingsActivity;
 
 /**
 *Implementation of UserRepository interface

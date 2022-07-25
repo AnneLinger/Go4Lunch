@@ -58,6 +58,10 @@ public class UserViewModel extends ViewModel {
         return mLocationRepositoryImpl.getLiveDataLocation();
     }
 
+    public void stopLocationRequest() {
+        mLocationRepositoryImpl.stopLocationRequest();
+    }
+
 }
 
 

@@ -47,13 +47,15 @@ public class LocationRepositoryImpl implements LocationRepository {
     //To get the user location
     @RequiresPermission(anyOf = {"android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"})
     public void startLocationRequest(Context context) {
+        Log.d("Anne", "startLocRepo");
 
         instantiateFusedLocationProviderClient(context);
 
         callback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
-                super.onLocationResult(locationResult);
+                //super.onLocationResult(locationResult);
+                Log.d("Anne", "onLocResult");
                 Location location = locationResult.getLastLocation();
                 locationMutableLiveData.setValue(location);
             }
@@ -73,6 +75,11 @@ public class LocationRepositoryImpl implements LocationRepository {
 
     //To get the location as livedata for observable
     public LiveData<Location> getLiveDataLocation() {
+        Log.d("Anne", "getLDLocRepo");
         return locationMutableLiveData;
+    }
+
+    public void stopLocationRequest() {
+        mFusedLocationProviderClient.removeLocationUpdates(callback);
     }
 }
