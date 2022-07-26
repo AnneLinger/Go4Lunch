@@ -156,7 +156,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mLocation = location;
         mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
         Log.d("Anne", mLocationString);
-        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString);
+        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         mGoogleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
@@ -233,7 +233,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mLocation = location;
         mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
         Log.d("Anne", mLocationString);
-        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString);
+        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
         mPlacesViewModel.getNearbySearchResponseLiveData().observe(requireActivity(), results -> {
             mPlaceList = results;
             if(mPlaceList.isEmpty()) {

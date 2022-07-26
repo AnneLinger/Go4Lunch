@@ -1,4 +1,4 @@
-package model.placedetailpojo;
+package model.placedetailspojo;
 
 import android.location.Location;
 

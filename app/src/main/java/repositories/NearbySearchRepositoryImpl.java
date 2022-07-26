@@ -19,8 +19,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import utils.Retrofit;
 
 /**
 *Implementation of NearbySearchRepository interface
@@ -30,23 +30,12 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
 
     private static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
     private String type = "restaurant";
-    public static String base_url = "https://maps.googleapis.com/maps/api/place/";
     private MutableLiveData<List<Result>> mNearbySearchResponseLiveData = new MutableLiveData<>();
-    private Retrofit mRetrofit;
     private PlacesApi mPlacesApi;
-    private String rankBy = "distance";
+    private utils.Retrofit mRetrofit = new Retrofit();
 
     @Inject
     public NearbySearchRepositoryImpl() {
-    }
-
-    @Override
-    public void buildRetrofit() {
-        mRetrofit = new Retrofit.Builder()
-                .baseUrl(base_url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        //mPlacesApi = mRetrofit.create(PlacesApi.class);
     }
 
     @Override
@@ -55,18 +44,12 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
         return mNearbySearchResponseLiveData;
     }
 
-    //PlacesApi mPlacesApi = mRetrofit.create(PlacesApi.class);
-
     @Override
-    public void fetchNearbySearchPlaces(String location) {
-        //PlacesApiCalls.fetchNearbySearchPlaces(callbacks, location, radius, type, key);
-        //PlacesApi mPlacesApi = PlacesApi.mRetrofit.create(PlacesApi.class);
-
+    public void fetchNearbySearchPlaces(String location, int radius) {
         Log.d("Anne", "fetchRepo");
 
-        buildRetrofit();
-        mPlacesApi = mRetrofit.create(PlacesApi.class);
-        Call<NearbySearchResponse> call = mPlacesApi.getNearbySearchResponse(location, rankBy, type, GOOGLE_PLACE_API_KEY);
+        mPlacesApi = mRetrofit.buildRetrofit();
+        Call<NearbySearchResponse> call = mPlacesApi.getNearbySearchResponse(location, radius, type, GOOGLE_PLACE_API_KEY);
         call.enqueue(new Callback<NearbySearchResponse>() {
             @Override
             public void onResponse(Call<NearbySearchResponse> call, Response<NearbySearchResponse> response) {

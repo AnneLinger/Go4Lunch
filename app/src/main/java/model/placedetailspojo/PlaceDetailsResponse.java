@@ -1,4 +1,4 @@
-package model.placedetailpojo;
+package model.placedetailspojo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -11,7 +11,7 @@ import javax.xml.transform.Result;
 *Created by Anne Linger on 19/07/2022.
 */
 
-public class PlaceDetailResponse {
+public class PlaceDetailsResponse {
 
     @SerializedName("html_attributions")
     @Expose

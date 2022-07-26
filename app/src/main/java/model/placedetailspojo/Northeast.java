@@ -1,13 +1,13 @@
-package model.placedetailpojo;
+package model.placedetailspojo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- *Pojo model for southwest place details
+ *Pojo model for northeast place details
 */
 
-public class Southwest {
+public class Northeast {
 
     @SerializedName("lat")
     @Expose
@@ -32,5 +32,4 @@ public class Southwest {
     public void setLng(Double lng) {
         this.lng = lng;
     }
-
 }

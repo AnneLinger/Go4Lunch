@@ -1,4 +1,4 @@
-package model.placedetailpojo;
+package model.placedetailspojo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

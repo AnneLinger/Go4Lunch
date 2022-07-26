@@ -31,9 +31,9 @@ public class PlacesViewModel extends ViewModel {
         mNearbySearchRepositoryImpl = nearbySearchRepository;
     }
 
-    public void fetchNearbySearchPlaces(String location) {
+    public void fetchNearbySearchPlaces(String location, int radius) {
         Log.d("Anne", "fetchVM");
-        mNearbySearchRepositoryImpl.fetchNearbySearchPlaces(location);
+        mNearbySearchRepositoryImpl.fetchNearbySearchPlaces(location, radius);
     }
 
     public LiveData<List<Result>> getNearbySearchResponseLiveData() {
