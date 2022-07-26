@@ -2,6 +2,7 @@ package repositories;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -29,10 +30,8 @@ import utils.Retrofit;
 public class NearbySearchRepositoryImpl implements NearbySearchRepository {
 
     private static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
-    private String type = "restaurant";
-    private MutableLiveData<List<Result>> mNearbySearchResponseLiveData = new MutableLiveData<>();
-    private PlacesApi mPlacesApi;
-    private utils.Retrofit mRetrofit = new Retrofit();
+    private final MutableLiveData<List<Result>> mNearbySearchResponseLiveData = new MutableLiveData<>();
+    private final utils.Retrofit mRetrofit = new Retrofit();
 
     @Inject
     public NearbySearchRepositoryImpl() {
@@ -48,22 +47,24 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
     public void fetchNearbySearchPlaces(String location, int radius) {
         Log.d("Anne", "fetchRepo");
 
-        mPlacesApi = mRetrofit.buildRetrofit();
-        Call<NearbySearchResponse> call = mPlacesApi.getNearbySearchResponse(location, radius, type, GOOGLE_PLACE_API_KEY);
+        PlacesApi placesApi = mRetrofit.buildRetrofit();
+        String type = "restaurant";
+        Call<NearbySearchResponse> call = placesApi.getNearbySearchResponse(location, radius, type, GOOGLE_PLACE_API_KEY);
         call.enqueue(new Callback<NearbySearchResponse>() {
             @Override
-            public void onResponse(Call<NearbySearchResponse> call, Response<NearbySearchResponse> response) {
+            public void onResponse(@NonNull Call<NearbySearchResponse> call, @NonNull Response<NearbySearchResponse> response) {
                 /**if(response.body().getResults().isEmpty()) {
                     Log.d("Anne", "response=null");
                 }
                 else {
                     Log.d("Anne", "responseOk");*/
-                    mNearbySearchResponseLiveData.setValue(response.body().getResults());
+                assert response.body() != null;
+                mNearbySearchResponseLiveData.setValue(response.body().getResults());
 
             }
 
             @Override
-            public void onFailure(Call<NearbySearchResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<NearbySearchResponse> call, @NonNull Throwable t) {
 
             }
         });

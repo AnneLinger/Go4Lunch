@@ -10,10 +10,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import data.PlacesApi;
-import model.nearbysearchpojo.NearbySearchResponse;
 import model.nearbysearchpojo.Result;
 import repositories.NearbySearchRepositoryImpl;
+import repositories.PlaceDetailsRepositoryImpl;
 
 /**
 *ViewModel for places
@@ -24,12 +23,16 @@ public class PlacesViewModel extends ViewModel {
 
     //For data
     private final NearbySearchRepositoryImpl mNearbySearchRepositoryImpl;
+    private final PlaceDetailsRepositoryImpl mPlaceDetailsRepositoryImpl;
 
     //Constructor
     @Inject
-    public PlacesViewModel(NearbySearchRepositoryImpl nearbySearchRepository) {
+    public PlacesViewModel(NearbySearchRepositoryImpl nearbySearchRepository, PlaceDetailsRepositoryImpl placeDetailsRepository) {
         mNearbySearchRepositoryImpl = nearbySearchRepository;
+        mPlaceDetailsRepositoryImpl = placeDetailsRepository;
     }
+
+    //..........................For nearbySearch....................................................
 
     public void fetchNearbySearchPlaces(String location, int radius) {
         Log.d("Anne", "fetchVM");
@@ -38,5 +41,15 @@ public class PlacesViewModel extends ViewModel {
 
     public LiveData<List<Result>> getNearbySearchResponseLiveData() {
         return mNearbySearchRepositoryImpl.getNearbySearchResponseLiveData();
+    }
+
+    //..........................For placeDetails....................................................
+
+    public void fetchPlaceDetails(String placeId) {
+        mPlaceDetailsRepositoryImpl.fetchPlaceDetails(placeId);
+    }
+
+    public LiveData<model.placedetailspojo.Result> getPlaceDetailsLiveData() {
+        return mPlaceDetailsRepositoryImpl.getPlaceDetailsLiveData();
     }
 }

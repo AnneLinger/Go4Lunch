@@ -5,8 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import javax.xml.transform.Result;
-
 /**
 *Created by Anne Linger on 19/07/2022.
 */

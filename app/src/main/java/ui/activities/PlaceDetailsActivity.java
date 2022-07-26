@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +21,8 @@ import java.util.List;
 import dagger.hilt.android.AndroidEntryPoint;
 import model.User;
 import ui.adapter.JoiningWorkmatesListAdapter;
+import viewmodel.PlacesViewModel;
+import viewmodel.UserViewModel;
 
 /**
 *Activity to display details of a place
@@ -33,15 +36,17 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
 
     //For data
-    private List<User> mJoiningWorkmatesList = new ArrayList<>();
+    private final List<User> mJoiningWorkmatesList = new ArrayList<>();
     //TODO to replace with good data
-    private User fakeWorkmate = new User("1", "Peter", "https://fakeimg.pl/300/");
+    private final User fakeWorkmate = new User("1", "Peter", "https://fakeimg.pl/300/");
+    private PlacesViewModel mPlacesViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUi();
         configureActionBar();
+        configureViewModel();
     }
 
     //Configure UI
@@ -71,6 +76,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmatesList));
     }
 
+    private void configureViewModel() {
+        mPlacesViewModel = new ViewModelProvider(this).get(PlacesViewModel.class);
+    }
 
     //When click on action bar for back
     private void navigateToPlacesActivity() {
