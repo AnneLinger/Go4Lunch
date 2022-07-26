@@ -69,4 +69,6 @@
     <string name="place_image">Place image</string>
     <string name="user_avatar">User avatar</string>
     <string name="is_joining">\ is joining!</string>
+    <string name="search_menu">Search</string>
+    <string name="search_hint">Search a place to eat</string>
 </resources>

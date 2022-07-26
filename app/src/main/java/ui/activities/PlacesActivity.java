@@ -2,13 +2,17 @@ package ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -66,6 +70,17 @@ public class PlacesActivity extends AppCompatActivity {
         configureBottomNav();
         mBinding.bottomNav.setSelectedItemId(R.id.item_map_view);
         configureDrawer();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar_menu, menu);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.search_icon).getActionView();
+        searchView.setQueryHint(getResources().getText(R.string.search_hint));
+
+        return true;
     }
 
     //Configure UI
