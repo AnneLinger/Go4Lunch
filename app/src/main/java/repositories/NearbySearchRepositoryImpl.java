@@ -15,13 +15,10 @@ import javax.inject.Inject;
 import data.PlacesApi;
 import model.nearbysearchpojo.NearbySearchResponse;
 import model.nearbysearchpojo.Result;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.converter.gson.GsonConverterFactory;
-import utils.Retrofit;
+import utils.RetrofitBuilder;
 
 /**
 *Implementation of NearbySearchRepository interface
@@ -31,7 +28,7 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
 
     private static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
     private final MutableLiveData<List<Result>> mNearbySearchResponseLiveData = new MutableLiveData<>();
-    private final utils.Retrofit mRetrofit = new Retrofit();
+    private final RetrofitBuilder mRetrofitBuilder = new RetrofitBuilder();
 
     @Inject
     public NearbySearchRepositoryImpl() {
@@ -47,7 +44,7 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
     public void fetchNearbySearchPlaces(String location, int radius) {
         Log.d("Anne", "fetchRepo");
 
-        PlacesApi placesApi = mRetrofit.buildRetrofit();
+        PlacesApi placesApi = mRetrofitBuilder.buildRetrofit();
         String type = "restaurant";
         Call<NearbySearchResponse> call = placesApi.getNearbySearchResponse(location, radius, type, GOOGLE_PLACE_API_KEY);
         call.enqueue(new Callback<NearbySearchResponse>() {

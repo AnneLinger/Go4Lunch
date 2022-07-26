@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import model.User;
+import model.placedetailspojo.Result;
 import ui.adapter.JoiningWorkmatesListAdapter;
 import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
@@ -47,6 +49,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         initUi();
         configureActionBar();
         configureViewModel();
+        getPlaceDetails();
     }
 
     //Configure UI
@@ -78,6 +81,29 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void configureViewModel() {
         mPlacesViewModel = new ViewModelProvider(this).get(PlacesViewModel.class);
+    }
+
+    private void getPlaceDetails() {
+        Log.d("Anne", "getPlaceDetails");
+        //TODO change place_id parameter with data from API
+        mPlacesViewModel.fetchPlaceDetails("ChIJKwtI9iKKDkgRAdBQ7I3xMII");
+        mPlacesViewModel.getPlaceDetailsLiveData().observe(this, this::initDataPlaceDetails);
+    }
+
+    private void initDataPlaceDetails(Result result) {
+        if(result!=null){
+            Log.d("Anne", "resultOk");
+            //TODO complete with Glide for the photo
+            //mBinding.imDetailPlace.setImageURI(result.getPhotos().get(0).getPhotoReference());
+            mBinding.tvDetailName.setText(result.getName());
+            //TODO comment récupérer le type de restaurant ? ?
+            //mBinding.tvDetailType.setText(result.getTypes());
+            mBinding.tvDetailAddress.setText(result.getFormattedAddress());
+            //TODO ajouter listener sur call...x3
+        }
+        else {
+            Log.d("Anne", "resultNull");
+        }
     }
 
     //When click on action bar for back
