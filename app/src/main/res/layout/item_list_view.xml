@@ -27,11 +27,11 @@
         android:layout_marginStart="16dp"
         android:textSize="14sp"
         android:textColor="@color/dark_grey"
-        app:layout_constraintEnd_toStartOf="@id/tv_place_range_meter"
+        app:layout_constraintEnd_toStartOf="@id/im_place"
         app:layout_constraintTop_toTopOf="@id/im_place"
         tools:text="@string/app_name" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/tv_place_range_meter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,41 +40,18 @@
         android:text="@string/meter"
         android:textColor="@color/dark_grey"
         app:layout_constraintEnd_toStartOf="@id/im_place"
-        app:layout_constraintTop_toTopOf="@id/im_place" />
-
-    <TextView
-        android:id="@+id/tv_place_style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:textSize="13sp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_place_name"
-        app:layout_constraintBottom_toTopOf="@id/tv_place_open"
-        tools:text="@string/app_name" />
-
-    <TextView
-        android:id="@+id/tv_hyphen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:textSize="13sp"
-        android:textColor="@color/black"
-        android:text="@string/hyphen"
-        app:layout_constraintStart_toEndOf="@id/tv_place_style"
-        app:layout_constraintTop_toBottomOf="@id/tv_place_name"
-        app:layout_constraintBottom_toTopOf="@id/tv_place_open"
-        tools:text="@string/hyphen" />
+        app:layout_constraintTop_toTopOf="@id/im_place" />-->
 
     <TextView
         android:id="@+id/tv_place_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:textSize="13sp"
-        android:layout_marginLeft="8dp"
+        android:maxWidth="200dp"
         android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@id/tv_hyphen"
+        android:maxLines="1"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_place_name"
         app:layout_constraintBottom_toTopOf="@id/tv_place_open"
         tools:text="@string/app_name" />

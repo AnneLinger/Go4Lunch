@@ -79,7 +79,7 @@ public class ListViewFragment extends Fragment {
         mRecyclerView = mBinding.rvListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.HORIZONTAL));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
         mRecyclerView.setAdapter(new PlaceListAdapter(mPlaceList, mLocation, mBookingList));
     }
 

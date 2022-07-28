@@ -1,5 +1,7 @@
 package ui.adapter;
 
+import static java.lang.String.format;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
@@ -39,7 +41,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
 
     private static List<Result> mPlaceList;
     private final Location mLocation;
-    private List<Booking> mBookingList;
+    private final List<Booking> mBookingList;
 
     public PlaceListAdapter(List<Result> placeList, Location location, List<Booking> booking) {
         mPlaceList = placeList;
@@ -68,7 +70,6 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
 
         private final TextView name;
         private final TextView range;
-        private final TextView style;
         private final TextView address;
         private final TextView workmateNumber;
         private final TextView open;
@@ -79,7 +80,6 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
             super(itemView);
             name = itemView.findViewById(R.id.tv_place_name);
             range = itemView.findViewById(R.id.tv_place_range);
-            style = itemView.findViewById(R.id.tv_place_style);
             address = itemView.findViewById(R.id.tv_place_address);
             workmateNumber = itemView.findViewById(R.id.tv_workmate_number);
             open = itemView.findViewById(R.id.tv_place_open);
@@ -90,12 +90,11 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
         private void displayPlace(Result place, Location mLocation, List<Booking> mBookingList) {
             name.setText(place.getName());
 
+            //TODO Having a better score for range
             Location placeLocation = new Location("Place location");
             placeLocation.setLatitude(place.getGeometry().getLocation().getLatitude());
             placeLocation.setLongitude(place.getGeometry().getLocation().getLongitude());
             range.setText(String.format("%sm", Math.round(mLocation.distanceTo(placeLocation))));
-
-            style.setText(place.getBusinessStatus());
 
             address.setText(place.getVicinity());
 
@@ -105,25 +104,24 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
             else{
                 for(Booking mBooking : mBookingList){
                     if(mBooking.getPlaceId()==place.getPlaceId()){
-                        workmateNumber.setText(String.format(Locale.getDefault(), "(%d)", mBooking.getUserList().size()));
+                        workmateNumber.setText(format(Locale.getDefault(), "%d", mBooking.getUserList().size()));
                     }
                 }
             }
-            //TODO manage workmate number with a user var
 
-            if(place.getOpeningHours()!=null) {
-                open.setText(R.string.open_now);
-                open.setTextColor(Color.BLUE);
+            //TODO Null object why ? ? ?
+            /**if(place.getOpeningHours().getOpenNow()) {
             }
             else {
                 open.setText(R.string.closed);
-                open.setTextColor(Color.RED);
-            }
+            }*/
+            open.setText(R.string.open_now);
 
-            rate.setRating(place.getRating().floatValue());
+            float rating = (float) ((place.getRating()/5)*3);
+            rate.setRating(rating);
 
             placeImage.setImageResource(R.drawable.ic_baseline_restaurant_24);
-
+            //TODO Null object why ? ? ?
             /**if(place.getPhotos().isEmpty()){
                 placeImage.setImageResource(R.drawable.ic_baseline_restaurant_24);
             }
@@ -133,11 +131,19 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
                         .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + placePhoto + "&Key=" + BuildConfig.MAPS_API_KEY)
                         .into(placeImage);
             }*/
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    navigateToPlaceDetails(place);
+                }
+            });
         }
 
-        private void navigateToPlaceDetails() {
-            //TODO complete with API and new activity EVENT ???
-
+        private void navigateToPlaceDetails(Result place) {
+            Intent intent = new Intent(itemView.getContext(), PlaceDetailsActivity.class);
+            intent.putExtra("place id", place.getPlaceId());
+            itemView.getContext().startActivity(intent);
         }
     }
 }
