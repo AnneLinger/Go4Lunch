@@ -79,6 +79,21 @@ public class PlacesActivity extends AppCompatActivity {
 
         SearchView searchView = (SearchView) menu.findItem(R.id.search_icon).getActionView();
         searchView.setQueryHint(getResources().getText(R.string.search_hint));
+        searchView.setBackgroundColor(getResources().getColor(R.color.white));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                //TODO Manage the user query
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                //TODO Manage the autocomplete with places API
+                return false;
+            }
+        });
 
         return true;
     }

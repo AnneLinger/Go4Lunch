@@ -4,9 +4,8 @@
     <item
         android:id="@+id/search_icon"
         android:icon="@drawable/ic_baseline_search_24"
-        android:iconTint="@color/white"
         android:contentDescription="@string/search_icon"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always|collapseActionView"
         app:actionViewClass="android.widget.SearchView"
         android:title="@string/search" />
 </menu>

@@ -61,7 +61,7 @@
     <string name="zoom">Zoom</string>
     <string name="notifications">Notifications</string>
     <string name="hyphen">-</string>
-    <string name="workmate_number">( )</string>
+    <string name="workmate_number">2</string>
     <string name="call">call</string>
     <string name="like">like</string>
     <string name="website">website</string>
@@ -71,4 +71,9 @@
     <string name="is_joining">\ is joining!</string>
     <string name="search_menu">Search</string>
     <string name="search_hint">Search a place to eat</string>
+    <string name="last_parenthesis">)</string>
+    <string name="first_parenthesis">(</string>
+    <string name="meter">m</string>
+    <string name="open_now">Open now</string>
+    <string name="closed">Closed</string>
 </resources>

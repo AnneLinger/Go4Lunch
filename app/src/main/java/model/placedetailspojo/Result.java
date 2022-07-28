@@ -49,7 +49,7 @@ public class Result {
     private OpeningHours openingHours;
     @SerializedName("photos")
     @Expose
-    private List<Photo> photos = null;
+    private List<Photo> photos;
     @SerializedName("place_id")
     @Expose
     private String placeId;
@@ -67,7 +67,7 @@ public class Result {
     private List<Review> reviews = null;
     @SerializedName("types")
     @Expose
-    private List<String> types = null;
+    private List<String> types;
     @SerializedName("url")
     @Expose
     private String url;

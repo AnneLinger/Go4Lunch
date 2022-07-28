@@ -21,9 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.FragmentListViewBinding;
+import com.firebase.ui.auth.data.model.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import model.Booking;
 import model.nearbysearchpojo.Result;
 import ui.adapter.PlaceListAdapter;
 import viewmodel.PlacesViewModel;
@@ -44,8 +49,13 @@ public class ListViewFragment extends Fragment {
     private SharedPreferences mSharedPreferences;
     private UserViewModel mUserViewModel;
     private PlacesViewModel mPlacesViewModel;
-    private String mLocation;
+    private Location mLocation;
     private String mLocationString;
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+    //TODO manage with repo
+    private List<FirebaseUser> mUserList = new ArrayList<>();
+    private List<Booking> mBookingList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,16 +69,18 @@ public class ListViewFragment extends Fragment {
         configureViewModels();
         getUserLocation();
         initPlaceList();
-        //initRecyclerView();
+        initRecyclerView();
     }
 
     private void initRecyclerView() {
-        Log.d("Anne", "initRV");
+        Log.e("Anne", "initRV");
+        mUserList.add(mAuth.getCurrentUser());
+        mBookingList.add(new Booking(0, mPlaceList.get(0).getPlaceId(), mUserList));
         mRecyclerView = mBinding.rvListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.HORIZONTAL));
-        mRecyclerView.setAdapter(new PlaceListAdapter(mPlaceList));
+        mRecyclerView.setAdapter(new PlaceListAdapter(mPlaceList, mLocation, mBookingList));
     }
 
     private void configureViewModels() {
@@ -79,13 +91,14 @@ public class ListViewFragment extends Fragment {
     //Get the user location
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
-        Log.d("Anne", "getLoc");
+        Log.e("Anne", "getLoc");
         mUserViewModel.getLivedataLocation().observe(requireActivity(), this::initLocation);
     }
 
     private void initLocation(Location location) {
-        Log.d("Anne", "initLoc");
-        mLocation = location.getLatitude() + "," + location.getLongitude();
+        Log.e("Anne", "initLoc");
+        mLocation = location;
+        mLocationString = location.getLatitude() + "," + location.getLongitude();
     }
 
     private void initPlaceList() {
@@ -94,17 +107,16 @@ public class ListViewFragment extends Fragment {
             radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
         }
         Log.d("Anne", "initPlaceList");*/
-        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Result>>() {
-            @Override
-            public void onChanged(List<Result> results) {
-                mPlaceList = results;
-                if(mPlaceList.isEmpty()) {
-                    Log.d("Anne", "=nullList");
-                }
-                else {
-                    Log.d("Anne", "!=nullList");
-                }
-            }
-        });
+        mPlacesViewModel.getNearbySearchResponseLiveData().observe(requireActivity(), this::placeList);
+    }
+
+    private void placeList(List<Result> results) {
+        mPlaceList = results;
+        if(mPlaceList.isEmpty()) {
+            Log.e("Anne", "=nullList");
+        }
+        else {
+            Log.e("Anne", "!=nullList");
+        }
     }
 }

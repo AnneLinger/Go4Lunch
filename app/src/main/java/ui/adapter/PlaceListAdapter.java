@@ -1,23 +1,35 @@
 package ui.adapter;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.location.Location;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.anne.linger.go4lunch.BuildConfig;
 import com.anne.linger.go4lunch.R;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
+import java.util.Locale;
 
+import model.Booking;
 import model.Place;
 import model.nearbysearchpojo.NearbySearchResponse;
+import model.nearbysearchpojo.OpeningHours;
 import model.nearbysearchpojo.Result;
 import repositories.NearbySearchRepositoryImpl;
+import ui.activities.PlaceDetailsActivity;
+import ui.activities.PlacesActivity;
 
 /**
 *Adapter and ViewHolder to display a recycler view for the place list
@@ -26,9 +38,13 @@ import repositories.NearbySearchRepositoryImpl;
 public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.ViewHolder> {
 
     private static List<Result> mPlaceList;
+    private final Location mLocation;
+    private List<Booking> mBookingList;
 
-    public PlaceListAdapter(List<Result> placeList) {
+    public PlaceListAdapter(List<Result> placeList, Location location, List<Booking> booking) {
         mPlaceList = placeList;
+        mLocation = location;
+        mBookingList = booking;
     }
 
     @NonNull
@@ -40,8 +56,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull PlaceListAdapter.ViewHolder holder, int position) {
-        holder.displayPlace(mPlaceList.get(position));
-        holder.navigateToPlaceDetails();
+        holder.displayPlace(mPlaceList.get(position), mLocation, mBookingList);
     }
 
     @Override
@@ -54,12 +69,10 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
         private final TextView name;
         private final TextView range;
         private final TextView style;
-        private final TextView hyphen;
         private final TextView address;
-        private final ImageView workmate;
         private final TextView workmateNumber;
         private final TextView open;
-        private final ImageView star;
+        private final RatingBar rate;
         private final ImageView placeImage;
 
         public ViewHolder(@NonNull View itemView) {
@@ -67,22 +80,64 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
             name = itemView.findViewById(R.id.tv_place_name);
             range = itemView.findViewById(R.id.tv_place_range);
             style = itemView.findViewById(R.id.tv_place_style);
-            hyphen = itemView.findViewById(R.id.tv_hyphen);
             address = itemView.findViewById(R.id.tv_place_address);
-            workmate = itemView.findViewById(R.id.im_workmate);
             workmateNumber = itemView.findViewById(R.id.tv_workmate_number);
             open = itemView.findViewById(R.id.tv_place_open);
-            star = itemView.findViewById(R.id.im_star);
+            rate = itemView.findViewById(R.id.rb_list_view_rate);
             placeImage = itemView.findViewById(R.id.im_place);
         }
 
-        private void displayPlace(Result place) {
-            //TODO complete with API
-            //name.setText(place.);
+        private void displayPlace(Result place, Location mLocation, List<Booking> mBookingList) {
+            name.setText(place.getName());
+
+            Location placeLocation = new Location("Place location");
+            placeLocation.setLatitude(place.getGeometry().getLocation().getLatitude());
+            placeLocation.setLongitude(place.getGeometry().getLocation().getLongitude());
+            range.setText(String.format("%sm", Math.round(mLocation.distanceTo(placeLocation))));
+
+            style.setText(place.getBusinessStatus());
+
+            address.setText(place.getVicinity());
+
+            if(mBookingList.isEmpty()) {
+                workmateNumber.setText("0");
+            }
+            else{
+                for(Booking mBooking : mBookingList){
+                    if(mBooking.getPlaceId()==place.getPlaceId()){
+                        workmateNumber.setText(String.format(Locale.getDefault(), "(%d)", mBooking.getUserList().size()));
+                    }
+                }
+            }
+            //TODO manage workmate number with a user var
+
+            if(place.getOpeningHours()!=null) {
+                open.setText(R.string.open_now);
+                open.setTextColor(Color.BLUE);
+            }
+            else {
+                open.setText(R.string.closed);
+                open.setTextColor(Color.RED);
+            }
+
+            rate.setRating(place.getRating().floatValue());
+
+            placeImage.setImageResource(R.drawable.ic_baseline_restaurant_24);
+
+            /**if(place.getPhotos().isEmpty()){
+                placeImage.setImageResource(R.drawable.ic_baseline_restaurant_24);
+            }
+            else {
+                String placePhoto = place.getPhotos().get(0).getPhotoReference();
+                Glide.with(itemView)
+                        .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + placePhoto + "&Key=" + BuildConfig.MAPS_API_KEY)
+                        .into(placeImage);
+            }*/
         }
 
         private void navigateToPlaceDetails() {
-            //TODO complete with API and new activity
+            //TODO complete with API and new activity EVENT ???
+
         }
     }
 }

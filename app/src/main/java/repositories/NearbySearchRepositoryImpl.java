@@ -56,32 +56,14 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
                 else {
                     Log.d("Anne", "responseOk");*/
                 assert response.body() != null;
+                Log.e("Anne", response.body().getResults().toString());
+                assert response.body() != null;
                 mNearbySearchResponseLiveData.setValue(response.body().getResults());
-
             }
 
             @Override
             public void onFailure(@NonNull Call<NearbySearchResponse> call, @NonNull Throwable t) {
-
             }
         });
-        /**mRetrofit.create(PlacesApi.class).getNearbySearchResponse(location, radius, type, GOOGLE_PLACE_API_KEY)
-                .enqueue(new Callback<NearbySearchResponse>() {
-                    @Override
-                    public void onResponse(Call<NearbySearchResponse> call, Response<NearbySearchResponse> response) {
-                        if(response.body()!=null) {
-                            Log.d("Anne", "onResponse");
-                            mNearbySearchResponseLiveData.setValue(response.body().getResults());
-                        }
-                        else {
-                            Log.d("Anne", "response=null");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<NearbySearchResponse> call, Throwable t) {
-
-                    }
-                });*/
     }
 }

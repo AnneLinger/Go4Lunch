@@ -27,9 +27,20 @@
         android:layout_marginStart="16dp"
         android:textSize="14sp"
         android:textColor="@color/dark_grey"
-        app:layout_constraintEnd_toStartOf="@id/im_place"
+        app:layout_constraintEnd_toStartOf="@id/tv_place_range_meter"
         app:layout_constraintTop_toTopOf="@id/im_place"
         tools:text="@string/app_name" />
+
+    <TextView
+        android:id="@+id/tv_place_range_meter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textSize="14sp"
+        android:text="@string/meter"
+        android:textColor="@color/dark_grey"
+        app:layout_constraintEnd_toStartOf="@id/im_place"
+        app:layout_constraintTop_toTopOf="@id/im_place" />
 
     <TextView
         android:id="@+id/tv_place_style"
@@ -75,8 +86,21 @@
         android:src="@drawable/ic_baseline_person_outline_24"
         app:layout_constraintTop_toBottomOf="@id/tv_place_name"
         app:layout_constraintBottom_toTopOf="@id/tv_place_open"
-        app:layout_constraintEnd_toStartOf="@id/tv_workmate_number"
+        app:layout_constraintEnd_toStartOf="@id/tv_workmate_first_parenthesis"
         app:tint="@color/black" />
+
+    <TextView
+        android:id="@+id/tv_workmate_first_parenthesis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:text="@string/first_parenthesis"
+        android:layout_marginLeft="4dp"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toStartOf="@id/tv_workmate_number"
+        app:layout_constraintTop_toBottomOf="@id/tv_place_name"
+        app:layout_constraintBottom_toTopOf="@id/tv_place_open"
+        />
 
     <TextView
         android:id="@+id/tv_workmate_number"
@@ -85,10 +109,22 @@
         android:textSize="13sp"
         android:layout_marginLeft="4dp"
         android:textColor="@color/black"
-        app:layout_constraintEnd_toStartOf="@id/im_place"
+        app:layout_constraintEnd_toStartOf="@id/tv_workmate_last_parenthesis"
         app:layout_constraintTop_toBottomOf="@id/tv_place_name"
         app:layout_constraintBottom_toTopOf="@id/tv_place_open"
         tools:text="@string/workmate_number" />
+
+    <TextView
+        android:id="@+id/tv_workmate_last_parenthesis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:layout_marginLeft="4dp"
+        android:textColor="@color/black"
+        android:text="@string/last_parenthesis"
+        app:layout_constraintEnd_toStartOf="@id/im_place"
+        app:layout_constraintTop_toBottomOf="@id/tv_place_name"
+        app:layout_constraintBottom_toTopOf="@id/tv_place_open"/>
 
     <TextView
         android:id="@+id/tv_place_open"
@@ -102,14 +138,18 @@
         app:layout_constraintBottom_toBottomOf="@id/im_place"
         tools:text="@string/app_name" />
 
-    <ImageView
-        android:id="@+id/im_star"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:src="@drawable/ic_baseline_star_outline_24"
+    <RatingBar
+        android:id="@+id/rb_list_view_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:isIndicator="true"
+        android:numStars="3"
+        android:rating="0"
+        android:stepSize="0.5"
+        android:layout_marginStart="15dp"
+        style="?android:attr/ratingBarStyleSmall"
         app:layout_constraintBottom_toBottomOf="@id/im_place"
-        app:layout_constraintEnd_toStartOf="@id/im_place"
-        app:tint="@color/dark_grey" />
+        app:layout_constraintEnd_toStartOf="@id/im_place"/>
 
     <ImageView
         android:id="@+id/im_place"

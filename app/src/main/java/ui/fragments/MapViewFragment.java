@@ -158,11 +158,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         Log.d("Anne", mLocationString);
         mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mGoogleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title(requireActivity().getString(R.string.marker_title)));
+        //mGoogleMap.addMarker(new MarkerOptions()
+          //      .position(new LatLng(location.getLatitude(), location.getLongitude()))
+            //    .title(requireActivity().getString(R.string.marker_title)));
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
-        updateMapPlaces();
+        //updateMapPlaces();
     }
 
     //Update the map with places
@@ -193,7 +193,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //Update the map when the user location changes
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        updateMapPlaces();
+        //updateMapPlaces();
     }
 
     //Dialog to alert about essential permission

@@ -1,21 +1,22 @@
 package model;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Date;
+import java.util.List;
 
 /**
 *Model for bookings made by users
 */
 public class Booking {
     private int bookingId;
-    private int placeId;
-    private int userId;
-    private Date date;
+    private String placeId;
+    private List<FirebaseUser> userList;
 
-    public Booking(int bookingId, int restaurantId, int userId, Date date) {
+    public Booking(int bookingId, String placeId, List<FirebaseUser> userList) {
         this.bookingId = bookingId;
-        this.placeId = restaurantId;
-        this.userId = userId;
-        this.date = date;
+        this.placeId = placeId;
+        this.userList = userList;
     }
 
     public int getBookingId() {
@@ -26,27 +27,19 @@ public class Booking {
         this.bookingId = bookingId;
     }
 
-    public int getPlaceId() {
+    public String getPlaceId() {
         return placeId;
     }
 
-    public void setPlaceId(int placeId) {
+    public void setPlaceId(String placeId) {
         this.placeId = placeId;
     }
 
-    public int getUserId() {
-        return userId;
+    public List<FirebaseUser> getUserList() {
+        return userList;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
+    public void setUserList(List<FirebaseUser> userList) {
+        this.userList = userList;
     }
 }
