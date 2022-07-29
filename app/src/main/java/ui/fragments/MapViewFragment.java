@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
@@ -45,6 +46,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -53,6 +55,7 @@ import java.util.Map;
 
 import model.nearbysearchpojo.Result;
 import pub.devrel.easypermissions.EasyPermissions;
+import ui.activities.PlaceDetailsActivity;
 import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
@@ -184,8 +187,19 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                     mGoogleMap.addMarker(new MarkerOptions()
                             .position(placeLatLng)
                             .title(mResult.getName())
-                            .icon(BitmapDescriptorFactory.fromBitmap(setUpMarkerIcon())));
+                            .icon(BitmapDescriptorFactory.fromBitmap(setUpMarkerIcon(R.drawable.icon2073973_1920restaurant))));
                 }
+            }
+        });
+        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(@NonNull Marker marker) {
+                Intent intent = new Intent(requireActivity(), PlaceDetailsActivity.class);
+                for(Result place : mPlaceList) {
+                    if(marker.getTitle()==place.getName())
+                        intent.putExtra("place id", place.getPlaceId());
+                }
+                startActivity(intent);
             }
         });
     }
@@ -194,6 +208,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     @Override
     public void onLocationChanged(@NonNull Location location) {
         updateMapPlaces();
+    }
+
+    private Bitmap setUpMarkerIcon(int drawable) {
+        Bitmap markerBitmap = BitmapFactory.decodeResource(requireContext().getResources(), drawable);
+        return Bitmap.createScaledBitmap(markerBitmap, 80, 120, false);
     }
 
     //Dialog to alert about essential permission
@@ -220,51 +239,5 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                 .setCancelable(false)
                 .create()
                 .show();
-    }
-
-    private Bitmap setUpMarkerIcon() {
-        Bitmap markerBitmap = BitmapFactory.decodeResource(requireContext().getResources(), R.drawable.icon_restaurant_green);
-        return Bitmap.createScaledBitmap(markerBitmap, 80, 120, false);
-    }
-
-    //Update the map with the user location
-    private void updateLocationUI(Location location) {
-        mLocation = location;
-        mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
-        Log.d("Anne", mLocationString);
-        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
-        mPlacesViewModel.getNearbySearchResponseLiveData().observe(requireActivity(), results -> {
-            mPlaceList = results;
-            if(mPlaceList.isEmpty()) {
-                Log.d("Anne", "=null");
-            }
-            else {
-                Log.d("Anne", "!=null");
-            }
-        });
-        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mGoogleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title(String.valueOf(R.string.marker_title)));
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
-    }
-
-    private void initPlacesList() {
-        //mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
-        /**if (mSharedPreferences != null) {
-         radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
-         }*/
-        Log.d("Anne", "initPlaceList");
-        mGoogleMap.clear();
-        //mPlacesViewModel.getNearbySearchResponseLiveData().observe(requireActivity(), this::updateMap);
-        mPlacesViewModel.getNearbySearchResponseLiveData().observe(requireActivity(), results -> {
-            mPlaceList = results;
-            if(mPlaceList.isEmpty()) {
-                Log.d("Anne", "=null");
-            }
-            else {
-                Log.d("Anne", "!=null");
-            }
-        });
     }
 }
