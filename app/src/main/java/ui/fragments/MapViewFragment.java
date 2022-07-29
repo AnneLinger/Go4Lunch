@@ -1,5 +1,7 @@
 package ui.fragments;
 
+import static android.graphics.Bitmap.createScaledBitmap;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -10,6 +12,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
@@ -25,6 +30,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -58,7 +64,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //For UI
     private FragmentMapViewBinding mBinding;
     private GoogleMap mGoogleMap;
-    private float zoom = 15;
+    private float zoom = 12;
     private int radius = 12000;
 
     //For data
@@ -158,29 +164,23 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         Log.d("Anne", mLocationString);
         mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        //mGoogleMap.addMarker(new MarkerOptions()
-          //      .position(new LatLng(location.getLatitude(), location.getLongitude()))
-            //    .title(requireActivity().getString(R.string.marker_title)));
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mGoogleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                .title(requireActivity().getString(R.string.marker_title)));
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
-        //updateMapPlaces();
+        updateMapPlaces();
     }
 
     //Update the map with places
     private void updateMapPlaces() {
-        Log.d("Anne", "updateMap");
-        mGoogleMap.clear();
+        Log.e("Anne", "updateMap");
         mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Result>>() {
             @Override
             public void onChanged(List<Result> results) {
                 mPlaceList = results;
-                if(mPlaceList.isEmpty()) {
-                    Log.d("Anne", "=null");
-                }
-                else {
-                    Log.d("Anne", "!=null");
-                }
                 for (Result mResult : mPlaceList) {
-                    LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLatitude(), mResult.getGeometry().getLocation().getLongitude());
+                    LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLat(), mResult.getGeometry().getLocation().getLng());
                     mGoogleMap.addMarker(new MarkerOptions()
                             .position(placeLatLng)
                             .title(mResult.getName())
@@ -193,7 +193,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //Update the map when the user location changes
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        //updateMapPlaces();
+        updateMapPlaces();
     }
 
     //Dialog to alert about essential permission
@@ -223,9 +223,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     }
 
     private Bitmap setUpMarkerIcon() {
-        Bitmap markerIcon = BitmapFactory.decodeResource(requireContext().getResources(), R.drawable.ic_baseline_restaurant_24);
-        markerIcon = Bitmap.createScaledBitmap(markerIcon, 100, 100, false);
-        return markerIcon;
+        Bitmap markerBitmap = BitmapFactory.decodeResource(requireContext().getResources(), R.drawable.icon_restaurant_green);
+        return Bitmap.createScaledBitmap(markerBitmap, 80, 120, false);
     }
 
     //Update the map with the user location

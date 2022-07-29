@@ -92,8 +92,8 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
 
             //TODO Having a better score for range
             Location placeLocation = new Location("Place location");
-            placeLocation.setLatitude(place.getGeometry().getLocation().getLatitude());
-            placeLocation.setLongitude(place.getGeometry().getLocation().getLongitude());
+            placeLocation.setLatitude(place.getGeometry().getLocation().getLat());
+            placeLocation.setLongitude(place.getGeometry().getLocation().getLng());
             range.setText(String.format("%sm", Math.round(mLocation.distanceTo(placeLocation))));
 
             address.setText(place.getVicinity());

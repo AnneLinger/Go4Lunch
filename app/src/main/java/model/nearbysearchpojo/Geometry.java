@@ -1,7 +1,5 @@
 package model.nearbysearchpojo;
 
-import android.location.Location;
-
 import com.google.android.filament.Viewport;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
