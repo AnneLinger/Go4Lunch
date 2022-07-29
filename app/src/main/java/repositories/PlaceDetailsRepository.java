@@ -1,9 +1,6 @@
 package repositories;
 
 import androidx.lifecycle.LiveData;
-
-import java.util.List;
-
 import model.placedetailspojo.Result;
 
 

@@ -23,8 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import model.User;
 import model.placedetailspojo.Result;
 import ui.adapter.JoiningWorkmatesListAdapter;
-import viewmodel.PlacesViewModel;
-import viewmodel.UserViewModel;
+import viewmodel.PlaceDetailsViewModel;
 
 /**
 *Activity to display details of a place
@@ -41,7 +40,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private final List<User> mJoiningWorkmatesList = new ArrayList<>();
     //TODO to replace with good data
     private final User fakeWorkmate = new User("1", "Peter", "https://fakeimg.pl/300/");
-    private PlacesViewModel mPlacesViewModel;
+    private PlaceDetailsViewModel mPlaceDetailsViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,19 +79,19 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void configureViewModel() {
-        mPlacesViewModel = new ViewModelProvider(this).get(PlacesViewModel.class);
+        mPlaceDetailsViewModel = new ViewModelProvider(this).get(PlaceDetailsViewModel.class);
     }
 
     private void getPlaceDetails() {
-        Log.d("Anne", "getPlaceDetails");
-        //TODO change place_id parameter with data from API
-        mPlacesViewModel.fetchPlaceDetails("ChIJKwtI9iKKDkgRAdBQ7I3xMII");
-        mPlacesViewModel.getPlaceDetailsLiveData().observe(this, this::initDataPlaceDetails);
+        Log.e("Anne", "getPlaceDetails");
+        Intent intent = getIntent();
+        mPlaceDetailsViewModel.fetchPlaceDetails(intent.getStringExtra("place id"));
+        mPlaceDetailsViewModel.getPlaceDetailsLiveData().observe(this, this::initDataPlaceDetails);
     }
 
     private void initDataPlaceDetails(Result result) {
         if(result!=null){
-            Log.d("Anne", "resultOk");
+            Log.e("Anne", "resultOk");
             //TODO complete with Glide for the photo
             //mBinding.imDetailPlace.setImageURI(result.getPhotos().get(0).getPhotoReference());
             mBinding.tvDetailName.setText(result.getName());
@@ -102,7 +101,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             //TODO ajouter listener sur call...x3
         }
         else {
-            Log.d("Anne", "resultNull");
+            Log.e("Anne", "resultNull");
         }
     }
 

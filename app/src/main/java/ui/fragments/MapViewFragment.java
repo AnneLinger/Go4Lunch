@@ -196,8 +196,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
             public void onInfoWindowClick(@NonNull Marker marker) {
                 Intent intent = new Intent(requireActivity(), PlaceDetailsActivity.class);
                 for(Result place : mPlaceList) {
-                    if(marker.getTitle()==place.getName())
+                    if(marker.getTitle().equalsIgnoreCase(place.getName())){
                         intent.putExtra("place id", place.getPlaceId());
+                    }
                 }
                 startActivity(intent);
             }

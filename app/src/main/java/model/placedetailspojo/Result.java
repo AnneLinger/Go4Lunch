@@ -58,13 +58,13 @@ public class Result {
     private PlusCode plusCode;
     @SerializedName("rating")
     @Expose
-    private Integer rating;
+    private double rating;
     @SerializedName("reference")
     @Expose
     private String reference;
     @SerializedName("reviews")
     @Expose
-    private List<Review> reviews = null;
+    private List<Review> reviews;
     @SerializedName("types")
     @Expose
     private List<String> types;
@@ -73,10 +73,10 @@ public class Result {
     private String url;
     @SerializedName("user_ratings_total")
     @Expose
-    private Integer userRatingsTotal;
+    private int userRatingsTotal;
     @SerializedName("utc_offset")
     @Expose
-    private Integer utcOffset;
+    private int utcOffset;
     @SerializedName("vicinity")
     @Expose
     private String vicinity;
@@ -204,11 +204,11 @@ public class Result {
         this.plusCode = plusCode;
     }
 
-    public Integer getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
@@ -244,7 +244,7 @@ public class Result {
         this.url = url;
     }
 
-    public Integer getUserRatingsTotal() {
+    public int getUserRatingsTotal() {
         return userRatingsTotal;
     }
 
@@ -252,7 +252,7 @@ public class Result {
         this.userRatingsTotal = userRatingsTotal;
     }
 
-    public Integer getUtcOffset() {
+    public int getUtcOffset() {
         return utcOffset;
     }
 
