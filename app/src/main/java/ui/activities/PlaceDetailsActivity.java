@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,12 +21,12 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import model.User;
 import model.placedetailspojo.Result;
 import ui.adapter.JoiningWorkmatesListAdapter;
+import viewmodel.BookingViewModel;
 import viewmodel.PlaceDetailsViewModel;
 
 /**
@@ -46,13 +45,14 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     //TODO to replace with good data
     private final User fakeWorkmate = new User("1", "Peter", "https://fakeimg.pl/300/");
     private PlaceDetailsViewModel mPlaceDetailsViewModel;
+    private BookingViewModel mBookingViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUi();
         configureActionBar();
-        configureViewModel();
+        configureViewModels();
         getPlaceDetails();
     }
 
@@ -82,8 +82,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmatesList));
     }
 
-    private void configureViewModel() {
+    private void configureViewModels() {
         mPlaceDetailsViewModel = new ViewModelProvider(this).get(PlaceDetailsViewModel.class);
+        mBookingViewModel = new ViewModelProvider(this).get(BookingViewModel.class);
     }
 
     private void getPlaceDetails() {
@@ -115,7 +116,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             mBinding.fabDetailChoice.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO manage booking
+                    manageBooking(result.getPlaceId());
                 }
             });
             //For place call
@@ -153,6 +154,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                     }
                 }
             });
+    }
+
+    //To manage user booking wish
+    private void manageBooking(String placeId) {
+
     }
 
     //When click on action bar for back
