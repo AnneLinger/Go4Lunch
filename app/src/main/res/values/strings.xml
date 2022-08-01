@@ -76,4 +76,6 @@
     <string name="meter">m</string>
     <string name="open_now">Open now</string>
     <string name="closed">Closed</string>
+    <string name="phone_number_unknown">Phone number unknown for this place</string>
+    <string name="unknown_website">Website unknown for this place</string>
 </resources>

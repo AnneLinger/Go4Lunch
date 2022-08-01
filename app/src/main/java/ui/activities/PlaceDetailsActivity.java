@@ -1,9 +1,11 @@
 package ui.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -117,12 +119,19 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 }
             });
             //For place call
-            mBinding.btDetailCall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
+                mBinding.btDetailCall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(result.getFormattedPhoneNumber()!=null) {
+                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                            callIntent.setData(Uri.parse(result.getFormattedPhoneNumber()));
+                            startActivity(callIntent);
+                        }
+                        else{
+                            Toast.makeText(PlaceDetailsActivity.this, R.string.phone_number_unknown, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             //For place like
             mBinding.btDetailLike.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -134,7 +143,14 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             mBinding.btDetailWebsite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    if(result.getWebsite()!=null) {
+                        Uri uri = Uri.parse(result.getWebsite());
+                        Intent websiteIntent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(websiteIntent);
+                    }
+                    else{
+                        Toast.makeText(PlaceDetailsActivity.this, R.string.unknown_website, Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
     }

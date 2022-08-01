@@ -25,7 +25,7 @@ import utils.RetrofitBuilder;
 public class PlaceDetailsRepositoryImpl implements PlaceDetailsRepository {
 
     private static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
-    private static final String FIELDS = "name,formatted_address,geometry/location,vicinity,place_id,photo,opening_hours/open_now,rating,website,international_phone_number";
+    private static final String FIELDS = "name,formatted_address,geometry/location,vicinity,place_id,photo,opening_hours/open_now,rating,website,international_phone_number,formatted_phone_number";
     private final MutableLiveData<Result> mPlaceDetailsLiveData = new MutableLiveData<>();
     private final RetrofitBuilder mRetrofitBuilder = new RetrofitBuilder();
 
