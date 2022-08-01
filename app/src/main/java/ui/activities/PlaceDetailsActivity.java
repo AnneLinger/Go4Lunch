@@ -13,11 +13,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.anne.linger.go4lunch.BuildConfig;
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityPlaceDetailsBinding;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import model.User;
@@ -59,8 +62,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void configureActionBar() {
-        mBinding.settingsToolbar.setBackgroundColor(getResources().getColor(R.color.transparent));
-        mBinding.settingsToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 navigateToPlacesActivity();
@@ -90,19 +92,51 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void initDataPlaceDetails(Result result) {
-        if(result!=null){
-            Log.e("Anne", "resultOk");
-            //TODO complete with Glide for the photo
-            //mBinding.imDetailPlace.setImageURI(result.getPhotos().get(0).getPhotoReference());
+            //For place photo
+            if(result.getPhotos()==null){
+                mBinding.imDetailPlace.setImageResource(R.drawable.drawer_header_background);
+            }
+            else {
+                String placePhoto = result.getPhotos().get(0).getPhotoReference();
+                Glide.with(this)
+                        .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + placePhoto + "&key=" + BuildConfig.MAPS_API_KEY)
+                        .into(mBinding.imDetailPlace);
+            }
+            //For place name
             mBinding.tvDetailName.setText(result.getName());
-            //TODO comment récupérer le type de restaurant ? ?
-            //mBinding.tvDetailType.setText(result.getTypes());
+            //For place address
             mBinding.tvDetailAddress.setText(result.getFormattedAddress());
-            //TODO ajouter listener sur call...x3
-        }
-        else {
-            Log.e("Anne", "resultNull");
-        }
+            //For place rating
+            float rating = (float) ((result.getRating()/5)*3);
+            mBinding.rbDetailRate.setRating(rating);
+            //For booking
+            mBinding.fabDetailChoice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO manage booking
+                }
+            });
+            //For place call
+            mBinding.btDetailCall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+            //For place like
+            mBinding.btDetailLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+            //For place website
+            mBinding.btDetailWebsite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
     }
 
     //When click on action bar for back

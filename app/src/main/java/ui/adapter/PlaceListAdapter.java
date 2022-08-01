@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import model.Booking;
 import model.Place;
@@ -88,50 +89,47 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
         }
 
         private void displayPlace(Result place, Location mLocation, List<Booking> mBookingList) {
+            //For name
             name.setText(place.getName());
-
-            //TODO Having a better score for range
+            //For range
             Location placeLocation = new Location("Place location");
             placeLocation.setLatitude(place.getGeometry().getLocation().getLat());
             placeLocation.setLongitude(place.getGeometry().getLocation().getLng());
             range.setText(String.format("%sm", Math.round(mLocation.distanceTo(placeLocation))));
-
+            //For address
             address.setText(place.getVicinity());
-
+            //For workmate number
             if(mBookingList.isEmpty()) {
                 workmateNumber.setText("0");
             }
             else{
                 for(Booking mBooking : mBookingList){
-                    if(mBooking.getPlaceId()==place.getPlaceId()){
+                    if(Objects.equals(mBooking.getPlaceId(), place.getPlaceId())){
                         workmateNumber.setText(format(Locale.getDefault(), "%d", mBooking.getUserList().size()));
                     }
                 }
             }
-
-            //TODO Null object why ? ? ?
-            /**if(place.getOpeningHours().getOpenNow()) {
+            //For open or closed
+            if(place.getOpeningHours()!=null) {
+                open.setText(R.string.open_now);
             }
             else {
                 open.setText(R.string.closed);
-            }*/
-            open.setText(R.string.open_now);
-
+            }
+            //For rating
             float rating = (float) ((place.getRating()/5)*3);
             rate.setRating(rating);
-
-            placeImage.setImageResource(R.drawable.ic_baseline_restaurant_24);
-            //TODO Null object why ? ? ?
-            /**if(place.getPhotos().isEmpty()){
+            //For place photo
+            if(place.getPhotos()==null){
                 placeImage.setImageResource(R.drawable.ic_baseline_restaurant_24);
             }
             else {
                 String placePhoto = place.getPhotos().get(0).getPhotoReference();
                 Glide.with(itemView)
-                        .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + placePhoto + "&Key=" + BuildConfig.MAPS_API_KEY)
+                        .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=90&photo_reference=" + placePhoto + "&key=" + BuildConfig.MAPS_API_KEY)
                         .into(placeImage);
-            }*/
-
+            }
+            //For navigate to details from itemView
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

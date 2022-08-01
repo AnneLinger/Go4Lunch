@@ -26,21 +26,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:textSize="14sp"
+        android:layout_marginEnd="8dp"
         android:textColor="@color/dark_grey"
         app:layout_constraintEnd_toStartOf="@id/im_place"
         app:layout_constraintTop_toTopOf="@id/im_place"
         tools:text="@string/app_name" />
-
-    <!--<TextView
-        android:id="@+id/tv_place_range_meter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:textSize="14sp"
-        android:text="@string/meter"
-        android:textColor="@color/dark_grey"
-        app:layout_constraintEnd_toStartOf="@id/im_place"
-        app:layout_constraintTop_toTopOf="@id/im_place" />-->
 
     <TextView
         android:id="@+id/tv_place_address"
@@ -98,6 +88,7 @@
         android:textSize="13sp"
         android:layout_marginLeft="4dp"
         android:textColor="@color/black"
+        android:layout_marginEnd="8dp"
         android:text="@string/last_parenthesis"
         app:layout_constraintEnd_toStartOf="@id/im_place"
         app:layout_constraintTop_toBottomOf="@id/tv_place_name"
@@ -124,6 +115,7 @@
         android:rating="0"
         android:stepSize="0.5"
         android:layout_marginStart="15dp"
+        android:layout_marginEnd="8dp"
         style="?android:attr/ratingBarStyleSmall"
         app:layout_constraintBottom_toBottomOf="@id/im_place"
         app:layout_constraintEnd_toStartOf="@id/im_place"/>
