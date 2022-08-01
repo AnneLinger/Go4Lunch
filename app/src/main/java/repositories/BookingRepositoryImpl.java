@@ -1,5 +1,7 @@
 package repositories;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -52,9 +54,16 @@ public class BookingRepositoryImpl implements BookingRepository {
     @Override
     public void getBookingListFromFirestore() {
         mFirestore.collection(COLLECTION).addSnapshotListener(((value, error) -> {
-            assert value != null;
-            List<Booking> bookingList = value.toObjects(Booking.class);
-            mBookingList.setValue(bookingList);
+            if(error!=null){
+                return;
+            }
+            if (value!=null) {
+                List<Booking> bookingList = value.toObjects(Booking.class);
+                mBookingList.setValue(bookingList);
+            }
+            else{
+                Log.e("Anne", "collectionValueNull");
+            }
         }));
     }
 

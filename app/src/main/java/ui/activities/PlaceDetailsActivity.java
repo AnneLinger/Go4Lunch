@@ -1,5 +1,6 @@
 package ui.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,8 +8,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,16 +23,19 @@ import com.anne.linger.go4lunch.BuildConfig;
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityPlaceDetailsBinding;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import model.Booking;
 import model.User;
 import model.placedetailspojo.Result;
 import ui.adapter.JoiningWorkmatesListAdapter;
 import viewmodel.BookingViewModel;
 import viewmodel.PlaceDetailsViewModel;
+import viewmodel.UserViewModel;
 
 /**
 *Activity to display details of a place
@@ -46,6 +54,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private final User fakeWorkmate = new User("1", "Peter", "https://fakeimg.pl/300/");
     private PlaceDetailsViewModel mPlaceDetailsViewModel;
     private BookingViewModel mBookingViewModel;
+    private UserViewModel mUserViewModel;
+    private List<Booking> mBookingList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +64,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         configureActionBar();
         configureViewModels();
         getPlaceDetails();
+        observeBookings();
     }
 
     //Configure UI
@@ -61,6 +72,14 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         mBinding = ActivityPlaceDetailsBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
         initRecyclerView();
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void manageBookingFAB(boolean isBooking){
+        if(isBooking){
+            mBinding.fabDetailChoice.setImageDrawable(getDrawable(R.drawable.ic_baseline_check_circle_24));
+        }
+        else mBinding.fabDetailChoice.setImageDrawable(getDrawable(R.drawable.check_circle_grey));
     }
 
     private void configureActionBar() {
@@ -85,6 +104,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void configureViewModels() {
         mPlaceDetailsViewModel = new ViewModelProvider(this).get(PlaceDetailsViewModel.class);
         mBookingViewModel = new ViewModelProvider(this).get(BookingViewModel.class);
+        mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
     private void getPlaceDetails() {
@@ -156,9 +176,42 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             });
     }
 
+    private void observeBookings() {
+        mBookingViewModel.getBookingListLiveData().observe(this, new Observer<List<Booking>>() {
+            @Override
+            public void onChanged(List<Booking> bookings) {
+                mBookingList = bookings;
+            }
+        });
+        if(!mBookingList.isEmpty()){
+            for(Booking booking : mBookingList){
+                for(FirebaseUser firebaseUser : booking.getUserList()){
+                    if(firebaseUser==mUserViewModel.getCurrentUser()){
+                        manageBookingFAB(true);
+                    }
+                }
+            }
+        }
+
+    }
+
     //To manage user booking wish
     private void manageBooking(String placeId) {
-
+        if(!mBookingList.isEmpty()) {
+            for (Booking booking : mBookingList) {
+                if (booking.getPlaceId() == placeId) {
+                    booking.getUserList().add(mUserViewModel.getCurrentUser());
+                }
+            }
+        }
+        else {
+            List<FirebaseUser> newUserList = new ArrayList<>();
+            newUserList.add(mUserViewModel.getCurrentUser());
+            mBookingViewModel.createBooking(mBookingList.size() + 1, placeId, newUserList);
+            observeBookings();
+        }
+        Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
+        manageBookingFAB(true);
     }
 
     //When click on action bar for back

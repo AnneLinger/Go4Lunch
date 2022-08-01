@@ -7,6 +7,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import model.Booking;
 import repositories.BookingRepositoryImpl;
@@ -22,11 +24,14 @@ public class BookingViewModel extends ViewModel {
     private final BookingRepositoryImpl mBookingRepositoryImpl;
 
     //Constructor
+    @Inject
     public BookingViewModel(BookingRepositoryImpl bookingRepositoryImpl) {
         mBookingRepositoryImpl = bookingRepositoryImpl;
     }
 
     public LiveData<List<Booking>> getBookingListLiveData() {
+        mBookingRepositoryImpl.instanceFirestore();
+        mBookingRepositoryImpl.getBookingListFromFirestore();
         return mBookingRepositoryImpl.getBookingListLiveData();
     }
 
