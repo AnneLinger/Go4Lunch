@@ -1,7 +1,5 @@
 package model.autocompletepojo;
 
-import android.gesture.Prediction;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -21,7 +19,7 @@ public class AutocompleteResponse {
     @Expose
     private String status;
 
-    public List<Prediction> getPredictions() {
+    public List<model.autocompletepojo.Prediction> getPredictions() {
         return predictions;
     }
 

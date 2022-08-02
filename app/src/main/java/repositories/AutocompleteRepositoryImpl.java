@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.anne.linger.go4lunch.BuildConfig;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import data.PlacesApi;
@@ -22,7 +24,7 @@ import utils.RetrofitBuilder;
 public class AutocompleteRepositoryImpl implements AutocompleteRepository {
 
     //For data
-    private final MutableLiveData<AutocompleteResponse> mAutocompleteLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Prediction>> mAutocompleteLiveData = new MutableLiveData<>();
     private static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
     private final RetrofitBuilder mRetrofitBuilder = new RetrofitBuilder();
 
@@ -32,7 +34,7 @@ public class AutocompleteRepositoryImpl implements AutocompleteRepository {
     }
 
     @Override
-    public LiveData<AutocompleteResponse> getAutocompleteLiveData() {
+    public LiveData<List<Prediction>> getAutocompleteLiveData() {
         return mAutocompleteLiveData;
     }
 
@@ -43,7 +45,7 @@ public class AutocompleteRepositoryImpl implements AutocompleteRepository {
         call.enqueue(new Callback<AutocompleteResponse>() {
             @Override
             public void onResponse(Call<AutocompleteResponse> call, Response<AutocompleteResponse> response) {
-                mAutocompleteLiveData.setValue(response.body());
+                mAutocompleteLiveData.setValue(response.body().getPredictions());
             }
 
             @Override

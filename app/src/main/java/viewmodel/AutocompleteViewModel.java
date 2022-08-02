@@ -3,10 +3,13 @@ package viewmodel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import model.autocompletepojo.AutocompleteResponse;
+import model.autocompletepojo.Prediction;
 import repositories.AutocompleteRepositoryImpl;
 
 /**
@@ -29,7 +32,7 @@ public class AutocompleteViewModel extends ViewModel {
         mAutocompleteRepositoryImpl.fetchAutocomplete(query, location, radius);
     }
 
-    public LiveData<AutocompleteResponse> getAutocompleteLiveData() {
+    public LiveData<List<Prediction>> getAutocompleteLiveData() {
         return mAutocompleteRepositoryImpl.getAutocompleteLiveData();
     }
 }

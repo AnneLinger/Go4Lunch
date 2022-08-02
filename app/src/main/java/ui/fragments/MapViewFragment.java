@@ -56,6 +56,7 @@ import java.util.Map;
 import model.nearbysearchpojo.Result;
 import pub.devrel.easypermissions.EasyPermissions;
 import ui.activities.PlaceDetailsActivity;
+import ui.activities.PlacesActivity;
 import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
@@ -92,12 +93,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         }
     });
 
+    public static MapViewFragment newInstance() {
+        return new MapViewFragment();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentMapViewBinding.inflate(getLayoutInflater());
         configureViewModel();
-        mActivityResultLauncher.launch(perms);
         return mBinding.getRoot();
     }
 
@@ -114,7 +118,18 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mGoogleMap = googleMap;
         checkIfUserIsSignIn();
-        requestLocationPermission();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mContext = null;
     }
 
     private void configureViewModel() {
@@ -126,18 +141,20 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private void checkIfUserIsSignIn() {
         FirebaseUser currentUser = mUserViewModel.getCurrentUser();
         if(currentUser!=null) {
+            //TODO a compléter par retour sur co dans un else
             mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
                 zoom = mSharedPreferences.getFloat(getString(R.string.zoom), zoom);
                 radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
             }
+            requestLocationPermission();
         }
     }
 
     //Check the location permission
     private void requestLocationPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(requireContext(),
             Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Log.d("Anne", "requestLocPerm=>getUserLoc");
@@ -146,7 +163,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         } else {
             //Permission not ok => ask permission to the user for location
             Log.d("Anne", "requestLocPerm=>requestPerm");
-            ActivityCompat.requestPermissions(requireActivity(), perms, PERMISSION);
+            mActivityResultLauncher.launch(perms);
+            //ActivityCompat.requestPermissions(requireActivity(), perms, PERMISSION);
         }
     }
 
@@ -170,7 +188,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mGoogleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title(requireActivity().getString(R.string.marker_title)));
+                .title(mContext.getString(R.string.marker_title)));
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
         updateMapPlaces();
     }

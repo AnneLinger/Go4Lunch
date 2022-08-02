@@ -2,6 +2,8 @@ package repositories;
 
 import androidx.lifecycle.LiveData;
 
+import java.util.List;
+
 import model.autocompletepojo.AutocompleteResponse;
 import model.autocompletepojo.Prediction;
 
@@ -11,7 +13,7 @@ import model.autocompletepojo.Prediction;
 
 public interface AutocompleteRepository {
 
-    LiveData<AutocompleteResponse> getAutocompleteLiveData();
+    LiveData<List<Prediction>> getAutocompleteLiveData();
 
     void fetchAutocomplete(String query, String location, int radius);
 }
