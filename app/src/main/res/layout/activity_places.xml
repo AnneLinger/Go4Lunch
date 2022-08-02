@@ -14,6 +14,7 @@
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints">
@@ -31,6 +32,16 @@
             </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
+
+        <ListView
+            android:id="@+id/lv_search_results"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:visibility="gone"
+            http:layout_constraintTop_toBottomOf="@id/app_bar"
+            http:layout_constraintStart_toStartOf="parent"
+            />
 
         <FrameLayout
             android:id="@+id/activity_places_frame_layout"

@@ -15,15 +15,15 @@ import model.placedetailspojo.Result;
 
 public interface BookingRepository {
 
-    public void instanceFirestore();
+    void instanceFirestore();
 
-    public LiveData<List<Booking>> getBookingListLiveData();
+    LiveData<List<Booking>> getBookingListLiveData();
 
-    public void getBookingListFromFirestore();
+    void getBookingListFromFirestore();
 
-    public void createBooking(int bookingId, String placeId, List<FirebaseUser> userList);
+    void createBooking(int bookingId, String placeId, List<FirebaseUser> userList);
 
-    public void updateBooking();
+    void updateBooking();
 
-    public void deleteBooking(Booking booking);
+    void deleteBooking(Booking booking);
 }

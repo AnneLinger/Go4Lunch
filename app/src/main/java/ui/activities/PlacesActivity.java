@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
@@ -78,8 +80,9 @@ public class PlacesActivity extends AppCompatActivity {
         inflater.inflate(R.menu.toolbar_menu, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.search_icon).getActionView();
-        searchView.setQueryHint(getResources().getText(R.string.search_hint));
         searchView.setBackgroundColor(getResources().getColor(R.color.white));
+        searchView.setQueryHint(getResources().getText(R.string.search_hint));
+        searchView.setIconifiedByDefault(false);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

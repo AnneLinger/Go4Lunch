@@ -6,11 +6,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,6 +39,9 @@ public class BookingRepositoryImpl implements BookingRepository {
     FirebaseFirestore mFirestore;
     private final MutableLiveData<List<Booking>> mBookingList = new MutableLiveData<>();
     private static final String COLLECTION = "Bookings";
+    private static final String BOOKING_ID = "BookingId";
+    private static final String PLACE_ID = "PlaceId";
+    private static final String USER_LIST = "UserList";
 
     @Inject
     public BookingRepositoryImpl(){
@@ -55,7 +61,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     public void getBookingListFromFirestore() {
         mFirestore.collection(COLLECTION).addSnapshotListener(((value, error) -> {
             if(error!=null){
-                return;
+                Log.e("Anne", "collectionError");
             }
             if (value!=null) {
                 List<Booking> bookingList = value.toObjects(Booking.class);
@@ -71,32 +77,41 @@ public class BookingRepositoryImpl implements BookingRepository {
     public void createBooking(int bookingId, String placeId, List<FirebaseUser> userList) {
         //Create a new booking
         Map<String, Object> newBooking = new HashMap<>();
-        newBooking.put("bookingId", bookingId);
-        newBooking.put("placeId", placeId);
-        newBooking.put("userList", userList);
+        newBooking.put(BOOKING_ID, bookingId);
+        newBooking.put(PLACE_ID, placeId);
+        newBooking.put(USER_LIST, userList);
+
+        String docRef = "docRef";
 
         //Create a new document
-        mFirestore.collection(COLLECTION)
+        CollectionReference bookingCollection = mFirestore.collection(COLLECTION);
+        bookingCollection
                 .add(newBooking)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
+                        Log.e("Anne", "collectionOnSuccess");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        Log.e("Anne", "collectionOnFailure");
                     }
                 });
+        /**mFirestore.collection(COLLECTION)
+                .get()
+                .addOnSuccessListener(documentReference -> mFirestore.collection(COLLECTION)
+                        .document(documentReference.getId()))
+                .addOnFailureListener(e -> Log.e("Anne", "collectionOnFailure" + e.getMessage()));*/
+
     }
 
     @Override
     public void updateBooking() {
-
     }
 
     @Override
     public void deleteBooking(Booking booking) {
-
     }
 }

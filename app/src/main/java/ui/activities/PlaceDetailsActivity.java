@@ -201,6 +201,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             for (Booking booking : mBookingList) {
                 if (booking.getPlaceId() == placeId) {
                     booking.getUserList().add(mUserViewModel.getCurrentUser());
+                    //TODO call updateBooking to also update in firestore
                 }
             }
         }
@@ -208,7 +209,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             List<FirebaseUser> newUserList = new ArrayList<>();
             newUserList.add(mUserViewModel.getCurrentUser());
             mBookingViewModel.createBooking(mBookingList.size() + 1, placeId, newUserList);
-            observeBookings();
         }
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
