@@ -11,11 +11,11 @@ import java.util.List;
  *Pojo model for geometry autocomplete
 */
 
-public class Geometry {
+public class AutocompleteResponse {
 
     @SerializedName("predictions")
     @Expose
-    private List<Prediction> predictions = null;
+    private List<Prediction> predictions;
 
     @SerializedName("status")
     @Expose

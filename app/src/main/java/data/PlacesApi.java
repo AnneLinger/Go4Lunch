@@ -1,5 +1,6 @@
 package data;
 
+import model.autocompletepojo.AutocompleteResponse;
 import model.nearbysearchpojo.NearbySearchResponse;
 import model.placedetailspojo.PlaceDetailsResponse;
 import retrofit2.Call;
@@ -25,5 +26,12 @@ public interface PlacesApi {
     Call<PlaceDetailsResponse> getPlaceDetailsResponse(
             @Query("fields") String fields,
             @Query("place_id") String placeId,
+            @Query("key") String key);
+
+    @GET("autocomplete/json?")
+    Call<AutocompleteResponse> getAutocompleteResponse(
+            @Query("input") String input,
+            @Query("location") String location,
+            @Query("radius") int radius,
             @Query("key") String key);
 }
