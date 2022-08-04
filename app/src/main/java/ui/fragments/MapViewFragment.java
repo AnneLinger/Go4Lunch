@@ -4,6 +4,7 @@ import static android.graphics.Bitmap.createScaledBitmap;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,6 +53,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import model.nearbysearchpojo.Result;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -102,6 +104,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentMapViewBinding.inflate(getLayoutInflater());
         configureViewModel();
+        this.onAttach(requireContext());
         return mBinding.getRoot();
     }
 
@@ -172,8 +175,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
         Log.d("Anne", "getUserLoc");
-        mGoogleMap.setMyLocationEnabled(true);
         mUserViewModel.getUserLocation(this.getContext());
+        mGoogleMap.setMyLocationEnabled(true);
         mUserViewModel.getLivedataLocation().observe(requireActivity(), this::updateMapLocation);
     }
 
@@ -186,11 +189,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mGoogleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                .title(mContext.getString(R.string.marker_title)));
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
-        updateMapPlaces();
+        Activity activity = getActivity();
+        if(isAdded() && activity!=null) {
+            mGoogleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .title(requireActivity().getString(R.string.marker_title)));
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
+            updateMapPlaces();
+        }
     }
 
     //Update the map with places
@@ -258,5 +264,16 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                 .setCancelable(false)
                 .create()
                 .show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(requireContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mPlacesViewModel.getNearbySearchResponseLiveData().removeObservers(this);
+        }
     }
 }
