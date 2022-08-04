@@ -21,6 +21,10 @@ public class WorkmatesFragment extends Fragment {
 
     //For data
 
+    public static WorkmatesFragment newInstance() {
+        return new WorkmatesFragment();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

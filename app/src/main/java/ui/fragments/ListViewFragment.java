@@ -57,6 +57,10 @@ public class ListViewFragment extends Fragment {
     private List<FirebaseUser> mUserList = new ArrayList<>();
     private List<Booking> mBookingList = new ArrayList<>();
 
+    public static ListViewFragment newInstance() {
+        return new ListViewFragment();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentListViewBinding.inflate(inflater, container, false);

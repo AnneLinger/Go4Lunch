@@ -79,4 +79,5 @@
     <string name="phone_number_unknown">Phone number unknown for this place</string>
     <string name="unknown_website">Website unknown for this place</string>
     <string name="booking_done">Booking done for this place !</string>
+    <string name="no_booking">You haven\'t yet chosen a place to eat !</string>
 </resources>
