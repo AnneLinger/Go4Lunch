@@ -3,6 +3,7 @@ package ui.fragments;
 import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -118,13 +119,14 @@ public class ListViewFragment extends Fragment {
     }
 
     private void initAutocomplete(List<Prediction> predictions){
-        Log.e("Anne", "intiAutocomplete");
-
+        //Clear previous predictions
         mPlaceListAutocomplete.clear();
 
+        //If no search is done
         if(predictions.isEmpty()) {
             initRecyclerView(mPlaceList);
         }
+        //If search occurs
         else {
             for(Result result : mPlaceList) {
                 for (Prediction prediction : predictions) {
@@ -133,42 +135,23 @@ public class ListViewFragment extends Fragment {
                     }
                 }
             }
+            //If search returns no result
             if(mPlaceListAutocomplete.isEmpty()) {
                 mBinding.rvListView.setVisibility(View.GONE);
-                Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_LONG).show();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBinding.rvListView.setVisibility(View.VISIBLE);
+                        initRecyclerView(mPlaceList);
+                    }
+                }, 2000);
             }
+            //If there are search results to display
             else {
                 initRecyclerView(mPlaceListAutocomplete);
             }
         }
-
-
-        /**ist<Result> tempPlaceList = new ArrayList<>();
-        tempPlaceList = mPlaceList;
-
-        mPlaceListAutocomplete = mPlaceList;
-
-        if(predictions.isEmpty()) {
-            initRecyclerView(mPlaceList);
-            Toast.makeText(requireActivity(), getString(R.string.search_canceled), Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Log.e("Anne", "predictions!=empty");
-            for (Prediction prediction : predictions) {
-                String placeName = prediction.getDescription();
-                for (Result result : tempPlaceList) {
-                    if (!result.getName().contains(placeName)) {
-                        Log.e("Anne", "removeId");
-                        tempPlaceList.remove(result);
-                    }
-                }
-            }
-            mPlaceListAutocomplete.removeAll(tempPlaceList);
-            if (mPlaceListAutocomplete.isEmpty()) {
-                Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_SHORT).show();
-            } else {
-                initRecyclerView(mPlaceListAutocomplete);
-            }
-        }*/
     }
 }
