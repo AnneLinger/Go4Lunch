@@ -1,5 +1,7 @@
 package repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -40,11 +42,13 @@ public class AutocompleteRepositoryImpl implements AutocompleteRepository {
 
     @Override
     public void fetchAutocomplete(String query, String location, int radius) {
+        Log.e("Anne", "fetchAuto");
         PlacesApi placesApi = mRetrofitBuilder.buildRetrofit();
         Call<AutocompleteResponse> call = placesApi.getAutocompleteResponse(query, location, radius, GOOGLE_PLACE_API_KEY);
         call.enqueue(new Callback<AutocompleteResponse>() {
             @Override
             public void onResponse(Call<AutocompleteResponse> call, Response<AutocompleteResponse> response) {
+                Log.e("Anne", "fetchAutoResponse");
                 mAutocompleteLiveData.setValue(response.body().getPredictions());
             }
 
@@ -53,5 +57,10 @@ public class AutocompleteRepositoryImpl implements AutocompleteRepository {
                 t.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public void setAutocompleteToNull() {
+        mAutocompleteLiveData.setValue(null);
     }
 }

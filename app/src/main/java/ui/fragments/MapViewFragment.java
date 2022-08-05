@@ -57,6 +57,7 @@ import java.util.Objects;
 
 import model.nearbysearchpojo.Result;
 import pub.devrel.easypermissions.EasyPermissions;
+import ui.activities.AuthenticationActivity;
 import ui.activities.PlaceDetailsActivity;
 import ui.activities.PlacesActivity;
 import viewmodel.PlacesViewModel;
@@ -70,8 +71,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //For UI
     private FragmentMapViewBinding mBinding;
     private GoogleMap mGoogleMap;
-    private float zoom = 12;
-    private int radius = 12000;
+    private float zoom = 15;
+    private int radius = 10000;
 
     //For data
     private Location mLocation;
@@ -144,13 +145,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private void checkIfUserIsSignIn() {
         FirebaseUser currentUser = mUserViewModel.getCurrentUser();
         if(currentUser!=null) {
-            //TODO a compléter par retour sur co dans un else
             mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
                 zoom = mSharedPreferences.getFloat(getString(R.string.zoom), zoom);
                 radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
             }
             requestLocationPermission();
+        }
+        else{
+            navigateToAuthenticationActivity();
         }
     }
 
@@ -160,21 +163,17 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(requireContext(),
             Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.d("Anne", "requestLocPerm=>getUserLoc");
             //Permission ok => display map
             getUserLocation();
         } else {
             //Permission not ok => ask permission to the user for location
-            Log.d("Anne", "requestLocPerm=>requestPerm");
             mActivityResultLauncher.launch(perms);
-            //ActivityCompat.requestPermissions(requireActivity(), perms, PERMISSION);
         }
     }
 
     //Get the user location when permission is ok
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
-        Log.d("Anne", "getUserLoc");
         mUserViewModel.getUserLocation(this.getContext());
         mGoogleMap.setMyLocationEnabled(true);
         mUserViewModel.getLivedataLocation().observe(requireActivity(), this::updateMapLocation);
@@ -182,10 +181,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     //Update map with user location
     private void updateMapLocation(Location location) {
-        Log.d("Anne", "updateMapLoc");
         mLocation = location;
         mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
-        Log.d("Anne", mLocationString);
         mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -201,7 +198,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     //Update the map with places
     private void updateMapPlaces() {
-        Log.e("Anne", "updateMap");
         mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Result>>() {
             @Override
             public void onChanged(List<Result> results) {
@@ -264,6 +260,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                 .setCancelable(false)
                 .create()
                 .show();
+    }
+
+    private void navigateToAuthenticationActivity() {
+        Intent intent = new Intent(requireActivity(), AuthenticationActivity.class);
+        startActivity(intent);
     }
 
     @Override

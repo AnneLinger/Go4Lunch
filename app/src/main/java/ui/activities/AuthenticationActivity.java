@@ -68,7 +68,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     private void initUi() {
         mBinding = ActivityAuthenticationBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
-        Objects.requireNonNull(getSupportActionBar()).hide();
+        //Objects.requireNonNull(getSupportActionBar()).hide();
     }
 
     //Configure data

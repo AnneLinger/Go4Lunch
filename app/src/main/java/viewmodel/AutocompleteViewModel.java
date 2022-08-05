@@ -35,4 +35,8 @@ public class AutocompleteViewModel extends ViewModel {
     public LiveData<List<Prediction>> getAutocompleteLiveData() {
         return mAutocompleteRepositoryImpl.getAutocompleteLiveData();
     }
+
+    public void setAutocompleteToNull(){
+        mAutocompleteRepositoryImpl.setAutocompleteToNull();
+    }
 }

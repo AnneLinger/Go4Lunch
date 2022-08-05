@@ -11,13 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -77,7 +77,6 @@ public class PlacesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initUi();
         configureViewModels();
-        configureSearchListView();
         configureBottomNav();
         configureDrawer();
         getSupportFragmentManager().beginTransaction().add(R.id.activity_places_frame_layout, new MapViewFragment()).commit();
@@ -88,34 +87,37 @@ public class PlacesActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e("Anne", "onCreateOptionMenu");
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar_menu, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.search_icon).getActionView();
-        searchView.setBackgroundColor(getResources().getColor(R.color.white));
+        //searchView.setBackgroundColor(getResources().getColor(R.color.white));
         searchView.setQueryHint(getResources().getText(R.string.search_hint));
         searchView.setIconifiedByDefault(false);
+        searchView.getOverlay();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //TODO Manage the user query ? ? ?
+                Log.e("Anne", "onQueryTextSubmitAutocomplete");
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                Log.e("Anne", "onQueryTextChangeAutocomplete");
+                //TODO recover default radius or shared pref radius
                 int radius = 12000;
                 mAutocompleteViewModel.fetchAutocomplete(s, mLocationString, radius);
-                mAutocompleteViewModel.getAutocompleteLiveData().observe(PlacesActivity.this, this::observeAutocomplete);
-                return false;
+                return true;
             }
+        });
 
-            private void observeAutocomplete(List<Prediction> predictions) {
-                for(Prediction prediction : predictions){
-                    mSearchList.add(prediction.getStructuredFormatting().getMainText());
-                }
-            }
+        searchView.setOnCloseListener(() -> {
+            Log.e("Anne", "setOnCloseAutocomplete");
+            mAutocompleteViewModel.setAutocompleteToNull();
+            return true;
         });
 
         return true;
@@ -125,7 +127,7 @@ public class PlacesActivity extends AppCompatActivity {
     private void initUi() {
         mBinding = ActivityPlacesBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
-        Objects.requireNonNull(getSupportActionBar()).hide();
+        setSupportActionBar(mBinding.toolbar);
     }
 
     //Configure data
@@ -133,16 +135,6 @@ public class PlacesActivity extends AppCompatActivity {
         mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         mAutocompleteViewModel = new ViewModelProvider(this).get(AutocompleteViewModel.class);
         mBookingViewModel = new ViewModelProvider(this).get(BookingViewModel.class);
-    }
-
-    //Configure listView for search results
-    private void configureSearchListView() {
-        mSearchListView = mBinding.lvSearchResults;
-        mAdapter = new ArrayAdapter<String>(
-                this,
-                R.layout.item_search_list_view,
-                mSearchList);
-        mSearchListView.setAdapter(mAdapter);
     }
 
     //Configure bottom nav
