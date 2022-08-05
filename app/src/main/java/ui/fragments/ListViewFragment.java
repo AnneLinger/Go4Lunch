@@ -1,14 +1,13 @@
 package ui.fragments;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,10 +24,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import model.Booking;
 import model.autocompletepojo.Prediction;
 import model.nearbysearchpojo.Result;
+import ui.activities.PlacesActivity;
 import ui.adapter.PlaceListAdapter;
 import viewmodel.AutocompleteViewModel;
 import viewmodel.PlacesViewModel;
@@ -45,6 +46,7 @@ public class ListViewFragment extends Fragment {
 
     //For data
     private static List<Result> mPlaceList;
+    private List<Result> mPlaceListAutocomplete = new ArrayList<>();
     private UserViewModel mUserViewModel;
     private PlacesViewModel mPlacesViewModel;
     private AutocompleteViewModel mAutocompleteViewModel;
@@ -72,18 +74,18 @@ public class ListViewFragment extends Fragment {
         configureViewModels();
         observeLocation();
         observePlaces();
-        initRecyclerView();
+        initRecyclerView(mPlaceList);
         observeAutocomplete();
     }
 
-    private void initRecyclerView() {
+    private void initRecyclerView(List<Result> list) {
         mUserList.add(mAuth.getCurrentUser());
-        mBookingList.add(new Booking(0, mPlaceList.get(0).getPlaceId(), mUserList));
+        mBookingList.add(new Booking(0, list.get(0).getPlaceId(), mUserList));
         mRecyclerView = mBinding.rvListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        mRecyclerView.setAdapter(new PlaceListAdapter(mPlaceList, mLocation, mBookingList));
+        mRecyclerView.setAdapter(new PlaceListAdapter(list, mLocation, mBookingList));
     }
 
     private void configureViewModels() {
@@ -112,24 +114,61 @@ public class ListViewFragment extends Fragment {
     }
 
     private void observeAutocomplete() {
-        Log.e("Anne", "observeAutocomplete");
         mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::initAutocomplete);
     }
 
     private void initAutocomplete(List<Prediction> predictions){
         Log.e("Anne", "intiAutocomplete");
-        if(!predictions.isEmpty()){
-            Log.e("Anne", "predictions!=empty");
-            for(Prediction prediction : predictions) {
-                for(Result result : mPlaceList) {
-                    if(!result.getName().contains(prediction.getStructuredFormatting().getMainText())){
-                        Log.e("Anne", "removePlaceName");
-                        mPlaceList.remove(result);
-                        initRecyclerView();
+
+        mPlaceListAutocomplete.clear();
+
+        if(predictions.isEmpty()) {
+            initRecyclerView(mPlaceList);
+        }
+        else {
+            for(Result result : mPlaceList) {
+                for (Prediction prediction : predictions) {
+                    if(prediction.getStructuredFormatting().getMainText().contains(result.getName())) {
+                        mPlaceListAutocomplete.add(result);
                     }
                 }
             }
+            if(mPlaceListAutocomplete.isEmpty()) {
+                mBinding.rvListView.setVisibility(View.GONE);
+                Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_SHORT).show();
+            }
+            else {
+                initRecyclerView(mPlaceListAutocomplete);
+            }
         }
-    }
 
+
+        /**ist<Result> tempPlaceList = new ArrayList<>();
+        tempPlaceList = mPlaceList;
+
+        mPlaceListAutocomplete = mPlaceList;
+
+        if(predictions.isEmpty()) {
+            initRecyclerView(mPlaceList);
+            Toast.makeText(requireActivity(), getString(R.string.search_canceled), Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Log.e("Anne", "predictions!=empty");
+            for (Prediction prediction : predictions) {
+                String placeName = prediction.getDescription();
+                for (Result result : tempPlaceList) {
+                    if (!result.getName().contains(placeName)) {
+                        Log.e("Anne", "removeId");
+                        tempPlaceList.remove(result);
+                    }
+                }
+            }
+            mPlaceListAutocomplete.removeAll(tempPlaceList);
+            if (mPlaceListAutocomplete.isEmpty()) {
+                Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_SHORT).show();
+            } else {
+                initRecyclerView(mPlaceListAutocomplete);
+            }
+        }*/
+    }
 }

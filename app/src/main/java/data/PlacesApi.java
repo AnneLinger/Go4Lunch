@@ -32,6 +32,7 @@ public interface PlacesApi {
     Call<AutocompleteResponse> getAutocompleteResponse(
             @Query("input") String input,
             @Query("location") String location,
+            @Query("type") String type,
             @Query("radius") int radius,
             @Query("key") String key);
 }

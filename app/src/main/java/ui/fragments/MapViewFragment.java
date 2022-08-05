@@ -1,7 +1,5 @@
 package ui.fragments;
 
-import static android.graphics.Bitmap.createScaledBitmap;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -13,27 +11,19 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -53,13 +43,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import model.nearbysearchpojo.Result;
-import pub.devrel.easypermissions.EasyPermissions;
 import ui.activities.AuthenticationActivity;
 import ui.activities.PlaceDetailsActivity;
-import ui.activities.PlacesActivity;
 import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
@@ -71,7 +58,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //For UI
     private FragmentMapViewBinding mBinding;
     private GoogleMap mGoogleMap;
-    private float zoom = 15;
+    private float zoom = 12;
     private int radius = 10000;
 
     //For data

@@ -9,16 +9,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
@@ -30,12 +26,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import model.Booking;
-import model.autocompletepojo.AutocompleteResponse;
-import model.autocompletepojo.Prediction;
 import ui.fragments.ListViewFragment;
 import ui.fragments.MapViewFragment;
 import ui.fragments.WorkmatesFragment;
@@ -52,9 +45,6 @@ public class PlacesActivity extends AppCompatActivity {
 
     //For UI
     private ActivityPlacesBinding mBinding;
-    private ActionBarDrawerToggle mActionBarDrawerToggle;
-    private ListView mSearchListView;
-    private ArrayAdapter<String> mAdapter;
 
     //For data
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -92,7 +82,6 @@ public class PlacesActivity extends AppCompatActivity {
         inflater.inflate(R.menu.toolbar_menu, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.search_icon).getActionView();
-        //searchView.setBackgroundColor(getResources().getColor(R.color.white));
         searchView.setQueryHint(getResources().getText(R.string.search_hint));
         searchView.setIconifiedByDefault(false);
         searchView.getOverlay();
