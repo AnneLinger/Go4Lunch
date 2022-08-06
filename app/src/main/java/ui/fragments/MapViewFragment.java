@@ -15,10 +15,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -26,7 +28,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
@@ -41,12 +42,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import model.autocompletepojo.Prediction;
 import model.nearbysearchpojo.Result;
 import ui.activities.AuthenticationActivity;
 import ui.activities.PlaceDetailsActivity;
+import viewmodel.AutocompleteViewModel;
 import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
@@ -67,7 +71,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private SharedPreferences mSharedPreferences;
     private UserViewModel mUserViewModel;
     private PlacesViewModel mPlacesViewModel;
+    private AutocompleteViewModel mAutocompleteViewModel;
     private List<Result> mPlaceList;
+    private List<Result> mPlaceListAutocomplete = new ArrayList<>();
     private Context mContext;
 
     //For permissions
@@ -91,7 +97,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentMapViewBinding.inflate(getLayoutInflater());
-        configureViewModel();
+        configureViewModels();
         this.onAttach(requireContext());
         return mBinding.getRoot();
     }
@@ -109,6 +115,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mGoogleMap = googleMap;
         checkIfUserIsSignIn();
+        observeAutocomplete();
     }
 
     @Override
@@ -123,9 +130,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mContext = null;
     }
 
-    private void configureViewModel() {
+    private void configureViewModels() {
         mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         mPlacesViewModel = new ViewModelProvider(requireActivity()).get(PlacesViewModel.class);
+        mAutocompleteViewModel = new ViewModelProvider(requireActivity()).get(AutocompleteViewModel.class);
     }
 
     //Check if user is signed in to load SharedPreferences
@@ -179,30 +187,34 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .title(requireActivity().getString(R.string.marker_title)));
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
-            updateMapPlaces();
+            observeNearbyPlaces();
         }
     }
 
+    private void observeNearbyPlaces() {
+        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), this::updateMapWithNearbyPlaces);
+    }
+
     //Update the map with places
-    private void updateMapPlaces() {
-        mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Result>>() {
-            @Override
-            public void onChanged(List<Result> results) {
-                mPlaceList = results;
-                for (Result mResult : mPlaceList) {
-                    LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLat(), mResult.getGeometry().getLocation().getLng());
-                    mGoogleMap.addMarker(new MarkerOptions()
-                            .position(placeLatLng)
-                            .title(mResult.getName())
-                            .icon(BitmapDescriptorFactory.fromBitmap(setUpMarkerIcon(R.drawable.icon2073973_1920restaurant))));
-                }
-            }
-        });
+    private void updateMapWithNearbyPlaces(List<Result> results) {
+        mPlaceList = results;
+        updateMapWithData(mPlaceList);
+    }
+
+    private void updateMapWithData(List<Result> results) {
+        mGoogleMap.clear();
+        for (Result mResult : results) {
+            LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLat(), mResult.getGeometry().getLocation().getLng());
+            mGoogleMap.addMarker(new MarkerOptions()
+                    .position(placeLatLng)
+                    .title(mResult.getName())
+                    .icon(BitmapDescriptorFactory.fromBitmap(setUpMarkerIcon(R.drawable.icon2073973_1920restaurant))));
+        }
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(@NonNull Marker marker) {
                 Intent intent = new Intent(requireActivity(), PlaceDetailsActivity.class);
-                for(Result place : mPlaceList) {
+                for(Result place : results) {
                     if(marker.getTitle().equalsIgnoreCase(place.getName())){
                         intent.putExtra("place id", place.getPlaceId());
                     }
@@ -212,10 +224,49 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         });
     }
 
+    private void observeAutocomplete() {
+        mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::updateMapWithAutocompletePlaces);
+    }
+
+    private void updateMapWithAutocompletePlaces(List<Prediction> predictions){
+        //Clear previous predictions
+        mPlaceListAutocomplete.clear();
+
+        //If no search is done
+        if(predictions.isEmpty()) {
+            updateMapWithNearbyPlaces(mPlaceList);
+        }
+        //If search occurs
+        else {
+            for(Result result : mPlaceList) {
+                for (Prediction prediction : predictions) {
+                    if(prediction.getStructuredFormatting().getMainText().contains(result.getName())) {
+                        mPlaceListAutocomplete.add(result);
+                    }
+                }
+            }
+            //If search returns no result
+            if(mPlaceListAutocomplete.isEmpty()) {
+                Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_LONG).show();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateMapWithNearbyPlaces(mPlaceList);
+                    }
+                }, 2000);
+            }
+            //If there are search results to display
+            else {
+                updateMapWithData(mPlaceListAutocomplete);
+            }
+        }
+    }
+
     //Update the map when the user location changes
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        updateMapPlaces();
+        observeNearbyPlaces();
     }
 
     private Bitmap setUpMarkerIcon(int drawable) {
