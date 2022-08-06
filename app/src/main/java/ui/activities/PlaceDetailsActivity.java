@@ -144,8 +144,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         if(result.getFormattedPhoneNumber()!=null) {
+                            String phoneNumber = String.format(getString(R.string.phone_number), result.getInternationalPhoneNumber());
                             Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                            callIntent.setData(Uri.parse(result.getFormattedPhoneNumber()));
+                            callIntent.setData(Uri.parse(phoneNumber));
                             startActivity(callIntent);
                         }
                         else{

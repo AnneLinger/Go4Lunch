@@ -83,4 +83,5 @@
     <string name="search_canceled">Search canceled</string>
     <string name="no_search_result">Search canceled, there\'s no result for your search</string>
     <string name="place_photo">place_photo</string>
+    <string name="phone_number">"tel:%s"</string>
 </resources>
