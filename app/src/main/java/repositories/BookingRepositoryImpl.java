@@ -17,7 +17,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -75,16 +74,45 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void createBooking(int bookingId, String placeId, List<FirebaseUser> userList) {
+        instanceFirestore();
         //Create a new booking
         Map<String, Object> newBooking = new HashMap<>();
         newBooking.put(BOOKING_ID, bookingId);
         newBooking.put(PLACE_ID, placeId);
         newBooking.put(USER_LIST, userList);
 
-        String docRef = "docRef";
+        CollectionReference bookingCollection = mFirestore.collection(COLLECTION);
+
+         bookingCollection.get()
+                .continueWithTask(new Continuation<QuerySnapshot, Task<List<QuerySnapshot>>>() {
+                    @Override
+                    public Task<List<QuerySnapshot>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
+                        List<Task<DocumentReference>> tasks = new ArrayList<>();
+                        for(DocumentSnapshot documentSnapshot : task.getResult()) {
+                            tasks.add(documentSnapshot.getReference().collection(COLLECTION).add(newBooking));
+                        }
+                        return Tasks.whenAllSuccess(tasks);
+                    }
+                })
+                .addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
+                        Log.e("Anne", "collectionOnSuccess");
+
+                        List<QuerySnapshot> list = task.getResult();
+                        for(QuerySnapshot querySnapshot : list) {
+                            for(DocumentSnapshot documentSnapshot : querySnapshot) {
+                                Booking booking = documentSnapshot.toObject(Booking.class);
+                                List<Booking> bookings = new ArrayList<>();
+                                bookings.add(booking);
+                                mBookingList.setValue(bookings);
+                            }
+                        }
+                    }
+                });
 
         //Create a new document
-        CollectionReference bookingCollection = mFirestore.collection(COLLECTION);
+        /**CollectionReference bookingCollection = mFirestore.collection(COLLECTION);
         bookingCollection
                 .add(newBooking)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

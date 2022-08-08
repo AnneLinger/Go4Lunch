@@ -74,6 +74,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private AutocompleteViewModel mAutocompleteViewModel;
     private List<Result> mPlaceList;
     private List<Result> mPlaceListAutocomplete = new ArrayList<>();
+    private MapViewFragment mMapViewFragment = this;
     private Context mContext;
 
     //For permissions
@@ -225,40 +226,42 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     }
 
     private void observeAutocomplete() {
-        mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::updateMapWithAutocompletePlaces);
+            mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::updateMapWithAutocompletePlaces);
     }
 
     private void updateMapWithAutocompletePlaces(List<Prediction> predictions){
         //Clear previous predictions
         mPlaceListAutocomplete.clear();
 
-        //If no search is done
-        if(predictions.isEmpty()) {
-            updateMapWithNearbyPlaces(mPlaceList);
-        }
-        //If search occurs
-        else {
-            for(Result result : mPlaceList) {
-                for (Prediction prediction : predictions) {
-                    if(prediction.getStructuredFormatting().getMainText().contains(result.getName())) {
-                        mPlaceListAutocomplete.add(result);
+        if(mMapViewFragment.isVisible()) {
+            //If no search is done
+            if(predictions.isEmpty()) {
+                updateMapWithNearbyPlaces(mPlaceList);
+            }
+            //If search occurs
+            else {
+                for (Result result : mPlaceList) {
+                    for (Prediction prediction : predictions) {
+                        if (prediction.getStructuredFormatting().getMainText().contains(result.getName())) {
+                            mPlaceListAutocomplete.add(result);
+                        }
                     }
                 }
-            }
-            //If search returns no result
-            if(mPlaceListAutocomplete.isEmpty()) {
-                Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_LONG).show();
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateMapWithNearbyPlaces(mPlaceList);
-                    }
-                }, 2000);
-            }
-            //If there are search results to display
-            else {
-                updateMapWithData(mPlaceListAutocomplete);
+                //If search returns no result
+                if (mPlaceListAutocomplete.isEmpty()) {
+                    Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_LONG).show();
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateMapWithNearbyPlaces(mPlaceList);
+                        }
+                    }, 2000);
+                }
+                //If there are search results to display
+                else {
+                    updateMapWithData(mPlaceListAutocomplete);
+                }
             }
         }
     }

@@ -178,6 +178,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void observeBookings() {
+        Log.e("Anne", "observeBookings");
         mBookingViewModel.getBookingListLiveData().observe(this, new Observer<List<Booking>>() {
             @Override
             public void onChanged(List<Booking> bookings) {

@@ -54,6 +54,7 @@ public class ListViewFragment extends Fragment {
     private Location mLocation;
     private String mLocationString;
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private ListViewFragment mListViewFragment = this;
 
     //TODO manage with repo
     private List<FirebaseUser> mUserList = new ArrayList<>();
@@ -115,42 +116,44 @@ public class ListViewFragment extends Fragment {
     }
 
     private void observeAutocomplete() {
-        mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::initAutocomplete);
+            mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::initAutocomplete);
     }
 
     private void initAutocomplete(List<Prediction> predictions){
         //Clear previous predictions
         mPlaceListAutocomplete.clear();
 
-        //If no search is done
-        if(predictions.isEmpty()) {
-            initRecyclerView(mPlaceList);
-        }
-        //If search occurs
-        else {
-            for(Result result : mPlaceList) {
-                for (Prediction prediction : predictions) {
-                    if(prediction.getStructuredFormatting().getMainText().contains(result.getName())) {
-                        mPlaceListAutocomplete.add(result);
+        if(mListViewFragment.isVisible()){
+            //If no search is done
+            if(predictions.isEmpty()) {
+                initRecyclerView(mPlaceList);
+            }
+            //If search occurs
+            else {
+                for (Result result : mPlaceList) {
+                    for (Prediction prediction : predictions) {
+                        if (prediction.getStructuredFormatting().getMainText().contains(result.getName())) {
+                            mPlaceListAutocomplete.add(result);
+                        }
                     }
                 }
-            }
-            //If search returns no result
-            if(mPlaceListAutocomplete.isEmpty()) {
-                mBinding.rvListView.setVisibility(View.GONE);
-                Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_LONG).show();
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mBinding.rvListView.setVisibility(View.VISIBLE);
-                        initRecyclerView(mPlaceList);
-                    }
-                }, 2000);
-            }
-            //If there are search results to display
-            else {
-                initRecyclerView(mPlaceListAutocomplete);
+                //If search returns no result
+                if (mPlaceListAutocomplete.isEmpty()) {
+                    mBinding.rvListView.setVisibility(View.GONE);
+                    Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_LONG).show();
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mBinding.rvListView.setVisibility(View.VISIBLE);
+                            initRecyclerView(mPlaceList);
+                        }
+                    }, 2000);
+                }
+                //If there are search results to display
+                else {
+                    initRecyclerView(mPlaceListAutocomplete);
+                }
             }
         }
     }

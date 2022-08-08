@@ -31,7 +31,7 @@ public class BookingViewModel extends ViewModel {
 
     public LiveData<List<Booking>> getBookingListLiveData() {
         mBookingRepositoryImpl.instanceFirestore();
-        mBookingRepositoryImpl.getBookingListFromFirestore();
+        //mBookingRepositoryImpl.getBookingListFromFirestore();
         return mBookingRepositoryImpl.getBookingListLiveData();
     }
 
