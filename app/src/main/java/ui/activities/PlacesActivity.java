@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityPlacesBinding;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -68,10 +71,10 @@ public class PlacesActivity extends AppCompatActivity {
         initUi();
         configureViewModels();
         configureBottomNav();
+        getCurrentUser();
         configureDrawer();
         getSupportFragmentManager().beginTransaction().add(R.id.activity_places_frame_layout, new MapViewFragment()).commit();
         getUserLocation();
-        getCurrentUser();
         observeBookings();
     }
 
@@ -141,6 +144,7 @@ public class PlacesActivity extends AppCompatActivity {
                 if(!mMapViewFragment.isVisible()) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.activity_places_frame_layout, mMapViewFragment).commit();
                 }
+                mBinding.toolbar.setTitle(this.getString(R.string.toolbar_title));
                 return true;
             case R.id.item_list_view:
                 if(mListViewFragment==null) {
@@ -149,6 +153,7 @@ public class PlacesActivity extends AppCompatActivity {
                 if(!mListViewFragment.isVisible()) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.activity_places_frame_layout, mListViewFragment).commit();
                 }
+                mBinding.toolbar.setTitle(this.getString(R.string.toolbar_title));
                 return true;
             case R.id.item_workmates:
                 if(mWorkmatesFragment==null) {
@@ -157,17 +162,38 @@ public class PlacesActivity extends AppCompatActivity {
                 if(!mWorkmatesFragment.isVisible()) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.activity_places_frame_layout, mWorkmatesFragment).commit();
                 }
+                mBinding.toolbar.setTitle(this.getString(R.string.available_workmates));
                 return true;
         }
         return false;
     }
 
     private void configureDrawer() {
+        //To open drawer
         mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mBinding.placesLayout.open();           }
+                mBinding.placesLayout.open();
+            }
         });
+
+        //To manage header drawer data
+        NavigationView navigationView = findViewById(R.id.navigation_view);
+        View headerView = navigationView.getHeaderView(0);
+        ImageView userAvatar = headerView.findViewById(R.id.iv_header_avatar);
+        TextView userName = headerView.findViewById(R.id.tv_header_name);
+        TextView userMail = headerView.findViewById(R.id.tv_header_mail);
+
+        if(mUser.getPhotoUrl()!=null){
+            Glide.with(this)
+                    .load(mUser.getPhotoUrl())
+                    .circleCrop()
+                    .into(userAvatar);
+        }
+        userName.setText(mUser.getDisplayName());
+        userMail.setText(mUser.getEmail());
+
+        //Listener on drawer menu
         mBinding.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @SuppressLint("NonConstantResourceId")
             @Override

@@ -86,4 +86,5 @@
     <string name="phone_number">"tel:%s"</string>
     <string name="default_notification_channel_id">com.google.firebase.messaging.default_notification_channel_id</string>
     <string name="notification_title">Here is your lunch for today !</string>
+    <string name="available_workmates">Available workmates</string>
 </resources>
