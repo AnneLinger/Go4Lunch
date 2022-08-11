@@ -53,7 +53,6 @@ public class ListViewFragment extends Fragment {
     private AutocompleteViewModel mAutocompleteViewModel;
     private Location mLocation;
     private String mLocationString;
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private ListViewFragment mListViewFragment = this;
 
     //TODO manage with repo
@@ -81,7 +80,7 @@ public class ListViewFragment extends Fragment {
     }
 
     private void initRecyclerView(List<Result> list) {
-        mUserList.add(mAuth.getCurrentUser());
+        mUserList.add(mUserViewModel.getCurrentUser());
         mBookingList.add(new Booking(0, list.get(0).getPlaceId(), mUserList));
         mRecyclerView = mBinding.rvListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());

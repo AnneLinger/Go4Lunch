@@ -7,16 +7,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="Hello workmates view !"
-        android:layout_margin="150dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_workmates_list_view"
+        android:name="com.anne.linger.Go4Lunch.ui.fragments.WorkmatesFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="12dp"
+        android:backgroundTint="@color/white"
+        app:layoutManager="LinearLayoutManager"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="MissingConstraints">
-    </TextView>
+        tools:context=".ui.fragments.WorkmatesFragment"
+        tools:listitem="@layout/item_workmate_list_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
@@ -28,6 +29,12 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public FirebaseUser getCurrentUser() {
         return mFirebaseAuth.getCurrentUser();
+    }
+
+    //TODO Manage with LiveData and Firestore
+    @Override
+    public List<FirebaseUser> getAllUsers() {
+        return null;
     }
 
     @Override

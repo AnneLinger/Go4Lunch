@@ -1,5 +1,6 @@
 package ui.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
+import model.Booking;
+import model.nearbysearchpojo.Result;
+import ui.activities.PlaceDetailsActivity;
+import ui.fragments.WorkmatesFragment;
+
 /**
 *Adapter and ViewHolder to display a recycler view for the workmates list
 */
@@ -22,9 +28,12 @@ import java.util.List;
 public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdapter.ViewHolder> {
 
     private static List<FirebaseUser> mUserList;
+    private static List<Booking> mBookingList;
 
+    //TODO Add booking list in constructor
     public WorkmatesListAdapter(List<FirebaseUser> userList) {
         mUserList = userList;
+        //mBookingList = bookingList;
     }
 
     @NonNull
@@ -61,7 +70,10 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdap
 
         private void displayWorkmate(FirebaseUser user){
             //For avatar
-            if(user.getPhotoUrl()!=null) {
+            if(user.getPhotoUrl()==null) {
+                avatar.setImageResource(R.drawable.ic_baseline_face_24);
+            }
+            else {
                 Glide.with(itemView)
                         .load(user.getPhotoUrl())
                         .circleCrop()
@@ -70,6 +82,23 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdap
             //For name
             name.setText(user.getDisplayName());
             //For eating or not
+            //TODO with booking list
+            //For place to eat
+            //TODO with booking list
+            //For navigate to details from itemView
+            //TODO set place in constructor of displayWorkmate with booking list
+            /**place.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    navigateToPlaceDetails(place);
+                }
+            });*/
+        }
+
+        private void navigateToPlaceDetails(Result place) {
+            Intent intent = new Intent(itemView.getContext(), PlaceDetailsActivity.class);
+            intent.putExtra("place id", place.getPlaceId());
+            itemView.getContext().startActivity(intent);
         }
     }
 }
