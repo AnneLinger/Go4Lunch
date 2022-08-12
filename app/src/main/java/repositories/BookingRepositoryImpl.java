@@ -73,7 +73,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public void createBooking(int bookingId, String placeId, List<FirebaseUser> userList) {
+    public void createBooking(int bookingId, String placeId, List<String> userList) {
         instanceFirestore();
         //Create a new booking
         Map<String, Object> newBooking = new HashMap<>();
@@ -81,38 +81,8 @@ public class BookingRepositoryImpl implements BookingRepository {
         newBooking.put(PLACE_ID, placeId);
         newBooking.put(USER_LIST, userList);
 
-        CollectionReference bookingCollection = mFirestore.collection(COLLECTION);
-
-         bookingCollection.get()
-                .continueWithTask(new Continuation<QuerySnapshot, Task<List<QuerySnapshot>>>() {
-                    @Override
-                    public Task<List<QuerySnapshot>> then(@NonNull Task<QuerySnapshot> task) throws Exception {
-                        List<Task<DocumentReference>> tasks = new ArrayList<>();
-                        for(DocumentSnapshot documentSnapshot : task.getResult()) {
-                            tasks.add(documentSnapshot.getReference().collection(COLLECTION).add(newBooking));
-                        }
-                        return Tasks.whenAllSuccess(tasks);
-                    }
-                })
-                .addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
-                    @Override
-                    public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
-                        Log.e("Anne", "collectionOnSuccess");
-
-                        List<QuerySnapshot> list = task.getResult();
-                        for(QuerySnapshot querySnapshot : list) {
-                            for(DocumentSnapshot documentSnapshot : querySnapshot) {
-                                Booking booking = documentSnapshot.toObject(Booking.class);
-                                List<Booking> bookings = new ArrayList<>();
-                                bookings.add(booking);
-                                mBookingList.setValue(bookings);
-                            }
-                        }
-                    }
-                });
-
         //Create a new document
-        /**CollectionReference bookingCollection = mFirestore.collection(COLLECTION);
+        CollectionReference bookingCollection = mFirestore.collection(COLLECTION);
         bookingCollection
                 .add(newBooking)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -127,12 +97,6 @@ public class BookingRepositoryImpl implements BookingRepository {
                         Log.e("Anne", "collectionOnFailure");
                     }
                 });
-        /**mFirestore.collection(COLLECTION)
-                .get()
-                .addOnSuccessListener(documentReference -> mFirestore.collection(COLLECTION)
-                        .document(documentReference.getId()))
-                .addOnFailureListener(e -> Log.e("Anne", "collectionOnFailure" + e.getMessage()));*/
-
     }
 
     @Override

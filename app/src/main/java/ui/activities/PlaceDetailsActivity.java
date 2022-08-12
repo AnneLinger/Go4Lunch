@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import model.Booking;
@@ -187,8 +188,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         });
         if(!mBookingList.isEmpty()){
             for(Booking booking : mBookingList){
-                for(FirebaseUser firebaseUser : booking.getUserList()){
-                    if(firebaseUser==mUserViewModel.getCurrentUser()){
+                for(String firebaseUser : booking.getUserList()){
+                    if(Objects.equals(firebaseUser, mUserViewModel.getCurrentUser().toString())){
                         manageBookingFAB(true);
                     }
                 }
@@ -201,15 +202,15 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void manageBooking(String placeId) {
         if(!mBookingList.isEmpty()) {
             for (Booking booking : mBookingList) {
-                if (booking.getPlaceId() == placeId) {
-                    booking.getUserList().add(mUserViewModel.getCurrentUser());
+                if (Objects.equals(booking.getPlaceId(), placeId)) {
+                    booking.getUserList().add(mUserViewModel.getCurrentUser().toString());
                     //TODO call updateBooking to also update in firestore
                 }
             }
         }
         else {
-            List<FirebaseUser> newUserList = new ArrayList<>();
-            newUserList.add(mUserViewModel.getCurrentUser());
+            List<String> newUserList = new ArrayList<>();
+            newUserList.add(mUserViewModel.getCurrentUser().toString());
             mBookingViewModel.createBooking(mBookingList.size() + 1, placeId, newUserList);
         }
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();

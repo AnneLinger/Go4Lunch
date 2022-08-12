@@ -56,7 +56,7 @@ public class ListViewFragment extends Fragment {
     private ListViewFragment mListViewFragment = this;
 
     //TODO manage with repo
-    private List<FirebaseUser> mUserList = new ArrayList<>();
+    private List<String> mUserList = new ArrayList<>();
     private List<Booking> mBookingList = new ArrayList<>();
 
     public static ListViewFragment newInstance() {
@@ -80,7 +80,7 @@ public class ListViewFragment extends Fragment {
     }
 
     private void initRecyclerView(List<Result> list) {
-        mUserList.add(mUserViewModel.getCurrentUser());
+        mUserList.add(mUserViewModel.getCurrentUser().toString());
         mBookingList.add(new Booking(0, list.get(0).getPlaceId(), mUserList));
         mRecyclerView = mBinding.rvListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());

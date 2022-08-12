@@ -246,9 +246,9 @@ public class PlacesActivity extends AppCompatActivity {
         mBookingList = bookings;
         if(!mBookingList.isEmpty()) {
             for(Booking booking : bookings) {
-                List<FirebaseUser> userList = booking.getUserList();
-                for (FirebaseUser firebaseUser : userList) {
-                    if (firebaseUser.getUid().equals(mUser.getUid())) {
+                List<String> userList = booking.getUserList();
+                for (String firebaseUser : userList) {
+                    if (firebaseUser.equals(mUser.getDisplayName())) {
                         mUserPlaceBooking = booking.getPlaceId();
                     }
                 }

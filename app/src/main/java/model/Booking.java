@@ -11,9 +11,9 @@ import java.util.List;
 public class Booking {
     private int bookingId;
     private String placeId;
-    private List<FirebaseUser> userList;
+    private List<String> userList;
 
-    public Booking(int bookingId, String placeId, List<FirebaseUser> userList) {
+    public Booking(int bookingId, String placeId, List<String> userList) {
         this.bookingId = bookingId;
         this.placeId = placeId;
         this.userList = userList;
@@ -35,11 +35,11 @@ public class Booking {
         this.placeId = placeId;
     }
 
-    public List<FirebaseUser> getUserList() {
+    public List<String> getUserList() {
         return userList;
     }
 
-    public void setUserList(List<FirebaseUser> userList) {
+    public void setUserList(List<String> userList) {
         this.userList = userList;
     }
 }
