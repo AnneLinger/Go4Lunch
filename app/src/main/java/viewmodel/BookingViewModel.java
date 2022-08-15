@@ -1,6 +1,7 @@
 package viewmodel;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseUser;
@@ -29,15 +30,24 @@ public class BookingViewModel extends ViewModel {
         mBookingRepositoryImpl = bookingRepositoryImpl;
     }
 
-    public LiveData<List<Booking>> getBookingListLiveData() {
+    public void fetchBookingList() {
         mBookingRepositoryImpl.instanceFirestore();
-        //mBookingRepositoryImpl.getBookingListFromFirestore();
+        mBookingRepositoryImpl.getBookingListFromFirestore();
+    }
+
+    public LiveData<List<Booking>> getBookingListLiveData() {
         return mBookingRepositoryImpl.getBookingListLiveData();
     }
 
-    public void createBooking(int bookingId, String placeId, List<String> userList) {
+    public List<Booking> getBookingListValue() {
         mBookingRepositoryImpl.instanceFirestore();
-        mBookingRepositoryImpl.createBooking(bookingId, placeId, userList);
+        mBookingRepositoryImpl.getBookingListFromFirestore();
+        return mBookingRepositoryImpl.getBookingListLiveData().getValue();
+    }
+
+    public void createBooking(String bookingId, String placeId, String user) {
+        mBookingRepositoryImpl.instanceFirestore();
+        mBookingRepositoryImpl.createBooking(bookingId, placeId, user);
     }
 
     public void updateBooking() {

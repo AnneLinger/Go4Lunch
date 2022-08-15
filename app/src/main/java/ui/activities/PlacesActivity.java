@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
@@ -75,7 +76,7 @@ public class PlacesActivity extends AppCompatActivity {
         configureDrawer();
         getSupportFragmentManager().beginTransaction().add(R.id.activity_places_frame_layout, new MapViewFragment()).commit();
         getUserLocation();
-        observeBookings();
+        //observeBookings();
     }
 
     @Override
@@ -239,19 +240,29 @@ public class PlacesActivity extends AppCompatActivity {
     }
 
     private void observeBookings() {
+        mBookingViewModel.fetchBookingList();
         mBookingViewModel.getBookingListLiveData().observe(this, this::getUserBooking);
     }
 
     private void getUserBooking(List<Booking> bookings) {
         mBookingList = bookings;
-        if(!mBookingList.isEmpty()) {
-            for(Booking booking : bookings) {
-                List<String> userList = booking.getUserList();
-                for (String firebaseUser : userList) {
-                    if (firebaseUser.equals(mUser.getDisplayName())) {
+        if(mBookingList.isEmpty()){
+            Log.e("Anne", "mBookingListEmpty");
+        }
+        else {
+            for(Booking booking : mBookingList) {
+                Log.e("Anne", mBookingList.toString());
+                if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
+                    mUserPlaceBooking = booking.getPlaceId();
+                }
+                /**Log.e("Anne", mBookingList.toString());
+                String user = booking.getUser();
+                Log.e("Anne", user);
+                if(!(user == null)) {
+                    if (user.equalsIgnoreCase(mUser.getDisplayName())) {
                         mUserPlaceBooking = booking.getPlaceId();
                     }
-                }
+                }*/
             }
         }
     }

@@ -21,7 +21,7 @@ public interface BookingRepository {
 
     void getBookingListFromFirestore();
 
-    void createBooking(int bookingId, String placeId, List<String> userList);
+    void createBooking(String bookingId, String placeId, String user);
 
     void updateBooking();
 

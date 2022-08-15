@@ -8,22 +8,26 @@ import java.util.List;
 /**
 *Model for bookings made by users
 */
-public class Booking {
-    private int bookingId;
-    private String placeId;
-    private List<String> userList;
 
-    public Booking(int bookingId, String placeId, List<String> userList) {
-        this.bookingId = bookingId;
-        this.placeId = placeId;
-        this.userList = userList;
+public class Booking {
+    private String bookingId;
+    private String placeId;
+    private String user;
+
+    public Booking(){
     }
 
-    public int getBookingId() {
+    public Booking(String bookingId, String placeId, String user) {
+        this.bookingId = bookingId;
+        this.placeId = placeId;
+        this.user = user;
+    }
+
+    public String getBookingId() {
         return bookingId;
     }
 
-    public void setBookingId(int bookingId) {
+    public void setBookingId(String bookingId) {
         this.bookingId = bookingId;
     }
 
@@ -35,11 +39,11 @@ public class Booking {
         this.placeId = placeId;
     }
 
-    public List<String> getUserList() {
-        return userList;
+    public String getUser() {
+        return user;
     }
 
-    public void setUserList(List<String> userList) {
-        this.userList = userList;
+    public void setUser(String user) {
+        this.user = user;
     }
 }

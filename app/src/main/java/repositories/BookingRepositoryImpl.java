@@ -40,7 +40,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     private static final String COLLECTION = "Bookings";
     private static final String BOOKING_ID = "BookingId";
     private static final String PLACE_ID = "PlaceId";
-    private static final String USER_LIST = "UserList";
+    private static final String USER = "User";
 
     @Inject
     public BookingRepositoryImpl(){
@@ -63,6 +63,7 @@ public class BookingRepositoryImpl implements BookingRepository {
                 Log.e("Anne", "collectionError");
             }
             if (value!=null) {
+                Log.e("Anne", "getCollectionOK");
                 List<Booking> bookingList = value.toObjects(Booking.class);
                 mBookingList.setValue(bookingList);
             }
@@ -73,13 +74,13 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public void createBooking(int bookingId, String placeId, List<String> userList) {
+    public void createBooking(String bookingId, String placeId, String user) {
         instanceFirestore();
         //Create a new booking
         Map<String, Object> newBooking = new HashMap<>();
         newBooking.put(BOOKING_ID, bookingId);
         newBooking.put(PLACE_ID, placeId);
-        newBooking.put(USER_LIST, userList);
+        newBooking.put(USER, user);
 
         //Create a new document
         CollectionReference bookingCollection = mFirestore.collection(COLLECTION);

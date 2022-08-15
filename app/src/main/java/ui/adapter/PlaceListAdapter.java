@@ -105,7 +105,8 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
             else{
                 for(Booking mBooking : mBookingList){
                     if(Objects.equals(mBooking.getPlaceId(), place.getPlaceId())){
-                        workmateNumber.setText(format(Locale.getDefault(), "%d", mBooking.getUserList().size()));
+                        //TODO manage numbers with joining workmates
+                        workmateNumber.setText(format(Locale.getDefault(), "%d", 1));
                     }
                 }
             }

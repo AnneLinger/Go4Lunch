@@ -179,7 +179,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void observeBookings() {
-        Log.e("Anne", "observeBookings");
+        Log.e("Anne", "observeBookingsPlaceDetails");
         mBookingViewModel.getBookingListLiveData().observe(this, new Observer<List<Booking>>() {
             @Override
             public void onChanged(List<Booking> bookings) {
@@ -188,14 +188,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         });
         if(!mBookingList.isEmpty()){
             for(Booking booking : mBookingList){
-                for(String firebaseUser : booking.getUserList()){
-                    if(Objects.equals(firebaseUser, mUserViewModel.getCurrentUser().toString())){
-                        manageBookingFAB(true);
-                    }
+                if(Objects.equals(booking.getUser(), mUserViewModel.getCurrentUser().toString())){
+                    manageBookingFAB(true);
                 }
             }
         }
-
     }
 
     //To manage user booking wish
@@ -203,15 +200,15 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         if(!mBookingList.isEmpty()) {
             for (Booking booking : mBookingList) {
                 if (Objects.equals(booking.getPlaceId(), placeId)) {
-                    booking.getUserList().add(mUserViewModel.getCurrentUser().toString());
+                    //booking.setUser(mUserViewModel.getCurrentUser().toString());
                     //TODO call updateBooking to also update in firestore
                 }
             }
         }
         else {
-            List<String> newUserList = new ArrayList<>();
-            newUserList.add(mUserViewModel.getCurrentUser().toString());
-            mBookingViewModel.createBooking(mBookingList.size() + 1, placeId, newUserList);
+            String user = mUserViewModel.getCurrentUser().toString();
+            //TODO manage with good id
+            mBookingViewModel.createBooking("1", placeId, user);
         }
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
