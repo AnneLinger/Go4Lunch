@@ -63,7 +63,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         initUi();
         configureViewModel();
         startSignInActivity();
-        responseAfterSignInFacebook();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
