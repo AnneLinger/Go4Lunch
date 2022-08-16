@@ -6,4 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ui.activities.AuthenticationActivity">
+
+    <Button
+        android:id="@+id/bt_facebook_login"
+        style="@style/bt_login"
+        android:layout_width="@dimen/width_login"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:paddingVertical="12dp"
+        android:backgroundTint="@color/facebook"
+        android:text="@string/sign_in_with_facebook"
+        http:icon="@drawable/facebook"
+        http:iconPadding="8dp"
+        http:iconTint="@color/white"
+        http:layout_constraintBottom_toBottomOf="parent"
+        http:layout_constraintEnd_toEndOf="parent"
+        http:layout_constraintStart_toStartOf="parent">
+    </Button>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

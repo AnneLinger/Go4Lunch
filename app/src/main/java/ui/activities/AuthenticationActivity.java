@@ -2,34 +2,40 @@ package ui.activities;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityAuthenticationBinding;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import model.User;
 import viewmodel.UserViewModel;
 
 /**
@@ -47,21 +53,29 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 123;
 
+    CallbackManager mCallbackManager = CallbackManager.Factory.create();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
         initUi();
         configureViewModel();
         startSignInActivity();
+        responseAfterSignInFacebook();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
         this.responseAfterSignIn(requestCode, resultCode, data);
     }
 
     //Check if user is signed in
+     @RequiresApi(api = Build.VERSION_CODES.M)
      @Override
      public void onStart() {
          super.onStart();
@@ -83,9 +97,18 @@ public class AuthenticationActivity extends AppCompatActivity {
         mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToPlacesActivity() {
         Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
-        startActivity(intent);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        //Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
+        //startActivity(intent);
+        try {
+            pendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
         finish();
     }
 
@@ -113,6 +136,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                 RC_SIGN_IN);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void responseAfterSignIn(int requestCode, int resultCode, Intent data) {
         IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
         if (requestCode == RC_SIGN_IN) {
@@ -134,6 +158,40 @@ public class AuthenticationActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void listenerOnFacebookSignIn() {
+        List<String> permissions = Arrays.asList("public_profile");
+        mBinding.btFacebookLogin.setOnClickListener(view -> {
+            LoginManager.getInstance().logInWithReadPermissions(this, permissions);
+        });
+    }
+
+    private void responseAfterSignInFacebook() {
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                facebookLogIn(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                showSnackBar(getString(R.string.canceled_authentication));
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                showSnackBar(getString(R.string.unknown_error));
+            }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void facebookLogIn(AccessToken accessToken) {
+        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
+        createUser();
+        navigateToPlacesActivity();
     }
 
     private void createUser() {

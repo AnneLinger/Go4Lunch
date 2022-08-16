@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.anne.linger.go4lunch.R;
@@ -38,6 +39,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     public NotificationReceiver(){
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
@@ -46,10 +48,11 @@ public class NotificationReceiver extends BroadcastReceiver {
         sendVisualNotification();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void sendVisualNotification() {
         // Create an Intent that will be shown when user will click on the Notification
         Intent intent = new Intent(context, AuthenticationActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         // Create a Channel (Android 8)
         String channelId = context.getString(R.string.default_notification_channel_id);
