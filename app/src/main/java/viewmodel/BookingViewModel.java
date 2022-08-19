@@ -40,8 +40,6 @@ public class BookingViewModel extends ViewModel {
     }
 
     public List<Booking> getBookingListValue() {
-        mBookingRepositoryImpl.instanceFirestore();
-        mBookingRepositoryImpl.getBookingListFromFirestore();
         return mBookingRepositoryImpl.getBookingListLiveData().getValue();
     }
 

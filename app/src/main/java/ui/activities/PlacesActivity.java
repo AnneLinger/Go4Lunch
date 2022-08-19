@@ -76,7 +76,8 @@ public class PlacesActivity extends AppCompatActivity {
         configureDrawer();
         getSupportFragmentManager().beginTransaction().add(R.id.activity_places_frame_layout, new MapViewFragment()).commit();
         getUserLocation();
-        //observeBookings();
+        observeBookings();
+        //checkUserBooking();
     }
 
     @Override
@@ -240,8 +241,34 @@ public class PlacesActivity extends AppCompatActivity {
     }
 
     private void observeBookings() {
+        Log.e("Anne", "observeBookings");
         mBookingViewModel.fetchBookingList();
         mBookingViewModel.getBookingListLiveData().observe(this, this::getUserBooking);
+    }
+
+    private void checkUserBooking() {
+        mBookingList = mBookingViewModel.getBookingListValue();
+        if(mBookingList.isEmpty()){
+            Log.e("Anne", "mBookingListEmpty");
+        }
+        else {
+            for(Booking booking : mBookingList) {
+                Log.e("Anne", mBookingList.toString());
+                Log.e("Anne", booking.toString());
+                Log.e("Anne", booking.getPlaceId());
+                if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
+                    mUserPlaceBooking = booking.getPlaceId();
+                }
+                Log.e("Anne", mBookingList.toString());
+                String user = booking.getUser();
+                Log.e("Anne", user);
+                if(!(user == null)) {
+                    if (user.equalsIgnoreCase(mUser.getDisplayName())) {
+                        mUserPlaceBooking = booking.getPlaceId();
+                    }
+                }
+            }
+        }
     }
 
     private void getUserBooking(List<Booking> bookings) {
@@ -252,17 +279,19 @@ public class PlacesActivity extends AppCompatActivity {
         else {
             for(Booking booking : mBookingList) {
                 Log.e("Anne", mBookingList.toString());
+                Log.e("Anne", booking.toString());
+                Log.e("Anne", booking.getPlaceId());
                 if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
                     mUserPlaceBooking = booking.getPlaceId();
                 }
-                /**Log.e("Anne", mBookingList.toString());
+                Log.e("Anne", mBookingList.toString());
                 String user = booking.getUser();
                 Log.e("Anne", user);
                 if(!(user == null)) {
                     if (user.equalsIgnoreCase(mUser.getDisplayName())) {
                         mUserPlaceBooking = booking.getPlaceId();
                     }
-                }*/
+                }
             }
         }
     }

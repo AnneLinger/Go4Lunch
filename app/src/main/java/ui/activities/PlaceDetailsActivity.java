@@ -57,6 +57,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private BookingViewModel mBookingViewModel;
     private UserViewModel mUserViewModel;
     private List<Booking> mBookingList = new ArrayList<>();
+    private FirebaseUser mUser;
+    private String mUserPlaceBooking;
+    private Result place;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,6 +68,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         configureActionBar();
         configureViewModels();
         getPlaceDetails();
+        getCurrentUser();
         observeBookings();
     }
 
@@ -116,6 +120,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void initDataPlaceDetails(Result result) {
+            place = result;
             //For place photo
             if(result.getPhotos()==null){
                 mBinding.imDetailPlace.setImageResource(R.drawable.drawer_header_background);
@@ -178,7 +183,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             });
     }
 
-    private void observeBookings() {
+    private void getCurrentUser() {
+        mUser = mUserViewModel.getCurrentUser();
+    }
+
+    private void observeBookingsBis() {
         Log.e("Anne", "observeBookingsPlaceDetails");
         mBookingViewModel.getBookingListLiveData().observe(this, new Observer<List<Booking>>() {
             @Override
@@ -190,6 +199,40 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             for(Booking booking : mBookingList){
                 if(Objects.equals(booking.getUser(), mUserViewModel.getCurrentUser().toString())){
                     manageBookingFAB(true);
+                }
+            }
+        }
+    }
+
+    private void observeBookings() {
+        Log.e("Anne", "observeBookings");
+        mBookingViewModel.fetchBookingList();
+        mBookingViewModel.getBookingListLiveData().observe(this, this::getUserBooking);
+    }
+
+    private void getUserBooking(List<Booking> bookings) {
+        mBookingList = bookings;
+        if(mBookingList.isEmpty()){
+            Log.e("Anne", "mBookingListEmptyPD");
+        }
+        else {
+            for(Booking booking : mBookingList) {
+                Log.e("Anne", mBookingList.toString());
+                Log.e("Anne", booking.toString());
+                Log.e("Anne", booking.getPlaceId());
+                if (booking.getPlaceId().equalsIgnoreCase(place.getPlaceId())) {
+                    manageBookingFAB(true);
+                }
+                if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
+                    mUserPlaceBooking = booking.getPlaceId();
+                }
+                Log.e("Anne", mBookingList.toString());
+                String user = booking.getUser();
+                Log.e("Anne", user);
+                if(!(user == null)) {
+                    if (user.equalsIgnoreCase(mUser.getDisplayName())) {
+                        mUserPlaceBooking = booking.getPlaceId();
+                    }
                 }
             }
         }

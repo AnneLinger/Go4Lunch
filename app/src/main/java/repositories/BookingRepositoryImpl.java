@@ -3,6 +3,7 @@ package repositories;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -16,7 +17,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -35,7 +39,7 @@ import model.Booking;
 public class BookingRepositoryImpl implements BookingRepository {
 
     //For data
-    FirebaseFirestore mFirestore;
+    private FirebaseFirestore mFirestore;
     private final MutableLiveData<List<Booking>> mBookingList = new MutableLiveData<>();
     private static final String COLLECTION = "Bookings";
     private static final String BOOKING_ID = "BookingId";
@@ -58,19 +62,49 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void getBookingListFromFirestore() {
-        mFirestore.collection(COLLECTION).addSnapshotListener(((value, error) -> {
+        /**mFirestore.collection(COLLECTION).addSnapshotListener((value, error) -> {
             if(error!=null){
                 Log.e("Anne", "collectionError");
+                return;
             }
             if (value!=null) {
                 Log.e("Anne", "getCollectionOK");
+                Log.e("Anne", value.toString());
                 List<Booking> bookingList = value.toObjects(Booking.class);
                 mBookingList.setValue(bookingList);
+                Log.e("Anne", mBookingList.toString());
             }
             else{
                 Log.e("Anne", "collectionValueNull");
             }
-        }));
+        });*/
+
+        mFirestore.collection(COLLECTION).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error!=null) {
+                    Log.e("Anne", "collectionError");
+                    return;
+                }
+
+                List<Booking> bookings = new ArrayList<>();
+                for (QueryDocumentSnapshot documentSnapshot : value){
+                    Booking booking = new Booking();
+                    if(documentSnapshot.get("User") != null) {
+                        booking.setUser(documentSnapshot.getString("User"));
+                    }
+                    if(documentSnapshot.get("BookingId") != null) {
+                        booking.setBookingId(documentSnapshot.getString("BookingId"));
+                    }
+                    if(documentSnapshot.get("PlaceId") != null) {
+                        booking.setPlaceId(documentSnapshot.getString("PlaceId"));
+                    }
+                    bookings.add(booking);
+                }
+                Log.e("Anne", bookings.toString());
+                mBookingList.setValue(bookings);
+            }
+        });
     }
 
     @Override
