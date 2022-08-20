@@ -83,7 +83,7 @@ public class BookingRepositoryImpl implements BookingRepository {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error!=null) {
-                    Log.e("Anne", "collectionError");
+                    Log.e("Anne", "getCollectionError");
                     return;
                 }
 
@@ -101,7 +101,7 @@ public class BookingRepositoryImpl implements BookingRepository {
                     }
                     bookings.add(booking);
                 }
-                Log.e("Anne", bookings.toString());
+                Log.e("Anne", "queryListenerRepo : bookings : " + bookings.toString());
                 mBookingList.setValue(bookings);
             }
         });
@@ -123,13 +123,13 @@ public class BookingRepositoryImpl implements BookingRepository {
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Log.e("Anne", "collectionOnSuccess");
+                        Log.e("Anne", "setCollectionOnSuccess");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("Anne", "collectionOnFailure");
+                        Log.e("Anne", "setCollectionOnFailure");
                     }
                 });
     }

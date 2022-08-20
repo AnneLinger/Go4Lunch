@@ -77,7 +77,6 @@ public class PlacesActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.activity_places_frame_layout, new MapViewFragment()).commit();
         getUserLocation();
         observeBookings();
-        //checkUserBooking();
     }
 
     @Override
@@ -241,54 +240,27 @@ public class PlacesActivity extends AppCompatActivity {
     }
 
     private void observeBookings() {
-        Log.e("Anne", "observeBookings");
+        Log.e("Anne", "observeBookingsInPlacesActivity");
         mBookingViewModel.fetchBookingList();
         mBookingViewModel.getBookingListLiveData().observe(this, this::getUserBooking);
-    }
-
-    private void checkUserBooking() {
-        mBookingList = mBookingViewModel.getBookingListValue();
-        if(mBookingList.isEmpty()){
-            Log.e("Anne", "mBookingListEmpty");
-        }
-        else {
-            for(Booking booking : mBookingList) {
-                Log.e("Anne", mBookingList.toString());
-                Log.e("Anne", booking.toString());
-                Log.e("Anne", booking.getPlaceId());
-                if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
-                    mUserPlaceBooking = booking.getPlaceId();
-                }
-                Log.e("Anne", mBookingList.toString());
-                String user = booking.getUser();
-                Log.e("Anne", user);
-                if(!(user == null)) {
-                    if (user.equalsIgnoreCase(mUser.getDisplayName())) {
-                        mUserPlaceBooking = booking.getPlaceId();
-                    }
-                }
-            }
-        }
     }
 
     private void getUserBooking(List<Booking> bookings) {
         mBookingList = bookings;
         if(mBookingList.isEmpty()){
-            Log.e("Anne", "mBookingListEmpty");
+            Log.e("Anne", "mBookingListIsEmptyInPlacesActivity");
         }
         else {
             for(Booking booking : mBookingList) {
-                Log.e("Anne", mBookingList.toString());
-                Log.e("Anne", booking.toString());
-                Log.e("Anne", booking.getPlaceId());
-                if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
-                    mUserPlaceBooking = booking.getPlaceId();
-                }
-                Log.e("Anne", mBookingList.toString());
-                String user = booking.getUser();
-                Log.e("Anne", user);
-                if(!(user == null)) {
-                    if (user.equalsIgnoreCase(mUser.getDisplayName())) {
+                Log.e("Anne", "getUserBookingInPlacesActivity : bookings : " + mBookingList.toString());
+                Log.e("Anne", "getUserBookingInPlacesActivity : booking : " + booking.toString());
+                Log.e("Anne", "getUserBookingInPlacesActivity : placeId : " + booking.getPlaceId());
+                Log.e("Anne", "getUserBookingInPlacesActivity : user : " + booking.getUser());
+                Log.e("Anne", "getUserBookingInPlacesActivity : bookingId : " + booking.getBookingId());
+                if(!(booking.getUser() == null)) {
+                    Log.e("Anne", mUser.getDisplayName());
+                    Log.e("Anne", booking.getUser());
+                    if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
                         mUserPlaceBooking = booking.getPlaceId();
                     }
                 }

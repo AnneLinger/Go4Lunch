@@ -59,7 +59,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private List<Booking> mBookingList = new ArrayList<>();
     private FirebaseUser mUser;
     private String mUserPlaceBooking;
-    private Result place;
+    private String placeId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,12 +115,13 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void getPlaceDetails() {
         Log.e("Anne", "getPlaceDetails");
         Intent intent = getIntent();
-        mPlaceDetailsViewModel.fetchPlaceDetails(intent.getStringExtra("place id"));
+        placeId = intent.getStringExtra("place id");
+        mPlaceDetailsViewModel.fetchPlaceDetails(placeId);
         mPlaceDetailsViewModel.getPlaceDetailsLiveData().observe(this, this::initDataPlaceDetails);
     }
 
     private void initDataPlaceDetails(Result result) {
-            place = result;
+            placeId = result.getPlaceId();
             //For place photo
             if(result.getPhotos()==null){
                 mBinding.imDetailPlace.setImageResource(R.drawable.drawer_header_background);
@@ -205,7 +206,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void observeBookings() {
-        Log.e("Anne", "observeBookings");
+        Log.e("Anne", "observeBookingsInPlaceDetails");
         mBookingViewModel.fetchBookingList();
         mBookingViewModel.getBookingListLiveData().observe(this, this::getUserBooking);
     }
@@ -213,14 +214,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void getUserBooking(List<Booking> bookings) {
         mBookingList = bookings;
         if(mBookingList.isEmpty()){
-            Log.e("Anne", "mBookingListEmptyPD");
+            Log.e("Anne", "mBookingListEmptyInPlaceDetails");
         }
         else {
             for(Booking booking : mBookingList) {
-                Log.e("Anne", mBookingList.toString());
-                Log.e("Anne", booking.toString());
-                Log.e("Anne", booking.getPlaceId());
-                if (booking.getPlaceId().equalsIgnoreCase(place.getPlaceId())) {
+                if (booking.getPlaceId().equalsIgnoreCase(placeId)) {
                     manageBookingFAB(true);
                 }
                 if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
@@ -249,9 +247,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             }
         }
         else {
-            String user = mUserViewModel.getCurrentUser().toString();
+            String user = mUserViewModel.getCurrentUser().getDisplayName();
             //TODO manage with good id
-            mBookingViewModel.createBooking("1", placeId, user);
+            mBookingViewModel.createBooking(String.valueOf(mBookingList.size()+1), placeId, user);
         }
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
