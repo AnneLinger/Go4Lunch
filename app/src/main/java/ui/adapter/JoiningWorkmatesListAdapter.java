@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.anne.linger.go4lunch.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import model.Place;
@@ -27,10 +28,13 @@ import repositories.NearbySearchRepositoryImpl;
 
 public class JoiningWorkmatesListAdapter extends RecyclerView.Adapter<JoiningWorkmatesListAdapter.ViewHolder> {
 
-    private static List<User> mJoiningWorkmatesList;
+    private static List<String> mJoiningWorkmatesList = new ArrayList<>();
 
-    public JoiningWorkmatesListAdapter(List<User> joiningWorkmatesList) {
+    public JoiningWorkmatesListAdapter(List<String> joiningWorkmatesList) {
         mJoiningWorkmatesList = joiningWorkmatesList;
+    }
+
+    public JoiningWorkmatesListAdapter() {
     }
 
     @NonNull
@@ -47,7 +51,12 @@ public class JoiningWorkmatesListAdapter extends RecyclerView.Adapter<JoiningWor
 
     @Override
     public int getItemCount() {
-        return mJoiningWorkmatesList.size();
+        if(mJoiningWorkmatesList.isEmpty()) {
+            return 0;
+        }
+        else {
+            return mJoiningWorkmatesList.size();
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -63,9 +72,9 @@ public class JoiningWorkmatesListAdapter extends RecyclerView.Adapter<JoiningWor
             name = itemView.findViewById(R.id.tv_joining_workmate);
         }
 
-        private void displayWorkmates(User workmate) {
+        private void displayWorkmates(String workmate) {
             //avatar.set...
-            name.setText(workmate.getName());
+            name.setText(workmate);
         }
     }
 }

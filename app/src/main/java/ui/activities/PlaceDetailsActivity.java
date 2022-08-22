@@ -8,12 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,11 +23,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import model.Booking;
-import model.User;
 import model.placedetailspojo.Result;
 import ui.adapter.JoiningWorkmatesListAdapter;
 import viewmodel.BookingViewModel;
@@ -50,16 +44,14 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
 
     //For data
-    private final List<User> mJoiningWorkmatesList = new ArrayList<>();
-    //TODO to replace with good data
-    private final User fakeWorkmate = new User("1", "Peter", "https://fakeimg.pl/300/");
     private PlaceDetailsViewModel mPlaceDetailsViewModel;
     private BookingViewModel mBookingViewModel;
     private UserViewModel mUserViewModel;
     private List<Booking> mBookingList = new ArrayList<>();
     private FirebaseUser mUser;
-    private String mUserPlaceBooking;
     private String placeId;
+    private List<String> mJoiningWorkmates = new ArrayList<>();
+    private Booking mUserBooking;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,8 +59,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         initUi();
         configureActionBar();
         configureViewModels();
-        getPlaceDetails();
         getCurrentUser();
+        getPlaceDetails();
         observeBookings();
     }
 
@@ -77,14 +69,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         mBinding = ActivityPlaceDetailsBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
         initRecyclerView();
-    }
-
-    @SuppressLint("UseCompatLoadingForDrawables")
-    private void manageBookingFAB(boolean isBooking){
-        if(isBooking){
-            mBinding.fabDetailChoice.setImageDrawable(getDrawable(R.drawable.ic_baseline_check_circle_24));
-        }
-        else mBinding.fabDetailChoice.setImageDrawable(getDrawable(R.drawable.check_circle_grey));
     }
 
     private void configureActionBar() {
@@ -98,18 +82,26 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
         Log.d("Anne", "initRV");
-        mJoiningWorkmatesList.add(fakeWorkmate);
         mRecyclerView = mBinding.rvDetailWorkmates;
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.HORIZONTAL));
-        mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmatesList));
+        if(isPlaceHasBooking()) {
+            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmates));
+        }
+        else {
+            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter());
+        }
     }
 
     private void configureViewModels() {
         mPlaceDetailsViewModel = new ViewModelProvider(this).get(PlaceDetailsViewModel.class);
         mBookingViewModel = new ViewModelProvider(this).get(BookingViewModel.class);
         mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+    }
+
+    private void getCurrentUser() {
+        mUser = mUserViewModel.getCurrentUser();
     }
 
     private void getPlaceDetails() {
@@ -121,7 +113,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void initDataPlaceDetails(Result result) {
-            placeId = result.getPlaceId();
             //For place photo
             if(result.getPhotos()==null){
                 mBinding.imDetailPlace.setImageResource(R.drawable.drawer_header_background);
@@ -143,24 +134,24 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             mBinding.fabDetailChoice.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    manageBooking(result.getPlaceId());
+                    manageBookingChoice();
                 }
             });
             //For place call
-                mBinding.btDetailCall.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(result.getFormattedPhoneNumber()!=null) {
-                            String phoneNumber = String.format(getString(R.string.phone_number), result.getInternationalPhoneNumber());
-                            Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                            callIntent.setData(Uri.parse(phoneNumber));
-                            startActivity(callIntent);
-                        }
-                        else{
-                            Toast.makeText(PlaceDetailsActivity.this, R.string.phone_number_unknown, Toast.LENGTH_SHORT).show();
-                        }
+            mBinding.btDetailCall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(result.getFormattedPhoneNumber()!=null) {
+                        String phoneNumber = String.format(getString(R.string.phone_number), result.getInternationalPhoneNumber());
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        callIntent.setData(Uri.parse(phoneNumber));
+                        startActivity(callIntent);
                     }
-                });
+                    else{
+                        Toast.makeText(PlaceDetailsActivity.this, R.string.phone_number_unknown, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
             //For place like
             mBinding.btDetailLike.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -184,27 +175,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             });
     }
 
-    private void getCurrentUser() {
-        mUser = mUserViewModel.getCurrentUser();
-    }
-
-    private void observeBookingsBis() {
-        Log.e("Anne", "observeBookingsPlaceDetails");
-        mBookingViewModel.getBookingListLiveData().observe(this, new Observer<List<Booking>>() {
-            @Override
-            public void onChanged(List<Booking> bookings) {
-                mBookingList = bookings;
-            }
-        });
-        if(!mBookingList.isEmpty()){
-            for(Booking booking : mBookingList){
-                if(Objects.equals(booking.getUser(), mUserViewModel.getCurrentUser().toString())){
-                    manageBookingFAB(true);
-                }
-            }
-        }
-    }
-
     private void observeBookings() {
         Log.e("Anne", "observeBookingsInPlaceDetails");
         mBookingViewModel.fetchBookingList();
@@ -213,46 +183,99 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void getUserBooking(List<Booking> bookings) {
         mBookingList = bookings;
-        if(mBookingList.isEmpty()){
-            Log.e("Anne", "mBookingListEmptyInPlaceDetails");
+        if (isUserHasBooking()) {
+            Log.e("Anne", placeId);
+            Log.e("Anne", mUserBooking.getPlaceId());
+            if(mUserBooking.getPlaceId().equalsIgnoreCase(placeId)) {
+                Log.e("Anne", "getUserBooking : userHasThisBooking");
+                manageBookingFAB(true);
+            }
         }
         else {
-            for(Booking booking : mBookingList) {
-                if (booking.getPlaceId().equalsIgnoreCase(placeId)) {
-                    manageBookingFAB(true);
-                }
-                if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
-                    mUserPlaceBooking = booking.getPlaceId();
-                }
-                Log.e("Anne", mBookingList.toString());
-                String user = booking.getUser();
-                Log.e("Anne", user);
-                if(!(user == null)) {
-                    if (user.equalsIgnoreCase(mUser.getDisplayName())) {
-                        mUserPlaceBooking = booking.getPlaceId();
-                    }
-                }
-            }
+            Log.e("Anne", "getUserBooking : userHasNOThisBooking");
+            manageBookingFAB(false);
         }
     }
 
     //To manage user booking wish
-    private void manageBooking(String placeId) {
-        if(!mBookingList.isEmpty()) {
-            for (Booking booking : mBookingList) {
-                if (Objects.equals(booking.getPlaceId(), placeId)) {
-                    //booking.setUser(mUserViewModel.getCurrentUser().toString());
-                    //TODO call updateBooking to also update in firestore
-                }
+    private void manageBookingChoice() {
+        if(!(mUserBooking==null)) {
+            if(mUserBooking.getPlaceId().equalsIgnoreCase(placeId)) {
+                mBookingViewModel.deleteBooking(mUserBooking);
+                Toast.makeText(PlaceDetailsActivity.this, R.string.booking_delete, Toast.LENGTH_SHORT).show();
+                manageBookingFAB(false);
+                mUserBooking = null;
+                mJoiningWorkmates.remove(mUser.getDisplayName());
+                updateJoiningWorkmatesList();
+            }
+            else {
+                mBookingViewModel.deleteBooking(mUserBooking);
+                createBooking();
             }
         }
         else {
-            String user = mUserViewModel.getCurrentUser().getDisplayName();
-            //TODO manage with good id
-            mBookingViewModel.createBooking(String.valueOf(mBookingList.size()+1), placeId, user);
+            createBooking();
         }
+    }
+
+    private void createBooking() {
+        mBookingViewModel.createBooking(placeId, mUser.getDisplayName());
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
+        mJoiningWorkmates.add(mUser.getDisplayName());
+        updateJoiningWorkmatesList();
+    }
+
+    private void updateJoiningWorkmatesList() {
+        if(mJoiningWorkmates.isEmpty()) {
+            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter());
+        }
+        else {
+            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmates));
+        }
+    }
+
+    private boolean isPlaceHasBooking() {
+        if(!mBookingList.isEmpty()) {
+            for (Booking booking : mBookingList) {
+                if (booking.getPlaceId().equalsIgnoreCase(placeId)) {
+                    String joiningWorkmate = booking.getUser();
+                    mJoiningWorkmates.add(joiningWorkmate);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isUserHasBooking() {
+        Log.e("Anne", "isUserHasBooking");
+        if(!mBookingList.isEmpty()) {
+            Log.e("Anne", "isUserHasBooking : listIsNOEmpty");
+            for (Booking booking : mBookingList) {
+                if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
+                    Log.e("Anne", "isUserHasBooking : userEqualsBookingUser");
+                    mUserBooking = booking;
+                    return true;
+                }
+                else {
+                    Log.e("Anne", "isUserHasBooking : returnFalseUserNOEquals");
+                    return false;
+                }
+            }
+        }
+        Log.e("Anne", "isUserHasBooking : returnFalseListEmpty");
+        return false;
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void manageBookingFAB(boolean isBooking){
+        if(isBooking){
+            mBinding.fabDetailChoice.setImageDrawable(getDrawable(R.drawable.ic_baseline_check_circle_24));
+        }
+        else {
+            mBinding.fabDetailChoice.setImageDrawable(getDrawable(R.drawable.check_circle_grey));
+        }
     }
 
     //When click on action bar for back

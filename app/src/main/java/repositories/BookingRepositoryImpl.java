@@ -108,11 +108,11 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public void createBooking(String bookingId, String placeId, String user) {
+    public void createBooking(String placeId, String user) {
         instanceFirestore();
         //Create a new booking
         Map<String, Object> newBooking = new HashMap<>();
-        newBooking.put(BOOKING_ID, bookingId);
+        newBooking.put(BOOKING_ID, null);
         newBooking.put(PLACE_ID, placeId);
         newBooking.put(USER, user);
 
@@ -120,18 +120,18 @@ public class BookingRepositoryImpl implements BookingRepository {
         CollectionReference bookingCollection = mFirestore.collection(COLLECTION);
         bookingCollection
                 .add(newBooking)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.e("Anne", "setCollectionOnSuccess");
-                    }
-                })
+                .addOnSuccessListener(documentReference -> mFirestore.collection(COLLECTION)
+                        .document(documentReference.getId())
+                        .update(BOOKING_ID, documentReference.getId())
+                        .addOnSuccessListener(unused -> {
+                            Log.e("Anne", "setCollectionOnSuccess");
+                        })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.e("Anne", "setCollectionOnFailure");
                     }
-                });
+                }));
     }
 
     @Override
@@ -140,5 +140,19 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void deleteBooking(Booking booking) {
+        mFirestore.collection(COLLECTION).document(booking.getBookingId())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.e("Anne", "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Anne", "Error deleting document", e);
+                    }
+                });
     }
 }

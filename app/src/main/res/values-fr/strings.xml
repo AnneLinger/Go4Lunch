@@ -77,6 +77,7 @@
     <string name="phone_number_unknown">Aucun numéro de téléphone pour ce restaurant</string>
     <string name="unknown_website">Aucun site web pour ce restaurant</string>
     <string name="booking_done">Ce restaurant est choisi pour votre déjeuner !</string>
+    <string name="booking_delete">Vous ne déjeunez plus dans ce restaurant !</string>
     <string name="no_booking">Vous n\'avez pas encore choisi de restaurant pour votre déjeuner !</string>
     <string name="search_canceled">Recherche annulée</string>
     <string name="no_search_result">Recherche annulée, aucun résultat pour votre recherche</string>

@@ -1,49 +1,45 @@
 package model;
 
-import com.google.firebase.auth.FirebaseUser;
-
-import java.util.Date;
-import java.util.List;
-
 /**
 *Model for bookings made by users
 */
 
 public class Booking {
-    private String bookingId;
-    private String placeId;
-    private String user;
+    private String BookingId;
+    private String PlaceId;
+    private String User;
+
 
     public Booking(){
     }
 
     public Booking(String bookingId, String placeId, String user) {
-        this.bookingId = bookingId;
-        this.placeId = placeId;
-        this.user = user;
+        this.BookingId = bookingId;
+        this.PlaceId = placeId;
+        this.User = user;
     }
 
     public String getBookingId() {
-        return bookingId;
+        return BookingId;
     }
 
     public void setBookingId(String bookingId) {
-        this.bookingId = bookingId;
+        this.BookingId = bookingId;
     }
 
     public String getPlaceId() {
-        return placeId;
+        return PlaceId;
     }
 
     public void setPlaceId(String placeId) {
-        this.placeId = placeId;
+        this.PlaceId = placeId;
     }
 
     public String getUser() {
-        return user;
+        return User;
     }
 
     public void setUser(String user) {
-        this.user = user;
+        this.User = user;
     }
 }
