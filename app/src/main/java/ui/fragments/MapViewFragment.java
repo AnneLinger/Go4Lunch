@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,12 +46,15 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import model.Booking;
 import model.autocompletepojo.Prediction;
 import model.nearbysearchpojo.Result;
 import ui.activities.AuthenticationActivity;
 import ui.activities.PlaceDetailsActivity;
 import viewmodel.AutocompleteViewModel;
+import viewmodel.BookingViewModel;
 import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
@@ -71,8 +75,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private SharedPreferences mSharedPreferences;
     private UserViewModel mUserViewModel;
     private PlacesViewModel mPlacesViewModel;
+    private BookingViewModel mBookingViewModel;
     private AutocompleteViewModel mAutocompleteViewModel;
     private List<Result> mPlaceList;
+    private String placeId;
+    private List<Booking> mBookingList = new ArrayList<>();
     private List<Result> mPlaceListAutocomplete = new ArrayList<>();
     private MapViewFragment mMapViewFragment = this;
     private Context mContext;
@@ -116,6 +123,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mGoogleMap = googleMap;
         checkIfUserIsSignIn();
+        observeBookings();
         observeAutocomplete();
     }
 
@@ -134,6 +142,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private void configureViewModels() {
         mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         mPlacesViewModel = new ViewModelProvider(requireActivity()).get(PlacesViewModel.class);
+        mBookingViewModel = new ViewModelProvider(requireActivity()).get(BookingViewModel.class);
         mAutocompleteViewModel = new ViewModelProvider(requireActivity()).get(AutocompleteViewModel.class);
     }
 
@@ -205,18 +214,23 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private void updateMapWithData(List<Result> results) {
         mGoogleMap.clear();
         for (Result mResult : results) {
-            LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLat(), mResult.getGeometry().getLocation().getLng());
-            mGoogleMap.addMarker(new MarkerOptions()
-                    .position(placeLatLng)
-                    .title(mResult.getName())
-                    .icon(BitmapDescriptorFactory.fromBitmap(setUpMarkerIcon(R.drawable.icon2073973_1920restaurant))));
+            for (Booking booking : mBookingList) {
+                LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLat(), mResult.getGeometry().getLocation().getLng());
+                if (booking.getPlaceId().equalsIgnoreCase(mResult.getPlaceId())) {
+                    addMarker(R.drawable.icon_restaurant_green, placeLatLng, mResult);
+
+                }
+                else {
+                    addMarker(R.drawable.icon2073973_1920restaurant, placeLatLng, mResult);
+                }
+            }
         }
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(@NonNull Marker marker) {
                 Intent intent = new Intent(requireActivity(), PlaceDetailsActivity.class);
                 for(Result place : results) {
-                    if(marker.getTitle().equalsIgnoreCase(place.getName())){
+                    if(Objects.requireNonNull(marker.getTitle()).equalsIgnoreCase(place.getName())){
                         intent.putExtra("place id", place.getPlaceId());
                     }
                 }
@@ -225,8 +239,25 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         });
     }
 
+    private void addMarker (int drawable, LatLng placeLatLng, Result result) {
+        mGoogleMap.addMarker(new MarkerOptions()
+                .position(placeLatLng)
+                .title(result.getName())
+                .icon(BitmapDescriptorFactory.fromBitmap(setUpMarkerIcon(drawable))));
+    }
+
+    private void observeBookings() {
+        Log.e("Anne", "observeBookingsInPlaceDetails");
+        mBookingViewModel.fetchBookingList();
+        mBookingViewModel.getBookingListLiveData().observe(this, this::updateMapWithBookings);
+    }
+
+    private void updateMapWithBookings(List<Booking> bookings) {
+        mBookingList = bookings;
+    }
+
     private void observeAutocomplete() {
-            mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::updateMapWithAutocompletePlaces);
+        mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::updateMapWithAutocompletePlaces);
     }
 
     private void updateMapWithAutocompletePlaces(List<Prediction> predictions){
