@@ -61,7 +61,7 @@ import viewmodel.UserViewModel;
 /**
 *Fragment to display a map for places
 */
-public class MapViewFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+public class MapViewFragment extends Fragment implements OnMapReadyCallback, LocationListener{
 
     //For UI
     private FragmentMapViewBinding mBinding;
@@ -118,6 +118,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         supportMapFragment.getMapAsync(this);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -148,6 +153,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     //Check if user is signed in to load SharedPreferences
     private void checkIfUserIsSignIn() {
+        Log.e("Anne", "checkIfUserIsSignIn");
         FirebaseUser currentUser = mUserViewModel.getCurrentUser();
         if(currentUser!=null) {
             mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
@@ -214,14 +220,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private void updateMapWithData(List<Result> results) {
         mGoogleMap.clear();
         for (Result mResult : results) {
+            LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLat(), mResult.getGeometry().getLocation().getLng());
+            addMarker(R.drawable.icon2073973_1920restaurant, placeLatLng, mResult);
             for (Booking booking : mBookingList) {
-                LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLat(), mResult.getGeometry().getLocation().getLng());
                 if (booking.getPlaceId().equalsIgnoreCase(mResult.getPlaceId())) {
                     addMarker(R.drawable.icon_restaurant_green, placeLatLng, mResult);
-
-                }
-                else {
-                    addMarker(R.drawable.icon2073973_1920restaurant, placeLatLng, mResult);
                 }
             }
         }
@@ -249,10 +252,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private void observeBookings() {
         Log.e("Anne", "observeBookingsInPlaceDetails");
         mBookingViewModel.fetchBookingList();
-        mBookingViewModel.getBookingListLiveData().observe(this, this::updateMapWithBookings);
+        mBookingViewModel.getBookingListLiveData().observe(this, this::updateBookingList);
     }
 
-    private void updateMapWithBookings(List<Booking> bookings) {
+    private void updateBookingList(List<Booking> bookings) {
         mBookingList = bookings;
     }
 

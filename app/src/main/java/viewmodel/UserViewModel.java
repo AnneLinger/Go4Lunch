@@ -40,6 +40,7 @@ public class UserViewModel extends ViewModel {
     }
 
     public void createUser() {
+        mUserRepositoryImpl.instanceFirestore();
         mUserRepositoryImpl.createUser();
     }
 

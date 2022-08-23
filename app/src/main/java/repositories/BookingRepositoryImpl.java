@@ -7,16 +7,9 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -41,7 +34,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     //For data
     private FirebaseFirestore mFirestore;
     private final MutableLiveData<List<Booking>> mBookingList = new MutableLiveData<>();
-    private static final String COLLECTION = "Bookings";
+    private static final String BOOKING_COLLECTION = "Bookings";
     private static final String BOOKING_ID = "BookingId";
     private static final String PLACE_ID = "PlaceId";
     private static final String USER = "User";
@@ -62,7 +55,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void getBookingListFromFirestore() {
-        /**mFirestore.collection(COLLECTION).addSnapshotListener((value, error) -> {
+        /**mFirestore.collection(BOOKING_COLLECTION).addSnapshotListener((value, error) -> {
             if(error!=null){
                 Log.e("Anne", "collectionError");
                 return;
@@ -79,7 +72,7 @@ public class BookingRepositoryImpl implements BookingRepository {
             }
         });*/
 
-        mFirestore.collection(COLLECTION).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        mFirestore.collection(BOOKING_COLLECTION).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error!=null) {
@@ -109,7 +102,9 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void createBooking(String placeId, String user) {
+
         instanceFirestore();
+
         //Create a new booking
         Map<String, Object> newBooking = new HashMap<>();
         newBooking.put(BOOKING_ID, null);
@@ -117,10 +112,10 @@ public class BookingRepositoryImpl implements BookingRepository {
         newBooking.put(USER, user);
 
         //Create a new document
-        CollectionReference bookingCollection = mFirestore.collection(COLLECTION);
+        CollectionReference bookingCollection = mFirestore.collection(BOOKING_COLLECTION);
         bookingCollection
                 .add(newBooking)
-                .addOnSuccessListener(documentReference -> mFirestore.collection(COLLECTION)
+                .addOnSuccessListener(documentReference -> mFirestore.collection(BOOKING_COLLECTION)
                         .document(documentReference.getId())
                         .update(BOOKING_ID, documentReference.getId())
                         .addOnSuccessListener(unused -> {
@@ -140,7 +135,8 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void deleteBooking(Booking booking) {
-        mFirestore.collection(COLLECTION).document(booking.getBookingId())
+        Log.e("Anne", booking.getBookingId());
+        mFirestore.collection(BOOKING_COLLECTION).document(booking.getBookingId())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

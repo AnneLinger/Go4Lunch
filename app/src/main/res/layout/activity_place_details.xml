@@ -115,7 +115,7 @@
         android:id="@+id/bt_detail_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@drawable/ic_baseline_star_rate_24"
+        android:drawableTop="@drawable/ic_baseline_star_outline_24"
         android:layout_marginTop="8dp"
         android:background="@color/transparent"
         android:drawableTint="@color/color_accent"

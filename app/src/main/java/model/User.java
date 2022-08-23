@@ -2,6 +2,8 @@ package model;
 
 import android.net.Uri;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 /**
@@ -12,11 +14,17 @@ public class User {
     private String name;
     @Nullable
     private String pictureUrl;
+    @Nullable
+    private List<String> likedPlaces;
 
-    public User(String userId, String name, @androidx.annotation.Nullable String pictureUrl) {
+    public User(){
+    }
+
+    public User(String userId, String name, @androidx.annotation.Nullable String pictureUrl, @androidx.annotation.Nullable List<String> likedPlaces) {
         this.userId = userId;
         this.name = name;
         this.pictureUrl = pictureUrl;
+        this.likedPlaces = likedPlaces;
     }
 
     public String getUserId() {
@@ -43,4 +51,14 @@ public class User {
     public void setPictureUrl(@androidx.annotation.Nullable String pictureUrl) {
         this.pictureUrl = pictureUrl;
     }
+
+    @Nullable
+    public List<String> getLikedPlaces() {
+        return likedPlaces;
+    }
+
+    public void setLikedPlaces(@Nullable List<String> likedPlaces) {
+        this.likedPlaces = likedPlaces;
+    }
 }
+

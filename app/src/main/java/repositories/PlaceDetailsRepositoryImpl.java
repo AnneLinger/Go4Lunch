@@ -7,10 +7,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.anne.linger.go4lunch.BuildConfig;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import data.PlacesApi;
+import model.Booking;
 import model.placedetailspojo.PlaceDetailsResponse;
 import model.placedetailspojo.Result;
 import retrofit2.Call;
