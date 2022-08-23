@@ -1,5 +1,7 @@
 package repositories;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 
 import com.google.firebase.auth.FirebaseUser;
@@ -16,7 +18,9 @@ public interface UserRepository {
 
     void instanceFirestore();
 
-    FirebaseUser getCurrentUser();
+    FirebaseUser getCurrentFirebaseUser();
+
+    User getCurrentUser();
 
     LiveData<List<User>> getUserListLiveData();
 
@@ -27,6 +31,8 @@ public interface UserRepository {
     void createUser();
 
     void logOut();
+
+    void deleteAccount(Context context);
 
     void addALikedPlace(String placeId, String user);
 

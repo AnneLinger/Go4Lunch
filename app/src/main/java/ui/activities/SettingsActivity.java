@@ -1,10 +1,14 @@
 package ui.activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Toast;
@@ -21,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import viewmodel.SettingsViewModel;
+import viewmodel.UserViewModel;
 
 /**
 *Activity for the user settings
@@ -39,6 +44,8 @@ public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private Location userLocation;
     private SettingsViewModel mSettingsViewModel;
+    private UserViewModel mUserViewModel;
+    private FirebaseUser mUser;
     private float zoom;
     private float radius = 12000;
     private boolean notifications;
@@ -47,11 +54,12 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUi();
-        configureViewModel();
+        configureViewModels();
         configureActionBar();
         saveRadius();
         saveZoom();
         saveNotificationsChoice();
+        deleteAccount();
         loadUserSettings();
         saveUserSettings();
     }
@@ -63,8 +71,9 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     //Configure data
-    private void configureViewModel() {
+    private void configureViewModels() {
         mSettingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
+        mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
     private void configureActionBar() {
@@ -78,6 +87,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void initSharedPreferences() {
         mSharedPreferences = SettingsActivity.this.getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
+    }
+
+    private void getCurrentUser() {
+        mUser = mUserViewModel.getCurrentUser();
     }
 
     //When click on action bar for back
@@ -115,6 +128,38 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    private void deleteAccount() {
+        mBinding.btDeleteAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogToConfirmDeleteAccount();
+            }
+        });
+    }
+
+    //Dialog to alert about essential permission
+    public void showDialogToConfirmDeleteAccount() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(R.string.are_you_sure)
+                .setCancelable(false)
+                .setPositiveButton(R.string.confirm_delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mUserViewModel.deleteAccount(SettingsActivity.this);
+                        navigateToAuthenticationActivity();
+                    }
+                })
+                .setNegativeButton(R.string.cancel_delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+    }
+
+
     //If user settings exist
     private void loadUserSettings() {
         FirebaseUser currentUser = mSettingsViewModel.getCurrentUser();
@@ -149,5 +194,11 @@ public class SettingsActivity extends AppCompatActivity {
                 navigateToPlacesActivity();
             }
         });
+    }
+
+    private void navigateToAuthenticationActivity() {
+        Intent intent = new Intent(SettingsActivity.this, AuthenticationActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

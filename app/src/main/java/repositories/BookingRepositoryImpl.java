@@ -35,9 +35,9 @@ public class BookingRepositoryImpl implements BookingRepository {
     private FirebaseFirestore mFirestore;
     private final MutableLiveData<List<Booking>> mBookingList = new MutableLiveData<>();
     private static final String BOOKING_COLLECTION = "Bookings";
-    private static final String BOOKING_ID = "BookingId";
-    private static final String PLACE_ID = "PlaceId";
-    private static final String USER = "User";
+    private static final String BOOKING_ID = "bookingId";
+    private static final String PLACE_ID = "placeId";
+    private static final String USER = "user";
 
     @Inject
     public BookingRepositoryImpl(){

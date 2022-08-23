@@ -5,41 +5,41 @@ package model;
 */
 
 public class Booking {
-    private String BookingId;
-    private String PlaceId;
-    private String User;
+    private String bookingId;
+    private String placeId;
+    private String user;
 
 
     public Booking(){
     }
 
     public Booking(String bookingId, String placeId, String user) {
-        this.BookingId = bookingId;
-        this.PlaceId = placeId;
-        this.User = user;
+        this.bookingId = bookingId;
+        this.placeId = placeId;
+        this.user = user;
     }
 
     public String getBookingId() {
-        return BookingId;
+        return bookingId;
     }
 
     public void setBookingId(String bookingId) {
-        this.BookingId = bookingId;
+        this.bookingId = bookingId;
     }
 
     public String getPlaceId() {
-        return PlaceId;
+        return placeId;
     }
 
     public void setPlaceId(String placeId) {
-        this.PlaceId = placeId;
+        this.placeId = placeId;
     }
 
     public String getUser() {
-        return User;
+        return user;
     }
 
     public void setUser(String user) {
-        this.User = user;
+        this.user = user;
     }
 }

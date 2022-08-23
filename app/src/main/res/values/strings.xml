@@ -90,4 +90,7 @@
     <string name="workmate_place">\ this place</string>
     <string name="is_eating">\ is eating at</string>
     <string name="not_decided">\ hasn\'t decided yet</string>
+    <string name="are_you_sure">Are you sure ?</string>
+    <string name="confirm_delete">Yes, delete my account</string>
+    <string name="cancel_delete">No, keep my account</string>
 </resources>

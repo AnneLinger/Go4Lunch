@@ -1,6 +1,6 @@
 package repositories;
 
-import android.content.Intent;
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -8,10 +8,14 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -22,14 +26,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
-import model.Booking;
 import model.User;
-import ui.activities.PlacesActivity;
-import ui.activities.SettingsActivity;
 
 /**
 *Implementation of UserRepository interface
@@ -44,7 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String USER_ID = "userId";
     private static final String NAME = "name";
     private static final String PICTURE_URL = "pictureUrl";
-    private static final String LIKED_PLACES = "LikedPlaces";
+    private static final String LIKED_PLACES = "likedPlaces";
 
 
     @Inject
@@ -57,8 +57,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public FirebaseUser getCurrentUser() {
+    public FirebaseUser getCurrentFirebaseUser() {
         return mFirebaseAuth.getCurrentUser();
+    }
+
+    @Override
+    public User getCurrentUser() {
+        return null;
     }
 
     @Override
@@ -104,14 +109,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void createUser() {
+        Log.e("Anne", "createUserRepo");
 
         instanceFirestore();
 
         //Create a new user
         Map<String, Object> newUser = new HashMap<>();
         newUser.put(USER_ID, null);
-        newUser.put(NAME, getCurrentUser().getDisplayName());
-        newUser.put(PICTURE_URL, getCurrentUser().getPhotoUrl() != null ? getCurrentUser().getPhotoUrl().toString() : null);
+        newUser.put(NAME, getCurrentFirebaseUser().getDisplayName());
+        newUser.put(PICTURE_URL, getCurrentFirebaseUser().getPhotoUrl() != null ? getCurrentFirebaseUser().getPhotoUrl().toString() : null);
 
         //Create a new document
         CollectionReference userCollection = mFirestore.collection(USER_COLLECTION);
@@ -119,7 +125,7 @@ public class UserRepositoryImpl implements UserRepository {
                 .add(newUser)
                 .addOnSuccessListener(documentReference -> mFirestore.collection(USER_COLLECTION)
                         .document(documentReference.getId())
-                        .update(USER_ID, documentReference.getId())
+                        .update(USER_ID, getCurrentFirebaseUser().getUid())
                         .addOnSuccessListener(unused -> {
                             Log.e("Anne", "setUserCollectionOnSuccess");
                         })
@@ -138,6 +144,30 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void logOut() {
         mFirebaseAuth.signOut();
+    }
+
+    @Override
+    public void deleteAccount(Context context) {
+        FirebaseUser userToDelete = getCurrentFirebaseUser();
+        //Delete in Firebase auth
+        AuthUI.getInstance().delete(context);
+        //Delete in Firestore
+        instanceFirestore();
+        Log.e("Anne", userToDelete.getUid());
+        mFirestore.collection(USER_COLLECTION).document(userToDelete.getUid())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.e("Anne", "DocumentSnapshot User successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Anne", "Error deleting User document", e);
+                    }
+                });
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -74,7 +75,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     //Check if user is signed in
-     @RequiresApi(api = Build.VERSION_CODES.M)
+     /*@RequiresApi(api = Build.VERSION_CODES.M)
      @Override
      public void onStart() {
          super.onStart();
@@ -82,7 +83,7 @@ public class AuthenticationActivity extends AppCompatActivity {
          if(currentUser!=null) {
              navigateToPlacesActivity();
          }
-     }
+     }*/
 
     //Configure the UI
     private void initUi() {
@@ -99,16 +100,16 @@ public class AuthenticationActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToPlacesActivity() {
         Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         //Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
-        //startActivity(intent);
-        try {
+        startActivity(intent);
+        /**try {
             pendingIntent.send();
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }
-        finish();
+        finish();*/
     }
 
     // Show Snack Bar with a message
@@ -137,10 +138,12 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void responseAfterSignIn(int requestCode, int resultCode, Intent data) {
+        Log.e("Anne", "responseAfterSignIn");
         IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
         if (requestCode == RC_SIGN_IN) {
             // SUCCESS
             if (resultCode == RESULT_OK) {
+                Log.e("Anne", "responseAfterSignInResultCodeOK");
                 createUser();
                 Toast.makeText(AuthenticationActivity.this, getString(R.string.successful_auth), Toast.LENGTH_SHORT).show();
                 navigateToPlacesActivity();
@@ -171,7 +174,7 @@ public class AuthenticationActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onSuccess(LoginResult loginResult) {
-                facebookLogIn(loginResult.getAccessToken());
+                //facebookLogIn(loginResult.getAccessToken());
             }
 
             @Override

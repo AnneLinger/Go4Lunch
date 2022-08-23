@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import model.User;
 import repositories.LocationRepositoryImpl;
 import repositories.UserRepositoryImpl;
 
@@ -36,7 +37,7 @@ public class UserViewModel extends ViewModel {
     //..........................For authentication...............................................
 
     public FirebaseUser getCurrentUser() {
-        return mUserRepositoryImpl.getCurrentUser();
+        return mUserRepositoryImpl.getCurrentFirebaseUser();
     }
 
     public void createUser() {
@@ -46,6 +47,10 @@ public class UserViewModel extends ViewModel {
 
     public void logOut() {
         mUserRepositoryImpl.logOut();
+    }
+
+    public void deleteAccount(Context context) {
+        mUserRepositoryImpl.deleteAccount(context);
     }
 
     //..........................For location.....................................................
