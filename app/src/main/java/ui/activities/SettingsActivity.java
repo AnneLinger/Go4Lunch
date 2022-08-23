@@ -6,9 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Toast;
@@ -90,7 +88,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void getCurrentUser() {
-        mUser = mUserViewModel.getCurrentUser();
+        mUser = mUserViewModel.getCurrentUserFromFirebase();
     }
 
     //When click on action bar for back

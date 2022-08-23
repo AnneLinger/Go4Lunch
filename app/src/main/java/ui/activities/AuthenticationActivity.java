@@ -1,6 +1,5 @@
 package ui.activities;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,9 +30,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -201,7 +198,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     private FirebaseUser getCurrentUser() {
-        return mUserViewModel.getCurrentUser();
+        return mUserViewModel.getCurrentUserFromFirebase();
     }
 
 }

@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
@@ -223,7 +222,7 @@ public class PlacesActivity extends AppCompatActivity {
     }
 
     private void getCurrentUser() {
-        mUser = mUserViewModel.getCurrentUser();
+        mUser = mUserViewModel.getCurrentUserFromFirebase();
     }
 
     //Get the user location

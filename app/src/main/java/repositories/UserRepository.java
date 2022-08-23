@@ -4,7 +4,10 @@ import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
@@ -18,17 +21,21 @@ public interface UserRepository {
 
     void instanceFirestore();
 
-    FirebaseUser getCurrentFirebaseUser();
+    FirebaseUser getCurrentUserFromFirebase();
 
-    User getCurrentUser();
+    CollectionReference getUserCollection();
+
+    LiveData<User> getUserLiveData();
+
+    void getCurrentUserFromFirestore(String userId);
 
     LiveData<List<User>> getUserListLiveData();
 
     void getUserListFromFirestore();
 
-    List<FirebaseUser> getAllUsers();
-
     void createUser();
+
+    Task<DocumentSnapshot> getUserData();
 
     void logOut();
 

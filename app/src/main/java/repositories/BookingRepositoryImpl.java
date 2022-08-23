@@ -55,23 +55,6 @@ public class BookingRepositoryImpl implements BookingRepository {
 
     @Override
     public void getBookingListFromFirestore() {
-        /**mFirestore.collection(BOOKING_COLLECTION).addSnapshotListener((value, error) -> {
-            if(error!=null){
-                Log.e("Anne", "collectionError");
-                return;
-            }
-            if (value!=null) {
-                Log.e("Anne", "getCollectionOK");
-                Log.e("Anne", value.toString());
-                List<Booking> bookingList = value.toObjects(Booking.class);
-                mBookingList.setValue(bookingList);
-                Log.e("Anne", mBookingList.toString());
-            }
-            else{
-                Log.e("Anne", "collectionValueNull");
-            }
-        });*/
-
         mFirestore.collection(BOOKING_COLLECTION).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

@@ -25,6 +25,6 @@ public class SettingsViewModel extends ViewModel {
     }
 
     public FirebaseUser getCurrentUser() {
-        return mUserRepositoryImpl.getCurrentFirebaseUser();
+        return mUserRepositoryImpl.getCurrentUserFromFirebase();
     }
 }

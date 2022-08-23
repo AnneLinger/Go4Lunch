@@ -20,12 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Booking;
-import model.nearbysearchpojo.Result;
-import ui.adapter.PlaceListAdapter;
 import ui.adapter.WorkmatesListAdapter;
-import viewmodel.AutocompleteViewModel;
 import viewmodel.BookingViewModel;
-import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
 /**
@@ -69,7 +65,7 @@ public class WorkmatesFragment extends Fragment {
 
     private void initRecyclerView() {
         //TODO getAllUsers in repo
-        mUserList.add(mUserViewModel.getCurrentUser());
+        mUserList.add(mUserViewModel.getCurrentUserFromFirebase());
         //TODO getAllBookings in repo
         //mBookingList.add(new Booking(0, list.get(0).getPlaceId(), mUserList));
         mRecyclerView = mBinding.rvWorkmatesListView;

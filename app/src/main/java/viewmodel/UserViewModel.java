@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
@@ -34,10 +36,26 @@ public class UserViewModel extends ViewModel {
 
     }
 
-    //..........................For authentication...............................................
+    //..........................For user account.................................................
 
-    public FirebaseUser getCurrentUser() {
-        return mUserRepositoryImpl.getCurrentFirebaseUser();
+    public FirebaseUser getCurrentUserFromFirebase() {
+        return mUserRepositoryImpl.getCurrentUserFromFirebase();
+    }
+
+    public void getCurrentUserFromFirestore(String userId) {
+        mUserRepositoryImpl.getCurrentUserFromFirestore(userId);
+    }
+
+    public LiveData<User> getUserLiveData() {
+        return mUserRepositoryImpl.getUserLiveData();
+    }
+
+    public void getUserListFromFirestore() {
+        mUserRepositoryImpl.getUserListFromFirestore();
+    }
+
+    public LiveData<List<User>> getUserListLiveData() {
+        return mUserRepositoryImpl.getUserListLiveData();
     }
 
     public void createUser() {

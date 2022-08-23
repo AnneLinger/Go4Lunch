@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.FragmentListViewBinding;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import model.Booking;
 import model.autocompletepojo.Prediction;
 import model.nearbysearchpojo.Result;
-import ui.activities.PlacesActivity;
 import ui.adapter.PlaceListAdapter;
 import viewmodel.AutocompleteViewModel;
 import viewmodel.PlacesViewModel;
@@ -80,7 +75,7 @@ public class ListViewFragment extends Fragment {
     }
 
     private void initRecyclerView(List<Result> list) {
-        mUser = mUserViewModel.getCurrentUser().toString();
+        mUser = mUserViewModel.getCurrentUserFromFirebase().toString();
         mBookingList.add(new Booking("0", list.get(0).getPlaceId(), mUser));
         mRecyclerView = mBinding.rvListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());

@@ -101,7 +101,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void getCurrentUser() {
-        mUser = mUserViewModel.getCurrentUser();
+        mUser = mUserViewModel.getCurrentUserFromFirebase();
     }
 
     private void getPlaceDetails() {

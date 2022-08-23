@@ -154,7 +154,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //Check if user is signed in to load SharedPreferences
     private void checkIfUserIsSignIn() {
         Log.e("Anne", "checkIfUserIsSignIn");
-        FirebaseUser currentUser = mUserViewModel.getCurrentUser();
+        FirebaseUser currentUser = mUserViewModel.getCurrentUserFromFirebase();
         if(currentUser!=null) {
             mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {

@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,9 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -40,6 +39,7 @@ public class UserRepositoryImpl implements UserRepository {
     private final FirebaseAuth mFirebaseAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore mFirestore;
     private final MutableLiveData<List<User>> mUserList = new MutableLiveData<>();
+    private final MutableLiveData<User> mUser = new MutableLiveData<>();
     private static final String USER_COLLECTION = "Users";
     private static final String USER_ID = "userId";
     private static final String NAME = "name";
@@ -57,22 +57,37 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public FirebaseUser getCurrentFirebaseUser() {
-        return mFirebaseAuth.getCurrentUser();
-    }
-
-    public String getCurrentFirebaseUserUid() {
-        FirebaseUser firebaseUser = getCurrentFirebaseUser();
-        return firebaseUser.getUid();
-    }
-
     public CollectionReference getUserCollection() {
         return mFirestore.collection(USER_COLLECTION);
     }
 
     @Override
-    public User getCurrentUser() {
-        return null;
+    public FirebaseUser getCurrentUserFromFirebase() {
+        return mFirebaseAuth.getCurrentUser();
+    }
+
+    @Override
+    public LiveData<User> getUserLiveData() {
+        return mUser;
+    }
+
+    @Override
+    public void getCurrentUserFromFirestore(String userId) {
+        DocumentReference documentReference = mFirestore.collection(USER_COLLECTION).document(userId);
+
+        documentReference.addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.w("Anne", "onEvent: Listen failed", error);
+                return;
+            }
+
+            if (value != null && value.exists()) {
+                mUser.setValue(value.toObject(User.class));
+            } else {
+                Log.i("Anne", "onEvent: data is null");
+                createUser();
+            }
+        });
     }
 
     @Override
@@ -110,19 +125,13 @@ public class UserRepositoryImpl implements UserRepository {
         });
     }
 
-    //TODO Manage with LiveData and Firestore
-    @Override
-    public List<FirebaseUser> getAllUsers() {
-        return null;
-    }
-
     @Override
     public void createUser() {
         Log.e("Anne", "createUserRepo");
 
         instanceFirestore();
 
-        FirebaseUser firebaseUser = getCurrentFirebaseUser();
+        FirebaseUser firebaseUser = getCurrentUserFromFirebase();
 
         if(firebaseUser!= null) {
             String userId = firebaseUser.getUid();
@@ -135,38 +144,11 @@ public class UserRepositoryImpl implements UserRepository {
 
             userData.addOnSuccessListener(documentSnapshot -> this.getUserCollection().document(userId).set(newUser));
         }
-
-        //Create a new user
-        /**Map<String, Object> newUser = new HashMap<>();
-        newUser.put(USER_ID, null);
-        newUser.put(NAME, getCurrentFirebaseUser().getDisplayName());
-        newUser.put(PICTURE_URL, getCurrentFirebaseUser().getPhotoUrl() != null ? getCurrentFirebaseUser().getPhotoUrl().toString() : null);
-
-        //Create a new document
-        CollectionReference userCollection = mFirestore.collection(USER_COLLECTION);
-        userCollection
-                .add(newUser)
-                .addOnSuccessListener(documentReference -> mFirestore.collection(USER_COLLECTION)
-                        .document(documentReference.getId())
-                        .update(USER_ID, getCurrentFirebaseUser().getUid())
-                        .addOnSuccessListener(unused -> {
-                            Log.e("Anne", "setUserCollectionOnSuccess");
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e("Anne", "setUserCollectionOnFailure");
-                            }
-                        }));*/
-        /**String name = getCurrentUser().getDisplayName();
-        String userId = getCurrentUser().getProviderId();
-        String pictureUrl = (getCurrentUser().getPhotoUrl() != null ? getCurrentUser().getPhotoUrl().toString() : null);
-        User user = new User(userId, name, pictureUrl, null);*/
     }
 
+    @Override
     public Task<DocumentSnapshot> getUserData() {
-        //assert this.getCurrentUser() != null;
-        String uId = this.getCurrentFirebaseUser().getUid();
+        String uId = this.getCurrentUserFromFirebase().getUid();
         return this.getUserCollection().document(uId).get();
     }
 
@@ -177,7 +159,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteAccount(Context context) {
-        FirebaseUser userToDelete = getCurrentFirebaseUser();
+        FirebaseUser userToDelete = getCurrentUserFromFirebase();
         //Delete in Firebase auth
         AuthUI.getInstance().delete(context);
         //Delete in Firestore
