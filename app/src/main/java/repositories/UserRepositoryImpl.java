@@ -73,6 +73,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void getCurrentUserFromFirestore(String userId) {
+        instanceFirestore();
         DocumentReference documentReference = mFirestore.collection(USER_COLLECTION).document(userId);
 
         documentReference.addSnapshotListener((value, error) -> {

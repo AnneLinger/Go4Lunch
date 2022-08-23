@@ -26,6 +26,7 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import model.Booking;
+import model.User;
 import model.placedetailspojo.Result;
 import ui.adapter.JoiningWorkmatesListAdapter;
 import viewmodel.BookingViewModel;
@@ -48,7 +49,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private BookingViewModel mBookingViewModel;
     private UserViewModel mUserViewModel;
     private List<Booking> mBookingList = new ArrayList<>();
-    private FirebaseUser mUser;
+    private User mUser;
     private String placeId;
     private List<String> mJoiningWorkmates = new ArrayList<>();
     private Booking mUserBooking;
@@ -59,7 +60,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         initUi();
         configureActionBar();
         configureViewModels();
-        getCurrentUser();
+        observeCurrentUser();
         getPlaceDetails();
         observeBookings();
     }
@@ -100,8 +101,14 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
-    private void getCurrentUser() {
-        mUser = mUserViewModel.getCurrentUserFromFirebase();
+    private void observeCurrentUser() {
+        FirebaseUser firebaseUser = mUserViewModel.getCurrentUserFromFirebase();
+        mUserViewModel.getCurrentUserFromFirestore(firebaseUser.getUid());
+        mUserViewModel.getUserLiveData().observe(this, this::getCurrentUser);
+    }
+
+    private void getCurrentUser(User user) {
+        mUser = user;
     }
 
     private void getPlaceDetails() {
@@ -182,7 +189,12 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void getUserBooking(List<Booking> bookings) {
+        Log.e("Anne", bookings.toString());
         mBookingList = bookings;
+        manageFABColor();
+    }
+
+    private void manageFABColor() {
         if (isUserHasBooking()) {
             Log.e("Anne", placeId);
             Log.e("Anne", mUserBooking.getPlaceId());
@@ -190,22 +202,50 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 Log.e("Anne", "getUserBooking : userHasThisBooking");
                 manageBookingFAB(true);
             }
+            else {
+                Log.e("Anne", "getUserBooking : userHasNOThisBooking");
+                manageBookingFAB(false);
+            }
         }
         else {
-            Log.e("Anne", "getUserBooking : userHasNOThisBooking");
+            Log.e("Anne", "getUserBooking : userHasNOBooking");
             manageBookingFAB(false);
         }
     }
 
+    private boolean isUserHasBooking() {
+        Log.e("Anne", "isUserHasBooking");
+        if(!mBookingList.isEmpty()) {
+            Log.e("Anne", "isUserHasBooking : listIsNOEmpty");
+            for (Booking booking : mBookingList) {
+                Log.e("Anne", "getUserBooking : " + booking.getUser());
+                Log.e("Anne", "getUserBooking : " + mUser.getName());
+                if (booking.getUser().equalsIgnoreCase(mUser.getName())) {
+                    Log.e("Anne", "isUserHasBooking : userEqualsBookingUser");
+                    mUserBooking = booking;
+                    return true;
+                }
+                else {
+                    Log.e("Anne", "isUserHasBooking : returnFalseUserNOEquals");
+                    //return false;
+                }
+            }
+        }
+        Log.e("Anne", "isUserHasBooking : returnFalseListEmpty");
+        return false;
+    }
+
     //To manage user booking wish
     private void manageBookingChoice() {
+        Log.e("Anne", "manageBookingChoice");
         if(!(mUserBooking==null)) {
+            Log.e("Anne", "manageBookingChoice : UserHasABooking");
             if(mUserBooking.getPlaceId().equalsIgnoreCase(placeId)) {
                 mBookingViewModel.deleteBooking(mUserBooking);
                 Toast.makeText(PlaceDetailsActivity.this, R.string.booking_delete, Toast.LENGTH_SHORT).show();
                 manageBookingFAB(false);
                 mUserBooking = null;
-                mJoiningWorkmates.remove(mUser.getDisplayName());
+                mJoiningWorkmates.remove(mUser.getName());
                 updateJoiningWorkmatesList();
             }
             else {
@@ -214,15 +254,18 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             }
         }
         else {
+            Log.e("Anne", "manageBookingChoice : UserHasNOBooking");
             createBooking();
         }
     }
 
     private void createBooking() {
-        mBookingViewModel.createBooking(placeId, mUser.getDisplayName());
+        Log.e("Anne", "CreateBooking");
+        mBookingViewModel.createBooking(placeId, mUser.getName());
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
-        mJoiningWorkmates.add(mUser.getDisplayName());
+
+        mJoiningWorkmates.add(mUser.getName());
         updateJoiningWorkmatesList();
     }
 
@@ -245,26 +288,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 }
             }
         }
-        return false;
-    }
-
-    private boolean isUserHasBooking() {
-        Log.e("Anne", "isUserHasBooking");
-        if(!mBookingList.isEmpty()) {
-            Log.e("Anne", "isUserHasBooking : listIsNOEmpty");
-            for (Booking booking : mBookingList) {
-                if (booking.getUser().equalsIgnoreCase(mUser.getDisplayName())) {
-                    Log.e("Anne", "isUserHasBooking : userEqualsBookingUser");
-                    mUserBooking = booking;
-                    return true;
-                }
-                else {
-                    Log.e("Anne", "isUserHasBooking : returnFalseUserNOEquals");
-                    return false;
-                }
-            }
-        }
-        Log.e("Anne", "isUserHasBooking : returnFalseListEmpty");
         return false;
     }
 
