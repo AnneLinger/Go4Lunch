@@ -61,6 +61,15 @@ public class UserRepositoryImpl implements UserRepository {
         return mFirebaseAuth.getCurrentUser();
     }
 
+    public String getCurrentFirebaseUserUid() {
+        FirebaseUser firebaseUser = getCurrentFirebaseUser();
+        return firebaseUser.getUid();
+    }
+
+    public CollectionReference getUserCollection() {
+        return mFirestore.collection(USER_COLLECTION);
+    }
+
     @Override
     public User getCurrentUser() {
         return null;
@@ -113,8 +122,22 @@ public class UserRepositoryImpl implements UserRepository {
 
         instanceFirestore();
 
+        FirebaseUser firebaseUser = getCurrentFirebaseUser();
+
+        if(firebaseUser!= null) {
+            String userId = firebaseUser.getUid();
+            String name = firebaseUser.getDisplayName();
+            String pictureUrl = (firebaseUser.getPhotoUrl() != null) ? firebaseUser.getPhotoUrl().toString() : null;
+
+            User newUser = new User(userId, name, pictureUrl, null);
+
+            Task<DocumentSnapshot> userData = getUserData();
+
+            userData.addOnSuccessListener(documentSnapshot -> this.getUserCollection().document(userId).set(newUser));
+        }
+
         //Create a new user
-        Map<String, Object> newUser = new HashMap<>();
+        /**Map<String, Object> newUser = new HashMap<>();
         newUser.put(USER_ID, null);
         newUser.put(NAME, getCurrentFirebaseUser().getDisplayName());
         newUser.put(PICTURE_URL, getCurrentFirebaseUser().getPhotoUrl() != null ? getCurrentFirebaseUser().getPhotoUrl().toString() : null);
@@ -134,11 +157,17 @@ public class UserRepositoryImpl implements UserRepository {
                             public void onFailure(@NonNull Exception e) {
                                 Log.e("Anne", "setUserCollectionOnFailure");
                             }
-                        }));
+                        }));*/
         /**String name = getCurrentUser().getDisplayName();
         String userId = getCurrentUser().getProviderId();
         String pictureUrl = (getCurrentUser().getPhotoUrl() != null ? getCurrentUser().getPhotoUrl().toString() : null);
         User user = new User(userId, name, pictureUrl, null);*/
+    }
+
+    public Task<DocumentSnapshot> getUserData() {
+        //assert this.getCurrentUser() != null;
+        String uId = this.getCurrentFirebaseUser().getUid();
+        return this.getUserCollection().document(uId).get();
     }
 
     @Override
