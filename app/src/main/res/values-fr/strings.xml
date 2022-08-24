@@ -66,7 +66,7 @@
     <string name="button_to_save_place_choice">Bouton pour sauvegarder le restaurant choisi</string>
     <string name="place_image">Photo du restaurant</string>
     <string name="user_avatar">Avatar de l\'utilisateur</string>
-    <string name="is_joining">participe!</string>
+    <string name="is_joining">\ participe!</string>
     <string name="search_menu">Rechercher</string>
     <string name="search_hint">Rechercher un restaurant où manger</string>
     <string name="last_parenthesis">)</string>
@@ -86,9 +86,9 @@
     <string name="default_notification_channel_id">com.google.firebase.messaging.default_notification_channel_id</string>
     <string name="notification_title">Voici votre choix pour le déjeuner d\'aujourd\'hui !</string>
     <string name="available_workmates">Collègues disponibles</string>
-    <string name="workmate_place">ce restaurant</string>
-    <string name="is_eating">a choisi</string>
-    <string name="not_decided">n\'a pas encore décidé</string>
+    <string name="workmate_place">\ ce restaurant</string>
+    <string name="is_eating">\ a choisi</string>
+    <string name="not_decided">\ n\'a pas encore décidé</string>
     <string name="sign_in_with_mail">Se connecter par email</string>
     <string name="login">Se connecter</string>
     <string name="are_you_sure">Etes-vous sûr.e ?</string>

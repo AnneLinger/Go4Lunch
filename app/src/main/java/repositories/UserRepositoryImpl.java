@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import model.Booking;
 import model.User;
 
 /**
@@ -98,7 +99,24 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void getUserListFromFirestore() {
-        mFirestore.collection(USER_COLLECTION).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        instanceFirestore();
+        mFirestore.collection(USER_COLLECTION).addSnapshotListener((value, error) -> {
+            if(error!=null){
+                Log.e("Anne", "collectionUserListError");
+                return;
+            }
+            if (value!=null) {
+                Log.e("Anne", "getCollectionUserListOK");
+                Log.e("Anne", value.toString());
+                List<User> userList = value.toObjects(User.class);
+                mUserList.setValue(userList);
+                Log.e("Anne", mUserList.toString());
+            }
+            else{
+                Log.e("Anne", "collectionUserListValueNull");
+            }
+        });
+        /**mFirestore.collection(USER_COLLECTION).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error!=null) {
@@ -123,7 +141,7 @@ public class UserRepositoryImpl implements UserRepository {
                 Log.e("Anne", "queryListenerRepo : users : " + users.toString());
                 mUserList.setValue(users);
             }
-        });
+        });*/
     }
 
     @Override

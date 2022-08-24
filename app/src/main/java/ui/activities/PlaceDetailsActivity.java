@@ -51,8 +51,10 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private List<Booking> mBookingList = new ArrayList<>();
     private User mUser;
     private String placeId;
-    private List<String> mJoiningWorkmates = new ArrayList<>();
+    private List<String> mJoiningWorkmatesString = new ArrayList<>();
+    private List<User> mJoiningWorkmatesUsers = new ArrayList<>();
     private Booking mUserBooking;
+    private List<User> mUserList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         configureActionBar();
         configureViewModels();
         observeCurrentUser();
+        observeUsers();
         getPlaceDetails();
         observeBookings();
     }
@@ -69,7 +72,6 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void initUi() {
         mBinding = ActivityPlaceDetailsBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
-        initRecyclerView();
     }
 
     private void configureActionBar() {
@@ -82,17 +84,12 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        Log.d("Anne", "initRV");
+        Log.e("Anne", "initRV");
         mRecyclerView = mBinding.rvDetailWorkmates;
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.HORIZONTAL));
-        if(isPlaceHasBooking()) {
-            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmates));
-        }
-        else {
-            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter());
-        }
+        updateJoiningWorkmatesUsersList();
     }
 
     private void configureViewModels() {
@@ -109,6 +106,19 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void getCurrentUser(User user) {
         mUser = user;
+        Log.e("Anne", "GetCurrentUser : " + mUser.getName());
+    }
+
+    private void observeUsers() {
+        mUserViewModel.getUserListFromFirestore();
+        mUserViewModel.getUserListLiveData().observe(this, this::getUsers);
+    }
+
+    private void getUsers(List<User> users) {
+        mUserList = users;
+        Log.e("Anne", "getUserActivity : " + mUserList.toString());
+        Log.e("Anne", mUserList.get(0).getName());
+        Log.e("Anne", mUserList.get(0).toString());
     }
 
     private void getPlaceDetails() {
@@ -192,6 +202,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         Log.e("Anne", bookings.toString());
         mBookingList = bookings;
         manageFABColor();
+        initRecyclerView();
     }
 
     private void manageFABColor() {
@@ -245,8 +256,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 Toast.makeText(PlaceDetailsActivity.this, R.string.booking_delete, Toast.LENGTH_SHORT).show();
                 manageBookingFAB(false);
                 mUserBooking = null;
-                mJoiningWorkmates.remove(mUser.getName());
-                updateJoiningWorkmatesList();
+                mJoiningWorkmatesString.remove(mUser.getName());
+                updateJoiningWorkmatesUsersList();
             }
             else {
                 mBookingViewModel.deleteBooking(mUserBooking);
@@ -265,29 +276,44 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
 
-        mJoiningWorkmates.add(mUser.getName());
-        updateJoiningWorkmatesList();
+        mJoiningWorkmatesString.add(mUser.getName());
+        updateJoiningWorkmatesUsersList();
     }
 
-    private void updateJoiningWorkmatesList() {
-        if(mJoiningWorkmates.isEmpty()) {
+    private void updateJoiningWorkmatesUsersList() {
+        if(!isPlaceHasBooking()) {
+            Log.e("Anne", "PlaceHasNOBooking");
             mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter());
         }
+
         else {
-            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmates));
+            Log.e("Anne", "PlaceHasBooking");
+            Log.e("Anne", mJoiningWorkmatesString.toString());
+            Log.e("Anne", mUserList.get(0).getName());
+            for(String userString : mJoiningWorkmatesString) {
+                for(User user : mUserList) {
+                    if(userString.equalsIgnoreCase(user.getName())) {
+                        mJoiningWorkmatesUsers.add(user);
+                    }
+                }
+            }
+            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmatesUsers));
         }
     }
 
     private boolean isPlaceHasBooking() {
         if(!mBookingList.isEmpty()) {
+            Log.e("Anne", "BookingIsNOEmpty");
             for (Booking booking : mBookingList) {
                 if (booking.getPlaceId().equalsIgnoreCase(placeId)) {
+                    Log.e("Anne", "BookingIsNOEmptySoAddAWorkmateJoining");
                     String joiningWorkmate = booking.getUser();
-                    mJoiningWorkmates.add(joiningWorkmate);
+                    mJoiningWorkmatesString.add(joiningWorkmate);
                     return true;
                 }
             }
         }
+        Log.e("Anne", "BookingIsEmpty");
         return false;
     }
 

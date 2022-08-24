@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.anne.linger.go4lunch.R;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,9 @@ import repositories.NearbySearchRepositoryImpl;
 
 public class JoiningWorkmatesListAdapter extends RecyclerView.Adapter<JoiningWorkmatesListAdapter.ViewHolder> {
 
-    private static List<String> mJoiningWorkmatesList = new ArrayList<>();
+    private static List<User> mJoiningWorkmatesList = new ArrayList<>();
 
-    public JoiningWorkmatesListAdapter(List<String> joiningWorkmatesList) {
+    public JoiningWorkmatesListAdapter(List<User> joiningWorkmatesList) {
         mJoiningWorkmatesList = joiningWorkmatesList;
     }
 
@@ -72,9 +73,18 @@ public class JoiningWorkmatesListAdapter extends RecyclerView.Adapter<JoiningWor
             name = itemView.findViewById(R.id.tv_joining_workmate);
         }
 
-        private void displayWorkmates(String workmate) {
+        private void displayWorkmates(User workmate) {
             //avatar.set...
-            name.setText(workmate);
+            if(workmate.getPictureUrl()==null) {
+                avatar.setImageResource(R.drawable.ic_baseline_face_24);
+            }
+            else {
+                Glide.with(itemView)
+                        .load(workmate.getPictureUrl())
+                        .circleCrop()
+                        .into(avatar);
+            }
+            name.setText(workmate.getName());
         }
     }
 }
