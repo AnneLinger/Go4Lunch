@@ -50,14 +50,15 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private UserViewModel mUserViewModel;
     private List<Booking> mBookingList = new ArrayList<>();
     private User mUser;
-    private String placeId;
-    private List<String> mJoiningWorkmatesString = new ArrayList<>();
-    private List<User> mJoiningWorkmatesUsers = new ArrayList<>();
+    private String mPlaceId;
+    private final List<String> mJoiningWorkmatesString = new ArrayList<>();
+    private final List<User> mJoiningWorkmatesUsers = new ArrayList<>();
     private Booking mUserBooking;
     private List<User> mUserList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.e("Anne", "onCreate");
         super.onCreate(savedInstanceState);
         initUi();
         configureActionBar();
@@ -65,7 +66,20 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         observeCurrentUser();
         observeUsers();
         getPlaceDetails();
+        initRecyclerView();
         observeBookings();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e("Anne", "onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.e("Anne", "onStart");
+        super.onStart();
     }
 
     //Configure UI
@@ -82,14 +96,13 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             }
         });
     }
-
     private void initRecyclerView() {
         Log.e("Anne", "initRV");
         mRecyclerView = mBinding.rvDetailWorkmates;
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.HORIZONTAL));
-        updateJoiningWorkmatesUsersList();
+        mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter());
     }
 
     private void configureViewModels() {
@@ -124,8 +137,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void getPlaceDetails() {
         Log.e("Anne", "getPlaceDetails");
         Intent intent = getIntent();
-        placeId = intent.getStringExtra("place id");
-        mPlaceDetailsViewModel.fetchPlaceDetails(placeId);
+        mPlaceId = intent.getStringExtra("place id");
+        mPlaceDetailsViewModel.fetchPlaceDetails(mPlaceId);
         mPlaceDetailsViewModel.getPlaceDetailsLiveData().observe(this, this::initDataPlaceDetails);
     }
 
@@ -195,21 +208,21 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void observeBookings() {
         Log.e("Anne", "observeBookingsInPlaceDetails");
         mBookingViewModel.fetchBookingList();
-        mBookingViewModel.getBookingListLiveData().observe(this, this::getUserBooking);
+        mBookingViewModel.getBookingListLiveData().observe(this, this::getBookings);
     }
 
-    private void getUserBooking(List<Booking> bookings) {
+    private void getBookings(List<Booking> bookings) {
         Log.e("Anne", bookings.toString());
         mBookingList = bookings;
         manageFABColor();
-        initRecyclerView();
+        updateRecyclerView();
     }
 
     private void manageFABColor() {
         if (isUserHasBooking()) {
-            Log.e("Anne", placeId);
+            Log.e("Anne", mPlaceId);
             Log.e("Anne", mUserBooking.getPlaceId());
-            if(mUserBooking.getPlaceId().equalsIgnoreCase(placeId)) {
+            if(mUserBooking.getPlaceId().equalsIgnoreCase(mPlaceId)) {
                 Log.e("Anne", "getUserBooking : userHasThisBooking");
                 manageBookingFAB(true);
             }
@@ -246,18 +259,49 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         return false;
     }
 
+    private void updateRecyclerView(){
+        Log.e("Anne", "updateRV");
+        mJoiningWorkmatesString.clear();
+        mJoiningWorkmatesUsers.clear();
+        if(!mBookingList.isEmpty()){
+            Log.e("Anne", "updateRV : bookingListIsNoEmpty");
+            for(Booking booking : mBookingList) {
+                if(mPlaceId.equals(booking.getPlaceId()))  {
+                    Log.e("Anne", "updateRV : getUserBookingForThisPlace");
+                    mJoiningWorkmatesString.add(booking.getUser());
+                }
+            }
+        }
+        if(!mJoiningWorkmatesString.isEmpty()) {
+            Log.e("Anne", "updateRV : thereAreUserBookingForThisPlace");
+            for(String userString : mJoiningWorkmatesString) {
+                for(User user : mUserList) {
+                    if(userString.equalsIgnoreCase(user.getName())){
+                        Log.e("Anne", "updateRV : UserBookingAddToUserList");
+                        mJoiningWorkmatesUsers.add(user);
+                    }
+                }
+            }
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmatesUsers));
+        }
+        else {
+            Log.e("Anne", "updateRV : NoUserBookingForThisPlace");
+            mRecyclerView.setVisibility(View.GONE);
+        }
+    }
+
     //To manage user booking wish
     private void manageBookingChoice() {
         Log.e("Anne", "manageBookingChoice");
         if(!(mUserBooking==null)) {
             Log.e("Anne", "manageBookingChoice : UserHasABooking");
-            if(mUserBooking.getPlaceId().equalsIgnoreCase(placeId)) {
+            if(mUserBooking.getPlaceId().equalsIgnoreCase(mPlaceId)) {
                 mBookingViewModel.deleteBooking(mUserBooking);
                 Toast.makeText(PlaceDetailsActivity.this, R.string.booking_delete, Toast.LENGTH_SHORT).show();
                 manageBookingFAB(false);
                 mUserBooking = null;
-                mJoiningWorkmatesString.remove(mUser.getName());
-                updateJoiningWorkmatesUsersList();
+                updateRecyclerView();
             }
             else {
                 mBookingViewModel.deleteBooking(mUserBooking);
@@ -272,49 +316,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void createBooking() {
         Log.e("Anne", "CreateBooking");
-        mBookingViewModel.createBooking(placeId, mUser.getName());
+        mBookingViewModel.createBooking(mPlaceId, mUser.getName());
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
-
-        mJoiningWorkmatesString.add(mUser.getName());
-        updateJoiningWorkmatesUsersList();
-    }
-
-    private void updateJoiningWorkmatesUsersList() {
-        if(!isPlaceHasBooking()) {
-            Log.e("Anne", "PlaceHasNOBooking");
-            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter());
-        }
-
-        else {
-            Log.e("Anne", "PlaceHasBooking");
-            Log.e("Anne", mJoiningWorkmatesString.toString());
-            Log.e("Anne", mUserList.get(0).getName());
-            for(String userString : mJoiningWorkmatesString) {
-                for(User user : mUserList) {
-                    if(userString.equalsIgnoreCase(user.getName())) {
-                        mJoiningWorkmatesUsers.add(user);
-                    }
-                }
-            }
-            mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmatesUsers));
-        }
-    }
-
-    private boolean isPlaceHasBooking() {
-        if(!mBookingList.isEmpty()) {
-            Log.e("Anne", "BookingIsNOEmpty");
-            for (Booking booking : mBookingList) {
-                if (booking.getPlaceId().equalsIgnoreCase(placeId)) {
-                    Log.e("Anne", "BookingIsNOEmptySoAddAWorkmateJoining");
-                    String joiningWorkmate = booking.getUser();
-                    mJoiningWorkmatesString.add(joiningWorkmate);
-                    return true;
-                }
-            }
-        }
-        Log.e("Anne", "BookingIsEmpty");
-        return false;
+        mRecyclerView.setVisibility(View.VISIBLE);
+        updateRecyclerView();
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
