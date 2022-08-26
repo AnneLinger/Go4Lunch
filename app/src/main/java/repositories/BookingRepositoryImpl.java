@@ -37,6 +37,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     private static final String BOOKING_COLLECTION = "Bookings";
     private static final String BOOKING_ID = "bookingId";
     private static final String PLACE_ID = "placeId";
+    private static final String PLACE_NAME = "placeName";
     private static final String USER = "user";
 
     @Inject
@@ -100,7 +101,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public void createBooking(String placeId, String user) {
+    public void createBooking(String placeId, String placeName, String user) {
 
         instanceFirestore();
 
@@ -108,6 +109,7 @@ public class BookingRepositoryImpl implements BookingRepository {
         Map<String, Object> newBooking = new HashMap<>();
         newBooking.put(BOOKING_ID, null);
         newBooking.put(PLACE_ID, placeId);
+        newBooking.put(PLACE_NAME, placeName);
         newBooking.put(USER, user);
 
         //Create a new document

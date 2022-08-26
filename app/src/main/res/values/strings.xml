@@ -88,7 +88,7 @@
     <string name="notification_title">Here is your lunch for today !</string>
     <string name="available_workmates">Available workmates</string>
     <string name="workmate_place">\ this place</string>
-    <string name="is_eating">\ is eating at</string>
+    <string name="is_eating">\ is eating at\ </string>
     <string name="not_decided">\ hasn\'t decided yet</string>
     <string name="are_you_sure">Are you sure ?</string>
     <string name="confirm_delete">Yes, delete my account</string>

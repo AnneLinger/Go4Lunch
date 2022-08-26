@@ -87,7 +87,7 @@
     <string name="notification_title">Voici votre choix pour le déjeuner d\'aujourd\'hui !</string>
     <string name="available_workmates">Collègues disponibles</string>
     <string name="workmate_place">\ ce restaurant</string>
-    <string name="is_eating">\ a choisi</string>
+    <string name="is_eating">\ a choisi\ </string>
     <string name="not_decided">\ n\'a pas encore décidé</string>
     <string name="sign_in_with_mail">Se connecter par email</string>
     <string name="login">Se connecter</string>

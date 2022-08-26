@@ -139,13 +139,12 @@ public class PlacesActivity extends AppCompatActivity {
     public boolean selectBottomNavItem(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_map_view:
-                /**if(mMapViewFragment==null){
+                if(mMapViewFragment==null){
                     Log.e("Anne", "mMapViewFragment==null");
                     this.mMapViewFragment = MapViewFragment.newInstance();
-                }*/
+                }
                 if(!mMapViewFragment.isVisible()) {
                     Log.e("Anne", "mMapViewFragmentNONull");
-                    //getSupportFragmentManager().beginTransaction().hide(mListViewFragment).show(mMapViewFragment).commit();
                     getSupportFragmentManager().beginTransaction().replace(R.id.activity_places_frame_layout, mMapViewFragment).commit();
                 }
                 mBinding.toolbar.setTitle(this.getString(R.string.toolbar_title));

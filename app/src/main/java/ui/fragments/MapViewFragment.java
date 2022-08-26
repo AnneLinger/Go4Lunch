@@ -252,13 +252,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(@NonNull Marker marker) {
-                Intent intent = new Intent(requireActivity(), PlaceDetailsActivity.class);
-                for(Result place : results) {
-                    if(Objects.requireNonNull(marker.getTitle()).equalsIgnoreCase(place.getName())){
-                        intent.putExtra("place id", place.getPlaceId());
-                    }
-                }
-                startActivity(intent);
+                navigateToPlaceDetailsActivity(results, marker);
             }
         });
     }
@@ -360,6 +354,16 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                 .setCancelable(false)
                 .create()
                 .show();
+    }
+
+    private void navigateToPlaceDetailsActivity(List<Result> results, Marker marker) {
+        Intent intent = new Intent(requireActivity(), PlaceDetailsActivity.class);
+        for(Result place : results) {
+            if(Objects.requireNonNull(marker.getTitle()).equalsIgnoreCase(place.getName())){
+                intent.putExtra("place id", place.getPlaceId());
+            }
+        }
+        startActivity(intent);
     }
 
     private void navigateToAuthenticationActivity() {

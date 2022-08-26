@@ -7,15 +7,17 @@ package model;
 public class Booking {
     private String bookingId;
     private String placeId;
+    private String placeName;
     private String user;
 
 
     public Booking(){
     }
 
-    public Booking(String bookingId, String placeId, String user) {
+    public Booking(String bookingId, String placeId, String placeName, String user) {
         this.bookingId = bookingId;
         this.placeId = placeId;
+        this.placeName = placeName;
         this.user = user;
     }
 
@@ -33,6 +35,14 @@ public class Booking {
 
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
+    }
+
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
     }
 
     public String getUser() {

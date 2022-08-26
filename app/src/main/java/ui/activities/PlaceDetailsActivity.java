@@ -51,6 +51,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private List<Booking> mBookingList = new ArrayList<>();
     private User mUser;
     private String mPlaceId;
+    private String mPlaceName;
     private final List<String> mJoiningWorkmatesString = new ArrayList<>();
     private final List<User> mJoiningWorkmatesUsers = new ArrayList<>();
     private Booking mUserBooking;
@@ -154,7 +155,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                         .into(mBinding.imDetailPlace);
             }
             //For place name
-            mBinding.tvDetailName.setText(result.getName());
+            mPlaceName = result.getName();
+            mBinding.tvDetailName.setText(mPlaceName);
             //For place address
             mBinding.tvDetailAddress.setText(result.getFormattedAddress());
             //For place rating
@@ -316,7 +318,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void createBooking() {
         Log.e("Anne", "CreateBooking");
-        mBookingViewModel.createBooking(mPlaceId, mUser.getName());
+        mBookingViewModel.createBooking(mPlaceId, mPlaceName, mUser.getName());
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
         mRecyclerView.setVisibility(View.VISIBLE);

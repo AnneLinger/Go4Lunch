@@ -38,8 +38,7 @@
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_workmate_name"
-        android:text="@string/is_eating"/>
+        app:layout_constraintStart_toEndOf="@id/tv_workmate_name"/>
 
     <TextView
         android:id="@+id/tv_workmate_place"
@@ -49,7 +48,6 @@
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_workmate_eating"
-        android:text="@string/workmate_place"/>
+        app:layout_constraintStart_toEndOf="@id/tv_workmate_eating"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

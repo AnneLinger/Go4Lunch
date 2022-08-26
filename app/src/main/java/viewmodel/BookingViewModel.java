@@ -39,9 +39,9 @@ public class BookingViewModel extends ViewModel {
         return mBookingRepositoryImpl.getBookingListLiveData();
     }
 
-    public void createBooking(String placeId, String user) {
+    public void createBooking(String placeId, String placeName, String user) {
         mBookingRepositoryImpl.instanceFirestore();
-        mBookingRepositoryImpl.createBooking(placeId, user);
+        mBookingRepositoryImpl.createBooking(placeId, placeName, user);
     }
 
     public void updateBooking() {

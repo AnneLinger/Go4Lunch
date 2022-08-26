@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
 
 import model.Booking;
+import model.User;
 import model.nearbysearchpojo.Result;
 import ui.activities.PlaceDetailsActivity;
 import ui.fragments.WorkmatesFragment;
@@ -27,13 +28,13 @@ import ui.fragments.WorkmatesFragment;
 
 public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdapter.ViewHolder> {
 
-    private static List<FirebaseUser> mUserList;
+    private static List<User> mUserList;
     private static List<Booking> mBookingList;
 
     //TODO Add booking list in constructor
-    public WorkmatesListAdapter(List<FirebaseUser> userList) {
+    public WorkmatesListAdapter(List<User> userList, List<Booking> bookingList) {
         mUserList = userList;
-        //mBookingList = bookingList;
+        mBookingList = bookingList;
     }
 
     @NonNull
@@ -68,36 +69,46 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdap
             place = itemView.findViewById(R.id.tv_workmate_place);
         }
 
-        private void displayWorkmate(FirebaseUser user){
+        private void displayWorkmate(User user){
             //For avatar
-            if(user.getPhotoUrl()==null) {
+            if(user.getPictureUrl()==null) {
                 avatar.setImageResource(R.drawable.ic_baseline_face_24);
             }
             else {
                 Glide.with(itemView)
-                        .load(user.getPhotoUrl())
+                        .load(user.getPictureUrl())
                         .circleCrop()
                         .into(avatar);
             }
             //For name
-            name.setText(user.getDisplayName());
-            //For eating or not
-            //TODO with booking list
-            //For place to eat
-            //TODO with booking list
-            //For navigate to details from itemView
-            //TODO set place in constructor of displayWorkmate with booking list
-            /**place.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    navigateToPlaceDetails(place);
+            name.setText(user.getName());
+
+            //About booking
+            Booking userBooking = null;
+            for(Booking booking : mBookingList) {
+                if(booking.getUser().equalsIgnoreCase(user.getName())) {
+                    userBooking = booking;
                 }
-            });*/
+            }
+            if(userBooking!=null){
+                eating.setText(R.string.is_eating);
+                place.setText(userBooking.getPlaceName());
+                Booking finalUserBooking = userBooking;
+                place.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        navigateToPlaceDetails(finalUserBooking.getPlaceId());
+                    }
+                });
+            }
+            else {
+                eating.setText(R.string.not_decided);
+            }
         }
 
-        private void navigateToPlaceDetails(Result place) {
+        private void navigateToPlaceDetails(String placeId) {
             Intent intent = new Intent(itemView.getContext(), PlaceDetailsActivity.class);
-            intent.putExtra("place id", place.getPlaceId());
+            intent.putExtra("place id", placeId);
             itemView.getContext().startActivity(intent);
         }
     }
