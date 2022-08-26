@@ -35,7 +35,6 @@ public class SettingsActivity extends AppCompatActivity {
     //For ui
     private ActivitySettingsBinding mBinding;
     private float DEFAULT_ZOOM = 15;
-    private float DEFAULT_RADIUS = 12000;
     private boolean DEFAULT_NOTIFICATIONS = true;
 
     //For data
@@ -45,7 +44,6 @@ public class SettingsActivity extends AppCompatActivity {
     private UserViewModel mUserViewModel;
     private FirebaseUser mUser;
     private float zoom;
-    private float radius = 12000;
     private boolean notifications;
 
     @Override
@@ -54,7 +52,6 @@ public class SettingsActivity extends AppCompatActivity {
         initUi();
         configureViewModels();
         configureActionBar();
-        saveRadius();
         saveZoom();
         saveNotificationsChoice();
         deleteAccount();
@@ -96,16 +93,6 @@ public class SettingsActivity extends AppCompatActivity {
         Intent intent = new Intent(SettingsActivity.this, PlacesActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    private void saveRadius() {
-        mBinding.sliderRadius.addOnChangeListener(new Slider.OnChangeListener() {
-            @Override
-            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                radius = value;
-
-            }
-        });
     }
 
     private void saveZoom() {
@@ -164,11 +151,9 @@ public class SettingsActivity extends AppCompatActivity {
         if(currentUser!=null) {
             initSharedPreferences();
             if (mSharedPreferences != null) {
-                mBinding.sliderRadius.setValue(mSharedPreferences.getFloat(getString(R.string.radius), DEFAULT_RADIUS));
                 mBinding.sliderZoom.setValue(mSharedPreferences.getFloat(getString(R.string.zoom), DEFAULT_ZOOM));
                 mBinding.switchNotifications.setChecked(mSharedPreferences.getBoolean(getString(R.string.notifications), DEFAULT_NOTIFICATIONS));            }
             else {
-                mBinding.sliderRadius.setValue(DEFAULT_RADIUS);
                 mBinding.sliderZoom.setValue(DEFAULT_ZOOM);
                 mBinding.switchNotifications.setChecked(DEFAULT_NOTIFICATIONS);
             }
@@ -183,7 +168,6 @@ public class SettingsActivity extends AppCompatActivity {
                 initSharedPreferences();
 
                 SharedPreferences.Editor editor = mSharedPreferences.edit();
-                editor.putFloat(getString(R.string.radius), radius);
                 editor.putFloat(getString(R.string.zoom), zoom);
                 editor.putBoolean(getString(R.string.notifications), notifications);
                 editor.apply();
