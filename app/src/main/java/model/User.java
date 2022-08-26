@@ -14,13 +14,12 @@ public class User {
     private String name;
     @Nullable
     private String pictureUrl;
-    @Nullable
     private List<String> likedPlaces;
 
     public User(){
     }
 
-    public User(String userId, String name, @androidx.annotation.Nullable String pictureUrl, @androidx.annotation.Nullable List<String> likedPlaces) {
+    public User(String userId, String name, @androidx.annotation.Nullable String pictureUrl, List<String> likedPlaces) {
         this.userId = userId;
         this.name = name;
         this.pictureUrl = pictureUrl;
@@ -57,7 +56,7 @@ public class User {
         return likedPlaces;
     }
 
-    public void setLikedPlaces(@Nullable List<String> likedPlaces) {
+    public void setLikedPlaces(List<String> likedPlaces) {
         this.likedPlaces = likedPlaces;
     }
 }

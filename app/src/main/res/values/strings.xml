@@ -63,6 +63,7 @@
     <string name="workmate_number" translatable="false">2</string>
     <string name="call">call</string>
     <string name="like">like</string>
+    <string name="dislike">dislike</string>
     <string name="website">website</string>
     <string name="button_to_save_place_choice">Button to save place choice</string>
     <string name="place_image">Place image</string>

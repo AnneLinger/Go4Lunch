@@ -56,6 +56,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private final List<User> mJoiningWorkmatesUsers = new ArrayList<>();
     private Booking mUserBooking;
     private List<User> mUserList = new ArrayList<>();
+    private List<String> mUserLikedPlacesList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,6 +122,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private void getCurrentUser(User user) {
         mUser = user;
         Log.e("Anne", "GetCurrentUser : " + mUser.getName());
+        assert mUser.getLikedPlaces() != null;
+        mUserLikedPlacesList.addAll(mUser.getLikedPlaces());
+        if(!mUserLikedPlacesList.isEmpty()){
+            Log.e("Anne", "GetCurrentUser : " + mUser.getLikedPlaces().toString());
+        }
     }
 
     private void observeUsers() {
@@ -185,10 +191,13 @@ public class PlaceDetailsActivity extends AppCompatActivity {
                 }
             });
             //For place like
+            if(mUserLikedPlacesList.contains(mPlaceId)) {
+                mBinding.btDetailLike.setText(R.string.dislike);
+            }
             mBinding.btDetailLike.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    manageLikeButton();
                 }
             });
             //For place website
@@ -332,6 +341,20 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         }
         else {
             mBinding.fabDetailChoice.setImageDrawable(getDrawable(R.drawable.check_circle_grey));
+        }
+    }
+
+    private void manageLikeButton() {
+        Log.e("Anne", "manageLikeButton");
+        if(mUserLikedPlacesList.contains(mPlaceId)) {
+            Log.e("Anne", "mUserLPLContainsThisPlace");
+            mBinding.btDetailLike.setText(R.string.like);
+            mUserViewModel.removeALikedPlace(mPlaceId, mUser.getUserId());
+        }
+        else {
+            Log.e("Anne", "mUserLPLisDoesNOTContainsThisPlace");
+            mBinding.btDetailLike.setText(R.string.dislike);
+            mUserViewModel.addALikedPlace(mPlaceId, mUser.getUserId());
         }
     }
 

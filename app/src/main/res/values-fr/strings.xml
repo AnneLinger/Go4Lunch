@@ -62,6 +62,7 @@
     <string name="workmate_number">2</string>
     <string name="call">appel</string>
     <string name="like">j\'aime</string>
+    <string name="dislike">je n\'aime plus</string>
     <string name="website">Site web</string>
     <string name="button_to_save_place_choice">Bouton pour sauvegarder le restaurant choisi</string>
     <string name="place_image">Photo du restaurant</string>

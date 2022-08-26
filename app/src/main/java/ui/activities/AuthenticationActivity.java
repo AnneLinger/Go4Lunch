@@ -30,10 +30,12 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import model.User;
 import viewmodel.UserViewModel;
 
 /**
@@ -48,6 +50,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     //For data
     private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private UserViewModel mUserViewModel;
+    private List<User> mUserList = new ArrayList<>();
 
     private static final int RC_SIGN_IN = 123;
 
@@ -60,6 +63,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         AppEventsLogger.activateApp(this);
         initUi();
         configureViewModel();
+        observeUsers();
         startSignInActivity();
     }
 
@@ -92,6 +96,18 @@ public class AuthenticationActivity extends AppCompatActivity {
     //Configure data
     private void configureViewModel() {
         mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+    }
+
+    private void observeUsers() {
+        mUserViewModel.getUserListFromFirestore();
+        mUserViewModel.getUserListLiveData().observe(this, this::getUsers);
+    }
+
+    private void getUsers(List<User> users) {
+        mUserList = users;
+        Log.e("Anne", "getUserActivity : " + mUserList.toString());
+        Log.e("Anne", mUserList.get(0).getName());
+        Log.e("Anne", mUserList.get(0).toString());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -141,9 +157,18 @@ public class AuthenticationActivity extends AppCompatActivity {
             // SUCCESS
             if (resultCode == RESULT_OK) {
                 Log.e("Anne", "responseAfterSignInResultCodeOK");
-                createUser();
-                Toast.makeText(AuthenticationActivity.this, getString(R.string.successful_auth), Toast.LENGTH_SHORT).show();
-                navigateToPlacesActivity();
+                for(User user : mUserList) {
+                    Log.e("Anne", user.getName());
+                    Log.e("Anne", mUserViewModel.getCurrentUserFromFirebase().getDisplayName());
+                    if (user.getName().equalsIgnoreCase(mUserViewModel.getCurrentUserFromFirebase().getDisplayName())) {
+                        navigateToPlacesActivity();
+                    }
+                    else {
+                        createUser();
+                        Toast.makeText(AuthenticationActivity.this, getString(R.string.successful_auth), Toast.LENGTH_SHORT).show();
+                        navigateToPlacesActivity();
+                    }
+                }
             } else {
                 // ERRORS
                 if (idpResponse == null) {

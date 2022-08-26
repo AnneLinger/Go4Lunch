@@ -86,6 +86,16 @@ public class UserViewModel extends ViewModel {
         mLocationRepositoryImpl.stopLocationRequest();
     }
 
+    //..........................For likes places...................................................
+
+    public void addALikedPlace(String placeId, String userId){
+        mUserRepositoryImpl.addALikedPlace(placeId, userId);
+    }
+
+    public void removeALikedPlace(String placeId, String userId) {
+        mUserRepositoryImpl.removeALikedPlace(placeId, userId);
+    }
+
 }
 
 

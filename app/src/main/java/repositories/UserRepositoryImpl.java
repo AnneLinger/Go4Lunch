@@ -18,6 +18,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -85,6 +86,7 @@ public class UserRepositoryImpl implements UserRepository {
 
             if (value != null && value.exists()) {
                 mUser.setValue(value.toObject(User.class));
+
             } else {
                 Log.i("Anne", "onEvent: data is null");
                 createUser();
@@ -156,8 +158,9 @@ public class UserRepositoryImpl implements UserRepository {
             String userId = firebaseUser.getUid();
             String name = firebaseUser.getDisplayName();
             String pictureUrl = (firebaseUser.getPhotoUrl() != null) ? firebaseUser.getPhotoUrl().toString() : null;
+            List<String> likedPlaces = new ArrayList<>();
 
-            User newUser = new User(userId, name, pictureUrl, null);
+            User newUser = new User(userId, name, pictureUrl, likedPlaces);
 
             Task<DocumentSnapshot> userData = getUserData();
 
@@ -201,11 +204,16 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void addALikedPlace(String placeId, String user) {
+    public void addALikedPlace(String placeId, String userId) {
+        mFirestore.collection(USER_COLLECTION).document(userId)
+                .update(LIKED_PLACES, FieldValue.arrayUnion(placeId))
+                .addOnFailureListener(e -> Log.e("Anne", "AddALikedPlaceFailed", e));
     }
 
     @Override
-    public void removeALikedPlace(String placeId, String user) {
-
+    public void removeALikedPlace(String placeId, String userId) {
+        mFirestore.collection(USER_COLLECTION).document(userId)
+                .update(LIKED_PLACES, FieldValue.arrayRemove(placeId))
+                .addOnFailureListener(e -> Log.e("Anne", "AddALikedPlaceFailed", e));
     }
 }
