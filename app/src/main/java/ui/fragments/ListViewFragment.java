@@ -74,15 +74,17 @@ public class ListViewFragment extends Fragment {
         observeBookings();
         observeLocation();
         observePlaces();
-        initRecyclerView(mPlaceList);
+        //initRecyclerView(mPlaceList);
         observeAutocomplete();
     }
 
     private void initRecyclerView(List<Result> list) {
+        Log.e("Anne", "initRVList");
         mRecyclerView = mBinding.rvListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
+        Log.e("Anne", mBookingList.toString());
         mRecyclerView.setAdapter(new PlaceListAdapter(list, mLocation, mBookingList));
     }
 
@@ -121,6 +123,7 @@ public class ListViewFragment extends Fragment {
     private void updateBookingList(List<Booking> bookings) {
         Log.e("Anne", "updateBookingList");
         mBookingList = bookings;
+        initRecyclerView(mPlaceList);
     }
 
     private void observeAutocomplete() {
