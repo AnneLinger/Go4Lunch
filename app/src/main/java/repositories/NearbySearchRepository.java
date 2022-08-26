@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public interface NearbySearchRepository {
 
-    void fetchNearbySearchPlaces(String location, int radius);
+    void fetchNearbySearchPlaces(String location);
 
     LiveData<List<Result>> getNearbySearchResponseLiveData();
 }

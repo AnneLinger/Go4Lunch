@@ -103,12 +103,14 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
                 workmateNumber.setText("0");
             }
             else{
+                int workmateNumberInt = 0;
                 for(Booking mBooking : mBookingList){
                     if(Objects.equals(mBooking.getPlaceId(), place.getPlaceId())){
                         //TODO manage numbers with joining workmates
-                        workmateNumber.setText(format(Locale.getDefault(), "%d", 1));
+                        workmateNumberInt = workmateNumberInt+ 1;
                     }
                 }
+                workmateNumber.setText(format(Locale.getDefault(), "%d", workmateNumberInt));
             }
             //For open or closed
             if(place.getOpeningHours()!=null) {
@@ -118,8 +120,10 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
                 open.setText(R.string.closed);
             }
             //For rating
-            float rating = (float) ((place.getRating()/5)*3);
-            rate.setRating(rating);
+            if(place.getRating()!=null){
+                float rating = (float) ((place.getRating()/5)*3);
+                rate.setRating(rating);
+            }
             //For place photo
             if(place.getPhotos()==null){
                 placeImage.setImageResource(R.drawable.ic_baseline_restaurant_24);

@@ -97,6 +97,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         }
     });
 
+    /**private final OnMapReadyCallback mCallback = new OnMapReadyCallback() {
+        @Override
+        public void onMapReady(@NonNull GoogleMap googleMap) {
+            mGoogleMap = googleMap;
+            checkIfUserIsSignIn();
+            //getUserLocation();
+        }
+    };*/
+
     public static MapViewFragment newInstance() {
         return new MapViewFragment();
     }
@@ -104,6 +113,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.e("Anne", "onCreateView");
         mBinding = FragmentMapViewBinding.inflate(getLayoutInflater());
         configureViewModels();
         this.onAttach(requireContext());
@@ -112,37 +122,43 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.e("Anne", "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         assert supportMapFragment != null;
         supportMapFragment.getMapAsync(this);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        Log.e("Anne", "onMapReady");
         mGoogleMap = googleMap;
         checkIfUserIsSignIn();
         observeBookings();
+        observeNearbyPlaces();
         observeAutocomplete();
     }
 
     @Override
+    public void onResume() {
+        Log.e("Anne", "onResume");
+        super.onResume();
+    }
+
+    @Override
     public void onAttach(@NonNull Context context) {
+        Log.e("Anne", "onAttach");
         super.onAttach(context);
         mContext = context;
     }
 
-    @Override
+    /**@Override
     public void onDetach() {
+        Log.e("Anne", "onDetach");
         super.onDetach();
         mContext = null;
-    }
+    }*/
 
     private void configureViewModels() {
         mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
@@ -170,6 +186,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     //Check the location permission
     private void requestLocationPermission() {
+        Log.e("Anne", "requestLocationPermission");
         if (ContextCompat.checkSelfPermission(requireContext(),
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(requireContext(),
@@ -185,6 +202,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //Get the user location when permission is ok
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
+        Log.e("Anne", "getUserLocation");
         mUserViewModel.getUserLocation(this.getContext());
         mGoogleMap.setMyLocationEnabled(true);
         mUserViewModel.getLivedataLocation().observe(requireActivity(), this::updateMapLocation);
@@ -192,9 +210,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     //Update map with user location
     private void updateMapLocation(Location location) {
+        Log.e("Anne", "updateMapLocation");
         mLocation = location;
         mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
-        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString, radius);
+        mPlacesViewModel.fetchNearbySearchPlaces(mLocationString);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         Activity activity = getActivity();
@@ -203,21 +222,23 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .title(requireActivity().getString(R.string.marker_title)));
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
-            observeNearbyPlaces();
         }
     }
 
     private void observeNearbyPlaces() {
+        Log.e("Anne", "observeNearbyPlaces");
         mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), this::updateMapWithNearbyPlaces);
     }
 
     //Update the map with places
     private void updateMapWithNearbyPlaces(List<Result> results) {
+        Log.e("Anne", "updateMapWithNearbyPlaces");
         mPlaceList = results;
         updateMapWithData(mPlaceList);
     }
 
     private void updateMapWithData(List<Result> results) {
+        Log.e("Anne", "updateMapWithData");
         mGoogleMap.clear();
         for (Result mResult : results) {
             LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLat(), mResult.getGeometry().getLocation().getLng());
@@ -250,20 +271,23 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     }
 
     private void observeBookings() {
-        Log.e("Anne", "observeBookingsInPlaceDetails");
+        Log.e("Anne", "observeBookingsInMapFragment");
         mBookingViewModel.fetchBookingList();
-        mBookingViewModel.getBookingListLiveData().observe(this, this::updateBookingList);
+        mBookingViewModel.getBookingListLiveData().observe(getViewLifecycleOwner(), this::updateBookingList);
     }
 
     private void updateBookingList(List<Booking> bookings) {
+        Log.e("Anne", "updateBookingList");
         mBookingList = bookings;
     }
 
     private void observeAutocomplete() {
+        Log.e("Anne", "observeAutoComplete");
         mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::updateMapWithAutocompletePlaces);
     }
 
     private void updateMapWithAutocompletePlaces(List<Prediction> predictions){
+        Log.e("Anne", "updateMapWithAutocompletePlaces");
         //Clear previous predictions
         mPlaceListAutocomplete.clear();
 
@@ -303,6 +327,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //Update the map when the user location changes
     @Override
     public void onLocationChanged(@NonNull Location location) {
+        Log.e("Anne", "onLocationChanged");
         observeNearbyPlaces();
     }
 
@@ -342,8 +367,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         startActivity(intent);
     }
 
-    @Override
+    /**@Override
     public void onDestroyView() {
+        Log.e("Anne", "onDestroyView");
         super.onDestroyView();
         if(ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -351,5 +377,5 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mPlacesViewModel.getNearbySearchResponseLiveData().removeObservers(this);
         }
-    }
+    }*/
 }

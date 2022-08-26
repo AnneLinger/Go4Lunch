@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import model.autocompletepojo.Prediction;
 import model.nearbysearchpojo.Result;
 import ui.adapter.PlaceListAdapter;
 import viewmodel.AutocompleteViewModel;
+import viewmodel.BookingViewModel;
 import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
@@ -46,6 +48,7 @@ public class ListViewFragment extends Fragment {
     private UserViewModel mUserViewModel;
     private PlacesViewModel mPlacesViewModel;
     private AutocompleteViewModel mAutocompleteViewModel;
+    private BookingViewModel mBookingViewModel;
     private Location mLocation;
     private String mLocationString;
     private ListViewFragment mListViewFragment = this;
@@ -68,6 +71,7 @@ public class ListViewFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         configureViewModels();
+        observeBookings();
         observeLocation();
         observePlaces();
         initRecyclerView(mPlaceList);
@@ -75,8 +79,6 @@ public class ListViewFragment extends Fragment {
     }
 
     private void initRecyclerView(List<Result> list) {
-        mUser = mUserViewModel.getCurrentUserFromFirebase().toString();
-        mBookingList.add(new Booking("0", list.get(0).getPlaceId(), mUser));
         mRecyclerView = mBinding.rvListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mRecyclerView.setLayoutManager(layoutManager);
@@ -88,6 +90,7 @@ public class ListViewFragment extends Fragment {
         mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         mPlacesViewModel = new ViewModelProvider(requireActivity()).get(PlacesViewModel.class);
         mAutocompleteViewModel = new ViewModelProvider(requireActivity()).get(AutocompleteViewModel.class);
+        mBookingViewModel = new ViewModelProvider(requireActivity()).get(BookingViewModel.class);
     }
 
     //Get the user location
@@ -107,6 +110,17 @@ public class ListViewFragment extends Fragment {
 
     private void initPlaceList(List<Result> results) {
         mPlaceList = results;
+    }
+
+    private void observeBookings() {
+        Log.e("Anne", "observeBookingsInMapFragment");
+        mBookingViewModel.fetchBookingList();
+        mBookingViewModel.getBookingListLiveData().observe(getViewLifecycleOwner(), this::updateBookingList);
+    }
+
+    private void updateBookingList(List<Booking> bookings) {
+        Log.e("Anne", "updateBookingList");
+        mBookingList = bookings;
     }
 
     private void observeAutocomplete() {
