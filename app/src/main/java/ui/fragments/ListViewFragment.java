@@ -52,9 +52,6 @@ public class ListViewFragment extends Fragment {
     private Location mLocation;
     private String mLocationString;
     private ListViewFragment mListViewFragment = this;
-
-    //TODO manage with repo
-    private String mUser;
     private List<Booking> mBookingList = new ArrayList<>();
 
     public static ListViewFragment newInstance() {

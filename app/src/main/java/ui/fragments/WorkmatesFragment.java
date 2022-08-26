@@ -49,7 +49,7 @@ public class WorkmatesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mBinding = FragmentWorkmatesBinding.inflate(getLayoutInflater());
+        mBinding = FragmentWorkmatesBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
 
@@ -67,6 +67,7 @@ public class WorkmatesFragment extends Fragment {
     }
 
     private void initRecyclerView() {
+        Log.e("Anne", "InitRVWorkmatesFragment");
         mRecyclerView = mBinding.rvWorkmatesListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mRecyclerView.setLayoutManager(layoutManager);
@@ -96,6 +97,8 @@ public class WorkmatesFragment extends Fragment {
     private void getBookings(List<Booking> bookings) {
         Log.e("Anne", bookings.toString());
         mBookingList = bookings;
-        initRecyclerView();
+        if(mWorkmatesFragment.isVisible()){
+            initRecyclerView();
+        }
     }
 }
