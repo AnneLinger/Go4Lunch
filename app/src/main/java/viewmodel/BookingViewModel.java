@@ -1,5 +1,7 @@
 package viewmodel;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
@@ -39,9 +41,9 @@ public class BookingViewModel extends ViewModel {
         return mBookingRepositoryImpl.getBookingListLiveData();
     }
 
-    public void createBooking(String placeId, String placeName, String user) {
+    public void createBooking(String placeId, String placeName, String user, Context context) {
         mBookingRepositoryImpl.instanceFirestore();
-        mBookingRepositoryImpl.createBooking(placeId, placeName, user);
+        mBookingRepositoryImpl.createBooking(placeId, placeName, user, context);
     }
 
     public void updateBooking() {

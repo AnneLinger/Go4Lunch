@@ -1,5 +1,10 @@
 package repositories;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -18,6 +23,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +31,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import model.Booking;
+import utils.NotificationReceiver;
 
 /**
 *Implementation of BookingRepository interface
@@ -103,7 +110,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     }
 
     @Override
-    public void createBooking(String placeId, String placeName, String user) {
+    public void createBooking(String placeId, String placeName, String user, Context context) {
 
         instanceFirestore();
 
@@ -123,6 +130,7 @@ public class BookingRepositoryImpl implements BookingRepository {
                         .document(documentReference.getId())
                         .update(BOOKING_ID, documentReference.getId())
                         .addOnSuccessListener(unused -> {
+                            setNotificationTimeToSend(context);
                             Log.e("Anne", "setCollectionOnSuccess");
                         })
                 .addOnFailureListener(new OnFailureListener() {
@@ -154,5 +162,19 @@ public class BookingRepositoryImpl implements BookingRepository {
                         Log.e("Anne", "Error deleting document", e);
                     }
                 });
+    }
+
+    @SuppressLint("MissingPermission")
+    private void setNotificationTimeToSend(Context context) {
+        Log.e("Anne", "intentForNotif");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 11);
+        calendar.set(Calendar.MINUTE, 36);
+        calendar.set(Calendar.SECOND, 1);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent alarmIntent = new Intent(context, NotificationReceiver.class);
+        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 }

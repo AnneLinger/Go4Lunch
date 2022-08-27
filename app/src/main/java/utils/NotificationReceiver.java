@@ -1,5 +1,6 @@
 package utils;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,12 +17,19 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.anne.linger.go4lunch.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import model.Booking;
+import model.User;
 import ui.activities.AuthenticationActivity;
 
 /**
@@ -31,8 +39,14 @@ import ui.activities.AuthenticationActivity;
 @AndroidEntryPoint
 public class NotificationReceiver extends BroadcastReceiver {
 
-    private final int NOTIFICATION_ID = 007;
-    private final String NOTIFICATION_TAG = "Go4Lunch";
+    private static final int NOTIFICATION_ID = 007;
+    private static final String NOTIFICATION_TAG = "Go4Lunch";
+    private static final String USER_COLLECTION = "Users";
+    private static final String BOOKING_COLLECTION = "Bookings";
+    private List<User> mUserList;
+    private List<Booking> mBookingList;
+    private User mUser;
+    private Booking mUserBooking;
     private Context context;
 
 
@@ -40,21 +54,51 @@ public class NotificationReceiver extends BroadcastReceiver {
     public NotificationReceiver(){
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e("Anne", "Notif");
         this.context = context;
-        //TODO implement this method
-        //getUserPreferences();
+        getUserListFromFirestore();
+        getBookingListFromFirestore();
+        getUserBooking();
         sendVisualNotification();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void getUserListFromFirestore() {
+        FirebaseFirestore.getInstance()
+                .collection(USER_COLLECTION)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    mUserList = queryDocumentSnapshots.toObjects(User.class);
+                })
+                .addOnFailureListener(e -> Log.e("Anne", "getUserListFailedInNotifReceiver"));
+    }
+
+    private void getBookingListFromFirestore() {
+        FirebaseFirestore.getInstance()
+                .collection(BOOKING_COLLECTION)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    mBookingList = queryDocumentSnapshots.toObjects(Booking.class);
+                })
+                .addOnFailureListener(e -> Log.e("Anne", "getBookingListFailedInNotifReceiver"));
+    }
+
+    private void getUserBooking(){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        for(Booking booking : mBookingList){
+            if(booking.getUser().equalsIgnoreCase(currentUser.getDisplayName())){
+                mUserBooking = booking;
+            }
+        }
+    }
+
     private void sendVisualNotification() {
         // Create an Intent that will be shown when user will click on the Notification
         Intent intent = new Intent(context, AuthenticationActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         // Create a Channel (Android 8)
         String channelId = context.getString(R.string.default_notification_channel_id);

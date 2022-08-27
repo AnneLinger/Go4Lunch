@@ -327,7 +327,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void createBooking() {
         Log.e("Anne", "CreateBooking");
-        mBookingViewModel.createBooking(mPlaceId, mPlaceName, mUser.getName());
+        mBookingViewModel.createBooking(mPlaceId, mPlaceName, mUser.getName(), this);
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
         mRecyclerView.setVisibility(View.VISIBLE);
