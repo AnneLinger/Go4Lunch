@@ -76,15 +76,15 @@ public class AuthenticationActivity extends AppCompatActivity {
     }
 
     //Check if user is signed in
-     /*@RequiresApi(api = Build.VERSION_CODES.M)
+     @RequiresApi(api = Build.VERSION_CODES.M)
      @Override
      public void onStart() {
          super.onStart();
-         FirebaseUser currentUser = mUserViewModel.getCurrentUser();
+         FirebaseUser currentUser = mUserViewModel.getCurrentUserFromFirebase();
          if(currentUser!=null) {
              navigateToPlacesActivity();
          }
-     }*/
+     }
 
     //Configure the UI
     private void initUi() {
@@ -112,11 +112,14 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToPlacesActivity() {
+        Log.e("Anne", "navigate");
+
         Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
         //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         //Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
         startActivity(intent);
+        finish();
         /**try {
             pendingIntent.send();
         } catch (PendingIntent.CanceledException e) {
@@ -157,19 +160,11 @@ public class AuthenticationActivity extends AppCompatActivity {
             // SUCCESS
             if (resultCode == RESULT_OK) {
                 Log.e("Anne", "responseAfterSignInResultCodeOK");
-                for(User user : mUserList) {
-                    Log.e("Anne", user.getName());
-                    Log.e("Anne", mUserViewModel.getCurrentUserFromFirebase().getDisplayName());
-                    if (user.getName().equalsIgnoreCase(mUserViewModel.getCurrentUserFromFirebase().getDisplayName())) {
-                        navigateToPlacesActivity();
-                    }
-                    else {
-                        createUser();
-                        Toast.makeText(AuthenticationActivity.this, getString(R.string.successful_auth), Toast.LENGTH_SHORT).show();
-                        navigateToPlacesActivity();
-                    }
+                createUser();
+                Toast.makeText(AuthenticationActivity.this, getString(R.string.successful_auth), Toast.LENGTH_SHORT).show();
+                navigateToPlacesActivity();
                 }
-            } else {
+            else {
                 // ERRORS
                 if (idpResponse == null) {
                     showSnackBar(getString(R.string.canceled_authentication));
@@ -184,7 +179,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         }
     }
 
-    private void listenerOnFacebookSignIn() {
+    /**private void listenerOnFacebookSignIn() {
         List<String> permissions = Arrays.asList("public_profile");
         mBinding.btFacebookLogin.setOnClickListener(view -> {
             LoginManager.getInstance().logInWithReadPermissions(this, permissions);
@@ -216,9 +211,10 @@ public class AuthenticationActivity extends AppCompatActivity {
         AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
         createUser();
         navigateToPlacesActivity();
-    }
+    }*/
 
     private void createUser() {
+        Log.e("Anne", "createUserInActivity");
         mUserViewModel.createUser();
     }
 

@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -39,6 +40,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     private static final String PLACE_ID = "placeId";
     private static final String PLACE_NAME = "placeName";
     private static final String USER = "user";
+    private static final String BOOKING_DATE = "bookingDate";
 
     @Inject
     public BookingRepositoryImpl(){
@@ -111,6 +113,7 @@ public class BookingRepositoryImpl implements BookingRepository {
         newBooking.put(PLACE_ID, placeId);
         newBooking.put(PLACE_NAME, placeName);
         newBooking.put(USER, user);
+        newBooking.put(BOOKING_DATE, FieldValue.serverTimestamp());
 
         //Create a new document
         CollectionReference bookingCollection = mFirestore.collection(BOOKING_COLLECTION);

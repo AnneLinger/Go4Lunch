@@ -32,7 +32,7 @@
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/activity_places_frame_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             http:layout_constraintBottom_toTopOf="@id/bottom_nav"
             http:layout_constraintEnd_toEndOf="parent"
             http:layout_constraintStart_toStartOf="parent"
