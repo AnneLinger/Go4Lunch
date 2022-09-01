@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,9 +25,16 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,6 +51,7 @@ import viewmodel.UserViewModel;
 *Activity for the authentication of the user
 */
 
+@RequiresApi(api = Build.VERSION_CODES.M)
 @AndroidEntryPoint
 public class AuthenticationActivity extends AppCompatActivity {
     //For UI
@@ -56,24 +66,29 @@ public class AuthenticationActivity extends AppCompatActivity {
 
     CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
+    private final ActivityResultLauncher<Intent> mIntentActivityResultLauncher = registerForActivityResult(
+            new FirebaseAuthUIActivityResultContract(),
+            this::onSignInResponse
+    );
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
-        initUi();
+        //initUi();
         configureViewModel();
         observeUsers();
         startSignInActivity();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    /**@RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
         this.responseAfterSignIn(requestCode, resultCode, data);
-    }
+    }*/
 
     //Check if user is signed in
      @RequiresApi(api = Build.VERSION_CODES.M)
@@ -138,21 +153,29 @@ public class AuthenticationActivity extends AppCompatActivity {
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build()
+                new AuthUI.IdpConfig.FacebookBuilder().build(),
+                new AuthUI.IdpConfig.TwitterBuilder().build()
         );
 
         // Launch the activity
-        startActivityForResult(
+        Intent signInIntent = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setTheme(R.style.LoginTheme)
+                .setAvailableProviders(providers)
+                .setIsSmartLockEnabled(false, true)
+                .build();
+        mIntentActivityResultLauncher.launch(signInIntent);
+        /**startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setTheme(R.style.LoginTheme)
                         .setAvailableProviders(providers)
                         .setIsSmartLockEnabled(false, true)
                         .build(),
-                RC_SIGN_IN);
+                RC_SIGN_IN);*/
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+   /** @RequiresApi(api = Build.VERSION_CODES.M)
     private void responseAfterSignIn(int requestCode, int resultCode, Intent data) {
         Log.e("Anne", "responseAfterSignIn");
         IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
@@ -176,6 +199,59 @@ public class AuthenticationActivity extends AppCompatActivity {
                     }
                 }
             }
+        }
+    }*/
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void onSignInResponse(FirebaseAuthUIAuthenticationResult result) {
+        IdpResponse idpResponse = result.getIdpResponse();
+        if (result.getResultCode() == RESULT_OK) {
+            Log.e("Anne", "responseAfterSignInResultCodeOK");
+            createUser();
+            Toast.makeText(AuthenticationActivity.this, getString(R.string.successful_auth), Toast.LENGTH_SHORT).show();
+            navigateToPlacesActivity();
+        }
+        else {
+            if(idpResponse == null) {
+                showSnackBar(getString(R.string.canceled_authentication));
+            } else if (idpResponse.getError() != null) {
+            if (idpResponse.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                showSnackBar(getString(R.string.no_connection));
+            } else if (idpResponse.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                showSnackBar(getString(R.string.unknown_error));
+                }
+            }
+        }
+    }
+
+    private void signInWithTwitterResponse() {
+        Task<AuthResult> pendingResultTask = mAuth.getPendingAuthResult();
+        if(pendingResultTask!=null){
+            // There's something already here! Finish the sign-in for your user.
+            pendingResultTask
+                    .addOnSuccessListener(
+                            new OnSuccessListener<AuthResult>() {
+                                @Override
+                                public void onSuccess(AuthResult authResult) {
+                                    // User is signed in.
+                                    // IdP data available in
+                                    // authResult.getAdditionalUserInfo().getProfile().
+                                    // The OAuth access token can also be retrieved:
+                                    // authResult.getCredential().getAccessToken().
+                                    // The OAuth secret can be retrieved by calling:
+                                    // authResult.getCredential().getSecret().
+                                }
+                            })
+                    .addOnFailureListener(
+                            new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Handle failure.
+                                }
+                            });
+        } else {
+            // There's no pending result so you need to start the sign-in flow.
+            startSignInActivity();
         }
     }
 
