@@ -3,10 +3,7 @@ package ui.adapter;
 import static java.lang.String.format;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
-import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +23,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import model.Booking;
-import model.Place;
-import model.nearbysearchpojo.NearbySearchResponse;
-import model.nearbysearchpojo.OpeningHours;
 import model.nearbysearchpojo.Result;
-import repositories.NearbySearchRepositoryImpl;
 import ui.activities.PlaceDetailsActivity;
-import ui.activities.PlacesActivity;
 
 /**
 *Adapter and ViewHolder to display a recycler view for the place list

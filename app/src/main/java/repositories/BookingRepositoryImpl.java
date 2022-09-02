@@ -48,6 +48,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     private static final String PLACE_NAME = "placeName";
     private static final String USER = "user";
     private static final String BOOKING_DATE = "bookingDate";
+    public static final int ALARM_TYPE_RTC = 100;
 
     @Inject
     public BookingRepositoryImpl(){
@@ -168,13 +169,30 @@ public class BookingRepositoryImpl implements BookingRepository {
     private void setNotificationTimeToSend(Context context) {
         Log.e("Anne", "intentForNotif");
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 11);
-        calendar.set(Calendar.MINUTE, 36);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        calendar.set(Calendar.HOUR_OF_DAY, 17);
+        calendar.set(Calendar.MINUTE, 18);
         calendar.set(Calendar.SECOND, 1);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent alarmIntent = new Intent(context, NotificationReceiver.class);
-        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, ALARM_TYPE_RTC, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+        //@SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmManager.INTERVAL_DAY, pendingIntent);
+
+        /**Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY,12);
+
+        //Setting intent to class where Alarm broadcast message will be handled
+        Intent intent = new Intent(mContext, AlarmReceiver.class);
+        //Setting alarm pending intent
+        alarmIntentRTC = PendingIntent.getBroadcast(mContext, ALARM_TYPE_RTC, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //getting instance of AlarmManager service
+        alarmManagerRTC = (AlarmManager) mContext.getSystemService(ALARM_SERVICE);
+
+        alarmManagerRTC.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntentRTC);*/
     }
 }

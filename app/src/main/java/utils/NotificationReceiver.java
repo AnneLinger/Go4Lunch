@@ -54,6 +54,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     public NotificationReceiver(){
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e("Anne", "Notif");
@@ -94,6 +95,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void sendVisualNotification() {
         // Create an Intent that will be shown when user will click on the Notification
         Intent intent = new Intent(context, AuthenticationActivity.class);

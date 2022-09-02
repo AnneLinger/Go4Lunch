@@ -1,6 +1,6 @@
 package com.anne.linger.go4lunch;
 
-import static org.mockito.Mockito.mock;
+//import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class BookingRepositoryImplTest {
     //For data
     public List<Booking> mBookingList = new ArrayList<>();
     public List<Booking> mExpectedBookingList = new ArrayList<>();
-    public Booking mBooking = mock(Booking.class);
+    //public Booking mBooking = mock(Booking.class);
 
     //For repository
     public BookingRepositoryImpl mBookingRepository = new BookingRepositoryImpl();

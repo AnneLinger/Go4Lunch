@@ -1,6 +1,5 @@
 package ui.adapter;
 
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +16,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Place;
 import model.User;
-import model.nearbysearchpojo.NearbySearchResponse;
-import model.nearbysearchpojo.Result;
-import repositories.NearbySearchRepositoryImpl;
 
 /**
  *Adapter and ViewHolder to display a recycler view for the place list

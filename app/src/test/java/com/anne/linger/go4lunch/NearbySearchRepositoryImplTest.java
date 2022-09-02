@@ -1,6 +1,6 @@
 package com.anne.linger.go4lunch;
 
-import static org.mockito.Mockito.mock;
+//import static org.mockito.Mockito.mock;
 
 import org.junit.Rule;
 import org.junit.runner.RunWith;
@@ -19,6 +19,6 @@ import model.nearbysearchpojo.Result;
 public class NearbySearchRepositoryImplTest {
 
     //For data
-    public NearbySearchResponse mNearbySearchResponse = mock(NearbySearchResponse.class);
+    //public NearbySearchResponse mNearbySearchResponse = mock(NearbySearchResponse.class);
     public List<Result> mResultList;
 }

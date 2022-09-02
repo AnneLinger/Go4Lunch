@@ -134,7 +134,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     public void onMapReady(@NonNull GoogleMap googleMap) {
         Log.e("Anne", "onMapReady");
         mGoogleMap = googleMap;
-        checkIfUserIsSignIn();
+        getDataIfUserIsSignIn();
         observeBookings();
         observeNearbyPlaces();
         observeAutocomplete();
@@ -168,14 +168,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     }
 
     //Check if user is signed in to load SharedPreferences
-    private void checkIfUserIsSignIn() {
-        Log.e("Anne", "checkIfUserIsSignIn");
+    private void getDataIfUserIsSignIn() {
+        Log.e("Anne", "getDataIfUserIsSignIn");
         FirebaseUser currentUser = mUserViewModel.getCurrentUserFromFirebase();
         if(currentUser!=null) {
             mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
                 zoom = mSharedPreferences.getFloat(getString(R.string.zoom), zoom);
-                radius = (int) mSharedPreferences.getFloat(getString(R.string.radius), radius);
             }
             requestLocationPermission();
         }

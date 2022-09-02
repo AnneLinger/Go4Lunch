@@ -78,6 +78,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         AppEventsLogger.activateApp(this);
         //initUi();
         configureViewModel();
+        checkIfUserIsSignIn();
         observeUsers();
         startSignInActivity();
     }
@@ -91,7 +92,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     }*/
 
     //Check if user is signed in
-     @RequiresApi(api = Build.VERSION_CODES.M)
+     /**@RequiresApi(api = Build.VERSION_CODES.M)
      @Override
      public void onStart() {
          super.onStart();
@@ -99,7 +100,14 @@ public class AuthenticationActivity extends AppCompatActivity {
          if(currentUser!=null) {
              navigateToPlacesActivity();
          }
-     }
+     }*/
+
+    private void checkIfUserIsSignIn() {
+        FirebaseUser currentUser = mUserViewModel.getCurrentUserFromFirebase();
+        if(currentUser!=null) {
+            navigateToPlacesActivity();
+        }
+    }
 
     //Configure the UI
     private void initUi() {

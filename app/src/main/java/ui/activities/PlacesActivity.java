@@ -215,6 +215,12 @@ public class PlacesActivity extends AppCompatActivity {
                         return true;
                     case R.id.item3:
                         mUserViewModel.logOut();
+                        if(mUserViewModel.getCurrentUserFromFirebase()!=null){
+                            Log.e("Anne", "logOutFailed!");
+                        }
+                        else {
+                            Log.e("Anne", "currentUserIsNull");
+                        }
                         navigateToAuthenticationActivity();
                         return true;
                 }
