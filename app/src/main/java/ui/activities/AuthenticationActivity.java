@@ -83,13 +83,13 @@ public class AuthenticationActivity extends AppCompatActivity {
         startSignInActivity();
     }
 
-    /**@RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
         this.responseAfterSignIn(requestCode, resultCode, data);
-    }*/
+    }
 
     //Check if user is signed in
      /**@RequiresApi(api = Build.VERSION_CODES.M)
@@ -183,7 +183,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                 RC_SIGN_IN);*/
     }
 
-   /** @RequiresApi(api = Build.VERSION_CODES.M)
+   @RequiresApi(api = Build.VERSION_CODES.M)
     private void responseAfterSignIn(int requestCode, int resultCode, Intent data) {
         Log.e("Anne", "responseAfterSignIn");
         IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
@@ -208,9 +208,8 @@ public class AuthenticationActivity extends AppCompatActivity {
                 }
             }
         }
-    }*/
+    }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void onSignInResponse(FirebaseAuthUIAuthenticationResult result) {
         IdpResponse idpResponse = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {

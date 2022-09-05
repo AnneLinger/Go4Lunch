@@ -47,7 +47,7 @@
             android:exported="true"
             android:theme="@style/Theme.MaterialComponents.NoActionBar"
             android:parentActivityName="ui.activities.AuthenticationActivity"/>
-        <activity android:name="com.facebook.FacebookActivity"
+        <!--<activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
                 "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
@@ -60,7 +60,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
-        </activity>
+        </activity>-->
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value="ui.activities.AuthenticationActivity" />

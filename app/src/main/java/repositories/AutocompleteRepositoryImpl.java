@@ -28,7 +28,7 @@ import utils.RetrofitBuilder;
 public class AutocompleteRepositoryImpl implements AutocompleteRepository {
 
     //For data
-    private final MutableLiveData<List<Prediction>> mAutocompleteLiveData = new MutableLiveData<>();
+    final MutableLiveData<List<Prediction>> mAutocompleteLiveData = new MutableLiveData<>();
     private static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
     private static final String TYPE = "restaurant";
     private final RetrofitBuilder mRetrofitBuilder = new RetrofitBuilder();
@@ -46,22 +46,22 @@ public class AutocompleteRepositoryImpl implements AutocompleteRepository {
     }
 
     @Override
-    public void fetchAutocomplete(String query, String location, int radius) {
-        Log.e("Anne", "fetchAuto");
+    public void fetchAutocomplete(String query, String location) {
+        //Log.e("Anne", "fetchAuto");
 
         AutocompleteResponse existing = mCache.get("autocomplete");
 
         if(existing!=null) {
-            Log.e("Anne", "ExistingIsNotNull");
+            //Log.e("Anne", "ExistingIsNotNull");
             mAutocompleteLiveData.setValue(existing.getPredictions());
         }
         else {
             PlacesApi placesApi = mRetrofitBuilder.buildRetrofit();
-            Call<AutocompleteResponse> call = placesApi.getAutocompleteResponse(query, location, TYPE, radius, GOOGLE_PLACE_API_KEY);
+            Call<AutocompleteResponse> call = placesApi.getAutocompleteResponse(query, location, TYPE, GOOGLE_PLACE_API_KEY);
             call.enqueue(new Callback<AutocompleteResponse>() {
                 @Override
                 public void onResponse(Call<AutocompleteResponse> call, Response<AutocompleteResponse> response) {
-                    Log.e("Anne", "fetchAutoResponse");
+                    //Log.e("Anne", "fetchAutoResponse");
                     mCache.put("autocomplete", response.body());
                     mAutocompleteLiveData.setValue(response.body().getPredictions());
                 }

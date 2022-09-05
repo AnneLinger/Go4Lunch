@@ -28,8 +28,8 @@ public class AutocompleteViewModel extends ViewModel {
         mAutocompleteRepositoryImpl = autocompleteRepositoryImpl;
     }
 
-    public void fetchAutocomplete(String query, String location, int radius){
-        mAutocompleteRepositoryImpl.fetchAutocomplete(query, location, radius);
+    public void fetchAutocomplete(String query, String location){
+        mAutocompleteRepositoryImpl.fetchAutocomplete(query, location);
     }
 
     public LiveData<List<Prediction>> getAutocompleteLiveData() {

@@ -19,9 +19,9 @@
     <string name="canceled_authentication">Connexion annulée</string>
     <string name="no_connection">Aucune connexion internet</string>
     <string name="unknown_error">Erreur inconnue</string>
-    <string name="facebook_application_id">1133411974182589</string>
-    <string name="fb_login_protocol_scheme">fb1133411974182589</string>
-    <string name="facebook_client_token">c0a024eaf6f33dc69dc3e053865a1470</string>
+    <string name="facebook_application_id">791619558748617</string>
+    <string name="fb_login_protocol_scheme">fb791619558748617</string>
+    <string name="facebook_client_token">67b251a6b2374b0b56740a1999f8fdb3</string>
     <string name="toolbar_title">J\'ai faim!</string>
     <string name="rationale_location">Cette application a besoin d\'accéder à votre position pour fonctionner</string>
     <string name="returned_from_app_settings_to_activity">

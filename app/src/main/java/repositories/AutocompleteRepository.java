@@ -15,7 +15,7 @@ public interface AutocompleteRepository {
 
     LiveData<List<Prediction>> getAutocompleteLiveData();
 
-    void fetchAutocomplete(String query, String location, int radius);
+    void fetchAutocomplete(String query, String location);
 
     void setAutocompleteToNull();
 }

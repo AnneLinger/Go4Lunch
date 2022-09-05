@@ -29,7 +29,7 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
 
     private static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
     private final int radius = 10000;
-    private final MutableLiveData<List<Result>> mNearbySearchResponseLiveData = new MutableLiveData<>();
+    final MutableLiveData<List<Result>> mNearbySearchResponseLiveData = new MutableLiveData<>();
     private final RetrofitBuilder mRetrofitBuilder = new RetrofitBuilder();
     //To limit Google API queries
     private final LruCache<String, NearbySearchResponse> mCache = new LruCache<>(2000);
@@ -40,7 +40,7 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
 
     @Override
     public LiveData<List<Result>> getNearbySearchResponseLiveData() {
-        Log.d("Anne", "getRepo");
+        //Log.d("Anne", "getRepo");
         return mNearbySearchResponseLiveData;
     }
 

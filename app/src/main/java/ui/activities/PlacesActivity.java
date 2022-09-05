@@ -3,6 +3,7 @@ package ui.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.ViewModelProvider;
@@ -43,6 +45,7 @@ import viewmodel.UserViewModel;
 *Main activity of the app launched after login
 */
 
+@RequiresApi(api = Build.VERSION_CODES.M)
 @AndroidEntryPoint
 public class PlacesActivity extends AppCompatActivity {
 
@@ -100,9 +103,7 @@ public class PlacesActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String s) {
                 Log.e("Anne", "onQueryTextChangeAutocomplete");
-                //TODO recover default radius or shared pref radius
-                int radius = 12000;
-                mAutocompleteViewModel.fetchAutocomplete(s, mLocationString, radius);
+                mAutocompleteViewModel.fetchAutocomplete(s, mLocationString);
                 return true;
             }
         });
@@ -245,6 +246,7 @@ public class PlacesActivity extends AppCompatActivity {
         Log.e("Anne", "initLoc");
         mLocation = location;
         mLocationString = location.getLatitude() + "," + location.getLongitude();
+        Log.e("Anne", "location String :" + mLocationString);
     }
 
     private void observeBookings() {
