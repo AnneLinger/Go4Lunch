@@ -55,6 +55,7 @@
     <string name="close_go4lunch">Close Go4Lunch</string>
     <string name="go_to_settings">Settings</string>
     <string name="user_settings">User settings</string>
+    <string name="user_booking">User booking</string>
     <string name="settings_saved">Settings saved !</string>
     <string name="radius">Radius</string>
     <string name="zoom" translatable="false">Zoom</string>

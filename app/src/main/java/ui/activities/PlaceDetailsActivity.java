@@ -1,14 +1,18 @@
 package ui.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -52,11 +56,13 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private User mUser;
     private String mPlaceId;
     private String mPlaceName;
+    private String mPlaceAddress;
     private final List<String> mJoiningWorkmatesString = new ArrayList<>();
     private final List<User> mJoiningWorkmatesUsers = new ArrayList<>();
     private Booking mUserBooking;
     private List<User> mUserList = new ArrayList<>();
     private List<String> mUserLikedPlacesList = new ArrayList<>();
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,6 +98,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void configureActionBar() {
         mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
                 navigateToPlacesActivity();
@@ -164,6 +171,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
             mPlaceName = result.getName();
             mBinding.tvDetailName.setText(mPlaceName);
             //For place address
+            mPlaceAddress = result.getFormattedAddress();
             mBinding.tvDetailAddress.setText(result.getFormattedAddress());
             //For place rating
             float rating = (float) ((result.getRating()/5)*3);
@@ -332,6 +340,19 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         manageBookingFAB(true);
         mRecyclerView.setVisibility(View.VISIBLE);
         updateRecyclerView();
+        saveUserBookingInSharedPreferences();
+    }
+
+    private void saveUserBookingInSharedPreferences() {
+        mSharedPreferences = PlaceDetailsActivity.this.getSharedPreferences(getString(R.string.user_booking), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString("PlaceName", mPlaceName);
+        editor.putString("PlaceAddress", mPlaceAddress);
+        List<User> joiningWorkmatesForNotification = mJoiningWorkmatesUsers;
+        joiningWorkmatesForNotification.remove(mUser);
+        String joiningWorkmatesForNotificationString = joiningWorkmatesForNotification.toString();
+        editor.putString("JoiningWorkmates", joiningWorkmatesForNotificationString);
+        editor.apply();
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -359,6 +380,7 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     //When click on action bar for back
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToPlacesActivity() {
         Intent intent = new Intent(PlaceDetailsActivity.this, PlacesActivity.class);
         startActivity(intent);

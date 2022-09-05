@@ -54,6 +54,7 @@
     <string name="close_go4lunch">Fermer Go4Lunch</string>
     <string name="go_to_settings">Préférences</string>
     <string name="user_settings">Préférences de l\'utilisateur</string>
+    <string name="user_booking">Choix de l\'utilisateur</string>
     <string name="settings_saved">Préférences sauvegardées !</string>
     <string name="radius">Rayon</string>
     <string name="zoom">Zoom</string>
