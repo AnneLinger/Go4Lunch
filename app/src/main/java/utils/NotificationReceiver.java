@@ -9,15 +9,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,10 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
 
-import java.io.FileReader;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,9 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import model.Booking;
 import model.User;
 import ui.activities.AuthenticationActivity;
-import viewmodel.AutocompleteViewModel;
 import viewmodel.BookingViewModel;
-import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
 /**
@@ -62,11 +54,13 @@ public class NotificationReceiver extends BroadcastReceiver {
     private Context context;
     private BookingViewModel mBookingViewModel;
     private UserViewModel mUserViewModel;
-    private SharedPreferences mSharedPreferences;
+    private SharedPreferences mSharedPreferencesBooking;
+    private SharedPreferences mSharedPreferencesUser;
     private String placeName;
     private String placeAddress;
     private String joiningWorkmates;
     private String notificationText;
+    private boolean notificationChoice;
 
     @Inject
     public NotificationReceiver(){
@@ -82,14 +76,17 @@ public class NotificationReceiver extends BroadcastReceiver {
         //getBookingListFromFirestore();
         //getUserBooking();
         updateNotificationText();
-        sendVisualNotification();
+        getNotificationChoiceFromSharedPreferences();
+        if(notificationChoice) {
+            sendVisualNotification();
+        }
     }
 
     private void getUserBookingFromSharedPreferences() {
-        mSharedPreferences = context.getSharedPreferences(context.getString(R.string.user_booking), Context.MODE_PRIVATE);
-        placeName = mSharedPreferences.getString(context.getString(R.string.notification_place_name_key), null);
-        placeAddress = mSharedPreferences.getString(context.getString(R.string.notification_place_address_key), null);
-        joiningWorkmates = mSharedPreferences.getString(context.getString(R.string.notification_joining_workmates_key), null);
+        mSharedPreferencesBooking = context.getSharedPreferences(context.getString(R.string.user_booking), Context.MODE_PRIVATE);
+        placeName = mSharedPreferencesBooking.getString(context.getString(R.string.notification_place_name_key), null);
+        placeAddress = mSharedPreferencesBooking.getString(context.getString(R.string.notification_place_address_key), null);
+        joiningWorkmates = mSharedPreferencesBooking.getString(context.getString(R.string.notification_joining_workmates_key), null);
     }
 
     private void updateNotificationText() {
@@ -100,6 +97,11 @@ public class NotificationReceiver extends BroadcastReceiver {
         else {
             notificationText = notificationTextStart + context.getString(R.string.notification_alone);
         }
+    }
+
+    private void getNotificationChoiceFromSharedPreferences() {
+        mSharedPreferencesUser = context.getSharedPreferences(context.getString(R.string.user_settings), Context.MODE_PRIVATE);
+        notificationChoice = mSharedPreferencesUser.getBoolean(context.getString(R.string.notifications), true);
     }
 
    /**private void configureViewModels() {

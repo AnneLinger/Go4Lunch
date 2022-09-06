@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -34,7 +36,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     //For ui
     private ActivitySettingsBinding mBinding;
-    private float DEFAULT_ZOOM = 15;
+    private float DEFAULT_ZOOM = 12;
     private boolean DEFAULT_NOTIFICATIONS = true;
 
     //For data
@@ -73,6 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void configureActionBar() {
         mBinding.settingsToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
                 navigateToPlacesActivity();
@@ -89,6 +92,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     //When click on action bar for back
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToPlacesActivity() {
         Intent intent = new Intent(SettingsActivity.this, PlacesActivity.class);
         startActivity(intent);
@@ -128,6 +132,7 @@ public class SettingsActivity extends AppCompatActivity {
         alertDialogBuilder.setTitle(R.string.are_you_sure)
                 .setCancelable(false)
                 .setPositiveButton(R.string.confirm_delete, new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mUserViewModel.deleteAccount(SettingsActivity.this);
@@ -163,6 +168,7 @@ public class SettingsActivity extends AppCompatActivity {
     //When click on button save
     private void saveUserSettings() {
         mBinding.btSaveSettings.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
                 initSharedPreferences();
@@ -178,6 +184,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToAuthenticationActivity() {
         Intent intent = new Intent(SettingsActivity.this, AuthenticationActivity.class);
         startActivity(intent);

@@ -6,10 +6,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -113,6 +115,7 @@ public class BookingRepositoryImpl implements BookingRepository {
         });*/
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void createBooking(String placeId, String placeName, String user, Context context) {
 
@@ -168,6 +171,7 @@ public class BookingRepositoryImpl implements BookingRepository {
                 });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("MissingPermission")
     private void setNotificationTimeToSend(Context context) {
         Log.e("Anne", "intentForNotif");
@@ -180,7 +184,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent alarmIntent = new Intent(context, NotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, ALARM_TYPE_RTC, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, ALARM_TYPE_RTC, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
         //@SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmManager.INTERVAL_DAY, pendingIntent);
 
