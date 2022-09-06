@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -83,6 +84,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private List<Result> mPlaceListAutocomplete = new ArrayList<>();
     private MapViewFragment mMapViewFragment = this;
     private Context mContext;
+    private ProgressBar mProgressBar;
 
     //For permissions
     private static final String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -127,6 +129,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         assert supportMapFragment != null;
         supportMapFragment.getMapAsync(this);
+        mProgressBar = mBinding.progressCircular;
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @SuppressLint("MissingPermission")
@@ -248,6 +252,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                 }
             }
         }
+        mProgressBar.setVisibility(View.INVISIBLE);
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(@NonNull Marker marker) {
