@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -340,19 +341,31 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         manageBookingFAB(true);
         mRecyclerView.setVisibility(View.VISIBLE);
         updateRecyclerView();
-        saveUserBookingInSharedPreferences();
+        saveBookingDataForNotificationInSharedPreferences();
     }
 
-    private void saveUserBookingInSharedPreferences() {
+    private void saveBookingDataForNotificationInSharedPreferences() {
+        Log.e("Anne", "SaveUserBookingInSP");
         mSharedPreferences = PlaceDetailsActivity.this.getSharedPreferences(getString(R.string.user_booking), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString("PlaceName", mPlaceName);
-        editor.putString("PlaceAddress", mPlaceAddress);
-        List<User> joiningWorkmatesForNotification = mJoiningWorkmatesUsers;
-        joiningWorkmatesForNotification.remove(mUser);
-        String joiningWorkmatesForNotificationString = joiningWorkmatesForNotification.toString();
-        editor.putString("JoiningWorkmates", joiningWorkmatesForNotificationString);
+        editor.putString(this.getString(R.string.notification_place_name_key), mPlaceName);
+        editor.putString(this.getString(R.string.notification_place_address_key), mPlaceAddress);
+        editor.putString(this.getString(R.string.notification_joining_workmates_key), manageJoiningWorkmatesForSharesPreferences().toString());
         editor.apply();
+    }
+
+    private String manageJoiningWorkmatesForSharesPreferences() {
+        List<User> joiningWorkmatesForNotification = mJoiningWorkmatesUsers;
+        Log.e("Anne", "ListUser = " + joiningWorkmatesForNotification.toString());
+        joiningWorkmatesForNotification.remove(mUser);
+        List<String> joiningWorkmatesForNotificationListString = new ArrayList<>();
+        for(User user : joiningWorkmatesForNotification) {
+            joiningWorkmatesForNotificationListString.add(user.getName());
+        }
+        Log.e("Anne", "ListUserString = " + joiningWorkmatesForNotificationListString);
+        String joiningWorkmatesForNotificationString = Arrays.toString(joiningWorkmatesForNotificationListString.toArray()).replace("[", " ").replace("]", "  ");
+        Log.e("Anne", "ListUserString = " + joiningWorkmatesForNotificationString);
+        return joiningWorkmatesForNotificationString;
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")

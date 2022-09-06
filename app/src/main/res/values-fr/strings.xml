@@ -88,6 +88,8 @@
     <string name="default_notification_channel_id">com.google.firebase.messaging.default_notification_channel_id</string>
     <string name="notification_title">Voici votre choix pour le déjeuner d\'aujourd\'hui !</string>
     <string name="available_workmates">Collègues disponibles</string>
+    <string name="notification_with">\ avec\ </string>
+    <string name="notification_alone">\ seul.e.</string>
     <string name="workmate_place">\ ce restaurant</string>
     <string name="is_eating">\ a choisi\ </string>
     <string name="not_decided">\ n\'a pas encore décidé</string>
@@ -96,4 +98,6 @@
     <string name="are_you_sure">Etes-vous sûr.e ?</string>
     <string name="confirm_delete">Oui, supprimez mon compte</string>
     <string name="cancel_delete">Non, conservez mon compte</string>
+    <string name="notification_first_start">\"Votre déjeuner aura lieu dans le restaurant \"</string>
+    <string name="notification_second_start">\" à cette adresse : \"</string>
 </resources>

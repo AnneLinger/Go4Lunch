@@ -78,18 +78,17 @@ public class AuthenticationActivity extends AppCompatActivity {
         AppEventsLogger.activateApp(this);
         //initUi();
         configureViewModel();
-        checkIfUserIsSignIn();
+        //checkIfUserIsSignIn();
         observeUsers();
         startSignInActivity();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
+    /**@Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
         this.responseAfterSignIn(requestCode, resultCode, data);
-    }
+    }*/
 
     //Check if user is signed in
      /**@RequiresApi(api = Build.VERSION_CODES.M)
@@ -129,11 +128,10 @@ public class AuthenticationActivity extends AppCompatActivity {
     private void getUsers(List<User> users) {
         mUserList = users;
         Log.e("Anne", "getUserActivity : " + mUserList.toString());
-        Log.e("Anne", mUserList.get(0).getName());
-        Log.e("Anne", mUserList.get(0).toString());
+        //Log.e("Anne", mUserList.get(0).getName());
+        //Log.e("Anne", mUserList.get(0).toString());
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToPlacesActivity() {
         Log.e("Anne", "navigate");
 
@@ -183,7 +181,6 @@ public class AuthenticationActivity extends AppCompatActivity {
                 RC_SIGN_IN);*/
     }
 
-   @RequiresApi(api = Build.VERSION_CODES.M)
     private void responseAfterSignIn(int requestCode, int resultCode, Intent data) {
         Log.e("Anne", "responseAfterSignIn");
         IdpResponse idpResponse = IdpResponse.fromResultIntent(data);

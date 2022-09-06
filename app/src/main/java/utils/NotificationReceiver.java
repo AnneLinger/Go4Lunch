@@ -87,18 +87,18 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private void getUserBookingFromSharedPreferences() {
         mSharedPreferences = context.getSharedPreferences(context.getString(R.string.user_booking), Context.MODE_PRIVATE);
-        placeName = mSharedPreferences.getString("PlaceName", null);
-        placeAddress = mSharedPreferences.getString("PlaceAddress", null);
-        joiningWorkmates = mSharedPreferences.getString("JoiningWorkmates", null);
+        placeName = mSharedPreferences.getString(context.getString(R.string.notification_place_name_key), null);
+        placeAddress = mSharedPreferences.getString(context.getString(R.string.notification_place_address_key), null);
+        joiningWorkmates = mSharedPreferences.getString(context.getString(R.string.notification_joining_workmates_key), null);
     }
 
     private void updateNotificationText() {
-        String notificationTextStart = "Your lunch will be in the place " + placeName + " at this address : " + placeAddress;
-        if(joiningWorkmates!=null){
-            notificationText = notificationTextStart + " with " + joiningWorkmates;
+        String notificationTextStart = context.getString(R.string.notification_first_start) + placeName + context.getString(R.string.notification_second_start) + placeAddress;
+        if(joiningWorkmates.length()>3){
+            notificationText = notificationTextStart + context.getString(R.string.notification_with) + joiningWorkmates;
         }
         else {
-            notificationText = notificationTextStart + " alone.";
+            notificationText = notificationTextStart + context.getString(R.string.notification_alone);
         }
     }
 
