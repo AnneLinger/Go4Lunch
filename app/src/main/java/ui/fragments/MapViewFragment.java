@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -28,6 +29,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -172,6 +174,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     }
 
     //Check if user is signed in to load SharedPreferences
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void getDataIfUserIsSignIn() {
         Log.e("Anne", "getDataIfUserIsSignIn");
         FirebaseUser currentUser = mUserViewModel.getCurrentUserFromFirebase();
@@ -370,12 +373,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToAuthenticationActivity() {
         Intent intent = new Intent(requireActivity(), AuthenticationActivity.class);
         startActivity(intent);
     }
 
-    /**@Override
+    @Override
     public void onDestroyView() {
         Log.e("Anne", "onDestroyView");
         super.onDestroyView();
@@ -385,5 +389,5 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mPlacesViewModel.getNearbySearchResponseLiveData().removeObservers(this);
         }
-    }*/
+    }
 }
