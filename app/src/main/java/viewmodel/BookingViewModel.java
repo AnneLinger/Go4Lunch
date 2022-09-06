@@ -1,7 +1,9 @@
 package viewmodel;
 
 import android.content.Context;
+import android.os.Build;
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
@@ -41,6 +43,7 @@ public class BookingViewModel extends ViewModel {
         return mBookingRepositoryImpl.getBookingListLiveData();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void createBooking(String placeId, String placeName, String user, Context context) {
         mBookingRepositoryImpl.instanceFirestore();
         mBookingRepositoryImpl.createBooking(placeId, placeName, user, context);
@@ -52,6 +55,10 @@ public class BookingViewModel extends ViewModel {
 
     public void deleteBooking(Booking booking) {
         mBookingRepositoryImpl.deleteBooking(booking);
+    }
+
+    public void deletePreviousBookings() {
+        mBookingRepositoryImpl.deletePreviousBookings();
     }
 
 }

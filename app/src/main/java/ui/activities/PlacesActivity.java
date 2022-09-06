@@ -256,6 +256,7 @@ public class PlacesActivity extends AppCompatActivity {
     }
 
     private void getUserBooking(List<Booking> bookings) {
+        mBookingViewModel.deletePreviousBookings();
         mBookingList = bookings;
         if(mBookingList.isEmpty()){
             Log.e("Anne", "mBookingListIsEmptyInPlacesActivity");

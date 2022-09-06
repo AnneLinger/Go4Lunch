@@ -28,4 +28,6 @@ public interface BookingRepository {
     void updateBooking();
 
     void deleteBooking(Booking booking);
+
+    void deletePreviousBookings();
 }

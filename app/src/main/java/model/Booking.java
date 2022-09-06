@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Date;
-
 /**
 *Model for bookings made by users
 */
@@ -11,18 +9,18 @@ public class Booking {
     private String placeId;
     private String placeName;
     private String user;
-    private Date bookingDate;
+    private int bookingDay;
 
 
     public Booking(){
     }
 
-    public Booking(String bookingId, String placeId, String placeName, String user, Date bookingDate) {
+    public Booking(String bookingId, String placeId, String placeName, String user, int bookingDay) {
         this.bookingId = bookingId;
         this.placeId = placeId;
         this.placeName = placeName;
         this.user = user;
-        this.bookingDate = bookingDate;
+        this.bookingDay = bookingDay;
     }
 
     public String getBookingId() {
@@ -57,11 +55,11 @@ public class Booking {
         this.user = user;
     }
 
-    public Date getBookingDate() {
-        return bookingDate;
+    public int getBookingDay() {
+        return bookingDay;
     }
 
-    public void setBookingDate(Date bookingDate) {
-        this.bookingDate = bookingDate;
+    public void setBookingDay(int bookingDay) {
+        this.bookingDay = bookingDay;
     }
 }

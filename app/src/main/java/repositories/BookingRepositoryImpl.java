@@ -5,37 +5,31 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.anne.linger.go4lunch.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
 import model.Booking;
-import ui.activities.SettingsActivity;
 import utils.NotificationReceiver;
 
 /**
@@ -52,7 +46,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     private static final String PLACE_ID = "placeId";
     private static final String PLACE_NAME = "placeName";
     private static final String USER = "user";
-    private static final String BOOKING_DATE = "bookingDate";
+    private static final String BOOKING_DAY = "bookingDay";
     public static final int ALARM_TYPE_RTC = 100;
 
     @Inject
@@ -122,12 +116,13 @@ public class BookingRepositoryImpl implements BookingRepository {
         instanceFirestore();
 
         //Create a new booking
+        Calendar calendar = Calendar.getInstance();
         Map<String, Object> newBooking = new HashMap<>();
         newBooking.put(BOOKING_ID, null);
         newBooking.put(PLACE_ID, placeId);
         newBooking.put(PLACE_NAME, placeName);
         newBooking.put(USER, user);
-        newBooking.put(BOOKING_DATE, FieldValue.serverTimestamp());
+        newBooking.put(BOOKING_DAY, calendar.get(Calendar.DAY_OF_YEAR));
 
         //Create a new document
         CollectionReference bookingCollection = mFirestore.collection(BOOKING_COLLECTION);
@@ -169,6 +164,19 @@ public class BookingRepositoryImpl implements BookingRepository {
                         Log.e("Anne", "Error deleting document", e);
                     }
                 });
+    }
+
+    @Override
+    public void deletePreviousBookings() {
+        Calendar calendar = Calendar.getInstance();
+        int currentDay = calendar.get(Calendar.DAY_OF_YEAR);
+        Log.e("Anne", "DeletePreviousBooking" + currentDay);
+        for(Booking booking : Objects.requireNonNull(mBookingList.getValue())) {
+            Log.e("Anne", "DeletePreviousBooking" + booking.getBookingDay());
+            if(booking.getBookingDay()!=currentDay) {
+                deleteBooking(booking);
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
