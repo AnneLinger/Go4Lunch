@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- *Pojo model for prediction autocomplete
-*/
+ * Pojo model for prediction autocomplete
+ */
 
 public class Prediction {
 

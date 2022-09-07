@@ -8,8 +8,8 @@ import repositories.AutocompleteRepository;
 import repositories.AutocompleteRepositoryImpl;
 
 /**
-*Hilt module for injections for autocomplete
-*/
+ * Hilt module for injections for autocomplete
+ */
 
 @InstallIn(SingletonComponent.class)
 @Module

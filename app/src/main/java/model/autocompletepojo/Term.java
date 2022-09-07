@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
-*Pojo model for term autocomplete
+ * Pojo model for term autocomplete
  **/
 
 public class Term {

@@ -6,7 +6,7 @@ import android.location.Location;
 import androidx.lifecycle.LiveData;
 
 /**
- *Interface repository for the user location
+ * Interface repository for the user location
  */
 public interface LocationRepository {
 

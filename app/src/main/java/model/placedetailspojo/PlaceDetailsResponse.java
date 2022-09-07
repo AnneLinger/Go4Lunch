@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
-*Created by Anne Linger on 19/07/2022.
-*/
+ * Created by Anne Linger on 19/07/2022.
+ */
 
 public class PlaceDetailsResponse {
 

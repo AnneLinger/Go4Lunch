@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- *Pojo model for result place details
-*/
+ * Pojo model for result place details
+ */
 
 public class Result {
 

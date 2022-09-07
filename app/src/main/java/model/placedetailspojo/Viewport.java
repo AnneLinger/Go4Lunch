@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- *Pojo model for viewport place details
-*/
+ * Pojo model for viewport place details
+ */
 
 public class Viewport {
 

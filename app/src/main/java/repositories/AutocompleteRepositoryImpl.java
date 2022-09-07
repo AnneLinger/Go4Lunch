@@ -1,8 +1,8 @@
 package repositories;
 
-import android.util.Log;
 import android.util.LruCache;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -15,15 +15,14 @@ import javax.inject.Inject;
 import data.PlacesApi;
 import model.autocompletepojo.AutocompleteResponse;
 import model.autocompletepojo.Prediction;
-import model.nearbysearchpojo.NearbySearchResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import utils.RetrofitBuilder;
 
 /**
-*Implementation of AutocompleteRepository interface
-*/
+ * Implementation of AutocompleteRepository interface
+ */
 
 public class AutocompleteRepositoryImpl implements AutocompleteRepository {
 
@@ -32,12 +31,13 @@ public class AutocompleteRepositoryImpl implements AutocompleteRepository {
     private static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
     private static final String TYPE = "restaurant";
     private final RetrofitBuilder mRetrofitBuilder = new RetrofitBuilder();
+
     //To limit Google API queries
     private final LruCache<String, AutocompleteResponse> mCache = new LruCache<>(2000);
 
     //Constructor
     @Inject
-    public AutocompleteRepositoryImpl(){
+    public AutocompleteRepositoryImpl() {
     }
 
     @Override
@@ -47,33 +47,30 @@ public class AutocompleteRepositoryImpl implements AutocompleteRepository {
 
     @Override
     public void fetchAutocomplete(String query, String location) {
-        //Log.e("Anne", "fetchAuto");
-
         AutocompleteResponse existing = mCache.get("autocomplete");
 
-        if(existing!=null) {
-            //Log.e("Anne", "ExistingIsNotNull");
+        if (existing != null) {
             mAutocompleteLiveData.setValue(existing.getPredictions());
-        }
-        else {
+        } else {
             PlacesApi placesApi = mRetrofitBuilder.buildRetrofit();
             Call<AutocompleteResponse> call = placesApi.getAutocompleteResponse(query, location, TYPE, GOOGLE_PLACE_API_KEY);
             call.enqueue(new Callback<AutocompleteResponse>() {
                 @Override
-                public void onResponse(Call<AutocompleteResponse> call, Response<AutocompleteResponse> response) {
-                    //Log.e("Anne", "fetchAutoResponse");
+                public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
                     mCache.put("autocomplete", response.body());
+                    assert response.body() != null;
                     mAutocompleteLiveData.setValue(response.body().getPredictions());
                 }
 
                 @Override
-                public void onFailure(Call<AutocompleteResponse> call, Throwable t) {
+                public void onFailure(@NonNull Call<AutocompleteResponse> call, @NonNull Throwable t) {
                     t.printStackTrace();
                 }
             });
         }
     }
 
+    //To cancel search when user wants to stop it
     @Override
     public void setAutocompleteToNull() {
         mAutocompleteLiveData.setValue(null);

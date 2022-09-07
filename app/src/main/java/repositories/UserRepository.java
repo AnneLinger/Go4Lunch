@@ -14,7 +14,7 @@ import java.util.List;
 import model.User;
 
 /**
- *Interface repository for users and their authentication
+ * Interface repository for users and their authentication
  */
 
 public interface UserRepository {
@@ -33,9 +33,9 @@ public interface UserRepository {
 
     void getUserListFromFirestore();
 
-    void createUser();
+    void createUserInFirestore();
 
-    Task<DocumentSnapshot> getUserData();
+    Task<DocumentSnapshot> getUserId();
 
     void logOut();
 

@@ -1,8 +1,8 @@
 package model;
 
 /**
-*Model for bookings made by users
-*/
+ * Model for bookings made by users
+ */
 
 public class Booking {
     private String bookingId;
@@ -12,7 +12,7 @@ public class Booking {
     private int bookingDay;
 
 
-    public Booking(){
+    public Booking() {
     }
 
     public Booking(String bookingId, String placeId, String placeName, String user, int bookingDay) {

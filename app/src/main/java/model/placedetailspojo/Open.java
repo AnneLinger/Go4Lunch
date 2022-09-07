@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- *Pojo model for open place details
-*/
+ * Pojo model for open place details
+ */
 
 public class Open {
 

@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
-*Pojo model for the Northeast place location
-*/
+ * Pojo model for the Northeast place location
+ */
 
 public class Northeast {
 

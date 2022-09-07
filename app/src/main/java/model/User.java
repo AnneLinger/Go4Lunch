@@ -1,22 +1,22 @@
 package model;
 
-import android.net.Uri;
-
 import java.util.List;
 
 import javax.annotation.Nullable;
 
 /**
-*Model for users of the app
-*/
+ * Model for users of the app
+ */
+
 public class User {
+
     private String userId;
     private String name;
     @Nullable
     private String pictureUrl;
     private List<String> likedPlaces;
 
-    public User(){
+    public User() {
     }
 
     public User(String userId, String name, @androidx.annotation.Nullable String pictureUrl, List<String> likedPlaces) {

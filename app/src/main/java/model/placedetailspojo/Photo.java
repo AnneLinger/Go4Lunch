@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- *Pojo model for photo place details
-*/
+ * Pojo model for photo place details
+ */
 
 public class Photo {
 

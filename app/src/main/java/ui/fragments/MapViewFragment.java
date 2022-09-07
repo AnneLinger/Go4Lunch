@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -18,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,15 +60,16 @@ import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
 /**
-*Fragment to display a map for places
-*/
-public class MapViewFragment extends Fragment implements OnMapReadyCallback, LocationListener{
+ * Fragment to display a map for places
+ */
+
+@RequiresApi(api = Build.VERSION_CODES.M)
+public class MapViewFragment extends Fragment implements OnMapReadyCallback, LocationListener {
 
     //For UI
     private FragmentMapViewBinding mBinding;
     private GoogleMap mGoogleMap;
     private float zoom = 12;
-    private int radius = 10000;
 
     //For data
     private Location mLocation;
@@ -81,34 +80,23 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     private BookingViewModel mBookingViewModel;
     private AutocompleteViewModel mAutocompleteViewModel;
     private List<Result> mPlaceList;
-    private String placeId;
     private List<Booking> mBookingList = new ArrayList<>();
-    private List<Result> mPlaceListAutocomplete = new ArrayList<>();
-    private MapViewFragment mMapViewFragment = this;
+    private final List<Result> mPlaceListAutocomplete = new ArrayList<>();
+    private final MapViewFragment mMapViewFragment = this;
     private Context mContext;
     private ProgressBar mProgressBar;
 
-    //For permissions
+    //For location permission result
     private static final String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-    private static final int PERMISSION = 5678;
-    private ActivityResultLauncher<String[]> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), (Map<String, Boolean> isGranted) -> {
+    private final ActivityResultLauncher<String[]> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), (Map<String, Boolean> isGranted) -> {
         boolean granted = true;
         for (Map.Entry<String, Boolean> x : isGranted.entrySet())
-            if(!x.getValue()) granted = false;
+            if (!x.getValue()) granted = false;
         if (granted) getUserLocation();
         else {
             showDialogToDenyAccessApp();
         }
     });
-
-    /**private final OnMapReadyCallback mCallback = new OnMapReadyCallback() {
-        @Override
-        public void onMapReady(@NonNull GoogleMap googleMap) {
-            mGoogleMap = googleMap;
-            checkIfUserIsSignIn();
-            //getUserLocation();
-        }
-    };*/
 
     public static MapViewFragment newInstance() {
         return new MapViewFragment();
@@ -117,7 +105,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.e("Anne", "onCreateView");
         mBinding = FragmentMapViewBinding.inflate(getLayoutInflater());
         configureViewModels();
         this.onAttach(requireContext());
@@ -126,7 +113,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.e("Anne", "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         assert supportMapFragment != null;
@@ -138,7 +124,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        Log.e("Anne", "onMapReady");
         mGoogleMap = googleMap;
         getDataIfUserIsSignIn();
         observeBookings();
@@ -147,24 +132,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     }
 
     @Override
-    public void onResume() {
-        Log.e("Anne", "onResume");
-        super.onResume();
-    }
-
-    @Override
     public void onAttach(@NonNull Context context) {
-        Log.e("Anne", "onAttach");
         super.onAttach(context);
         mContext = context;
     }
-
-    /**@Override
-    public void onDetach() {
-        Log.e("Anne", "onDetach");
-        super.onDetach();
-        mContext = null;
-    }*/
 
     private void configureViewModels() {
         mUserViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
@@ -174,29 +145,25 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     }
 
     //Check if user is signed in to load SharedPreferences
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void getDataIfUserIsSignIn() {
-        Log.e("Anne", "getDataIfUserIsSignIn");
         FirebaseUser currentUser = mUserViewModel.getCurrentUserFromFirebase();
-        if(currentUser!=null) {
+        if (currentUser != null) {
             mSharedPreferences = requireActivity().getSharedPreferences(getString(R.string.user_settings), Context.MODE_PRIVATE);
             if (mSharedPreferences != null) {
                 zoom = mSharedPreferences.getFloat(getString(R.string.zoom), zoom);
             }
             requestLocationPermission();
-        }
-        else{
+        } else {
             navigateToAuthenticationActivity();
         }
     }
 
     //Check the location permission
     private void requestLocationPermission() {
-        Log.e("Anne", "requestLocationPermission");
         if (ContextCompat.checkSelfPermission(requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(requireContext(),
-            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(requireContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             //Permission ok => display map
             getUserLocation();
         } else {
@@ -208,7 +175,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //Get the user location when permission is ok
     @SuppressLint("MissingPermission")
     private void getUserLocation() {
-        Log.e("Anne", "getUserLocation");
         mUserViewModel.getUserLocation(this.getContext());
         mGoogleMap.setMyLocationEnabled(true);
         mUserViewModel.getLivedataLocation().observe(requireActivity(), this::updateMapLocation);
@@ -216,14 +182,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     //Update map with user location
     private void updateMapLocation(Location location) {
-        Log.e("Anne", "updateMapLocation");
         mLocation = location;
         mLocationString = mLocation.getLatitude() + "," + mLocation.getLongitude();
         mPlacesViewModel.fetchNearbySearchPlaces(mLocationString);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         Activity activity = getActivity();
-        if(isAdded() && activity!=null) {
+        if (isAdded() && activity != null) {
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .title(requireActivity().getString(R.string.marker_title)));
@@ -232,19 +197,15 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     }
 
     private void observeNearbyPlaces() {
-        Log.e("Anne", "observeNearbyPlaces");
         mPlacesViewModel.getNearbySearchResponseLiveData().observe(getViewLifecycleOwner(), this::updateMapWithNearbyPlaces);
     }
 
-    //Update the map with places
     private void updateMapWithNearbyPlaces(List<Result> results) {
-        Log.e("Anne", "updateMapWithNearbyPlaces");
         mPlaceList = results;
         updateMapWithData(mPlaceList);
     }
 
     private void updateMapWithData(List<Result> results) {
-        Log.e("Anne", "updateMapWithData");
         mGoogleMap.clear();
         for (Result mResult : results) {
             LatLng placeLatLng = new LatLng(mResult.getGeometry().getLocation().getLat(), mResult.getGeometry().getLocation().getLng());
@@ -256,15 +217,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
             }
         }
         mProgressBar.setVisibility(View.INVISIBLE);
-        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(@NonNull Marker marker) {
-                navigateToPlaceDetailsActivity(results, marker);
-            }
-        });
+        mGoogleMap.setOnInfoWindowClickListener(marker -> navigateToPlaceDetailsActivity(results, marker));
     }
 
-    private void addMarker (int drawable, LatLng placeLatLng, Result result) {
+    private void addMarker(int drawable, LatLng placeLatLng, Result result) {
         mGoogleMap.addMarker(new MarkerOptions()
                 .position(placeLatLng)
                 .title(result.getName())
@@ -272,29 +228,25 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     }
 
     private void observeBookings() {
-        Log.e("Anne", "observeBookingsInMapFragment");
         mBookingViewModel.fetchBookingList();
         mBookingViewModel.getBookingListLiveData().observe(getViewLifecycleOwner(), this::updateBookingList);
     }
 
     private void updateBookingList(List<Booking> bookings) {
-        Log.e("Anne", "updateBookingList");
         mBookingList = bookings;
     }
 
     private void observeAutocomplete() {
-        Log.e("Anne", "observeAutoComplete");
         mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::updateMapWithAutocompletePlaces);
     }
 
-    private void updateMapWithAutocompletePlaces(List<Prediction> predictions){
-        Log.e("Anne", "updateMapWithAutocompletePlaces");
+    private void updateMapWithAutocompletePlaces(List<Prediction> predictions) {
         //Clear previous predictions
         mPlaceListAutocomplete.clear();
 
-        if(mMapViewFragment.isVisible()) {
+        if (mMapViewFragment.isVisible()) {
             //If no search is done
-            if(predictions.isEmpty()) {
+            if (predictions.isEmpty()) {
                 updateMapWithNearbyPlaces(mPlaceList);
             }
             //If search occurs
@@ -310,12 +262,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                 if (mPlaceListAutocomplete.isEmpty()) {
                     Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_LONG).show();
                     final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateMapWithNearbyPlaces(mPlaceList);
-                        }
-                    }, 2000);
+                    handler.postDelayed(() -> updateMapWithNearbyPlaces(mPlaceList), 2000);
                 }
                 //If there are search results to display
                 else {
@@ -328,7 +275,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
     //Update the map when the user location changes
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Log.e("Anne", "onLocationChanged");
         observeNearbyPlaces();
     }
 
@@ -343,21 +289,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
         alertDialogBuilder.setTitle(R.string.access_denied_title)
                 .setMessage(R.string.access_denied_text)
                 .setCancelable(false)
-                .setPositiveButton(R.string.go_to_settings, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                                Uri.fromParts("package", "com.anne.linger.go4lunch", null));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
+                .setPositiveButton(R.string.go_to_settings, (dialog, which) -> {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", "com.anne.linger.go4lunch", null));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 })
-                .setNegativeButton(R.string.close_go4lunch, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        requireActivity().finish();
-                    }
-                })
+                .setNegativeButton(R.string.close_go4lunch, (dialog, which) -> requireActivity().finish())
                 .setCancelable(false)
                 .create()
                 .show();
@@ -365,15 +303,14 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     private void navigateToPlaceDetailsActivity(List<Result> results, Marker marker) {
         Intent intent = new Intent(requireActivity(), PlaceDetailsActivity.class);
-        for(Result place : results) {
-            if(Objects.requireNonNull(marker.getTitle()).equalsIgnoreCase(place.getName())){
+        for (Result place : results) {
+            if (Objects.requireNonNull(marker.getTitle()).equalsIgnoreCase(place.getName())) {
                 intent.putExtra("place id", place.getPlaceId());
             }
         }
         startActivity(intent);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToAuthenticationActivity() {
         Intent intent = new Intent(requireActivity(), AuthenticationActivity.class);
         startActivity(intent);
@@ -381,9 +318,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
 
     @Override
     public void onDestroyView() {
-        Log.e("Anne", "onDestroyView");
         super.onDestroyView();
-        if(ContextCompat.checkSelfPermission(requireContext(),
+        if (ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(requireContext(),
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {

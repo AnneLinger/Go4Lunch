@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- *Pojo model for matched substring autocomplete
-*/
+ * Pojo model for matched substring autocomplete
+ */
 
 public class MatchedSubstring {
 

@@ -8,8 +8,8 @@ import repositories.NearbySearchRepository;
 import repositories.NearbySearchRepositoryImpl;
 
 /**
-*Hilt module for injections for nearbysearch places
-*/
+ * Hilt module for injections for nearbysearch places
+ */
 
 @InstallIn(SingletonComponent.class)
 @Module

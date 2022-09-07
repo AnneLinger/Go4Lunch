@@ -8,20 +8,14 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +27,12 @@ import model.Booking;
 import utils.NotificationReceiver;
 
 /**
-*Implementation of BookingRepository interface
-*/
+ * Implementation of BookingRepository interface
+ */
 
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class BookingRepositoryImpl implements BookingRepository {
 
-    //For data
     private FirebaseFirestore mFirestore;
     private final MutableLiveData<List<Booking>> mBookingList = new MutableLiveData<>();
     private static final String BOOKING_COLLECTION = "Bookings";
@@ -50,7 +44,7 @@ public class BookingRepositoryImpl implements BookingRepository {
     public static final int ALARM_TYPE_RTC = 100;
 
     @Inject
-    public BookingRepositoryImpl(){
+    public BookingRepositoryImpl() {
     }
 
     @Override
@@ -66,53 +60,20 @@ public class BookingRepositoryImpl implements BookingRepository {
     @Override
     public void getBookingListFromFirestore() {
         mFirestore.collection(BOOKING_COLLECTION).addSnapshotListener((value, error) -> {
-            if(error!=null){
-                Log.e("Anne", "collectionError");
+            if (error != null) {
                 return;
             }
-            if (value!=null) {
-                Log.e("Anne", "getCollectionOK");
-                Log.e("Anne", value.toString());
+            if (value != null) {
                 List<Booking> bookingList = value.toObjects(Booking.class);
                 mBookingList.setValue(bookingList);
-                Log.e("Anne", mBookingList.toString());
-            }
-            else{
-                Log.e("Anne", "collectionValueNull");
+            } else {
+                Log.e("Anne", "getBookingListFromFirestoreOnFailure");
             }
         });
-        /**mFirestore.collection(BOOKING_COLLECTION).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error!=null) {
-                    Log.e("Anne", "getCollectionError");
-                    return;
-                }
-
-                List<Booking> bookings = new ArrayList<>();
-                for (QueryDocumentSnapshot documentSnapshot : value){
-                    Booking booking = new Booking();
-                    if(documentSnapshot.get("User") != null) {
-                        booking.setUser(documentSnapshot.getString("User"));
-                    }
-                    if(documentSnapshot.get("BookingId") != null) {
-                        booking.setBookingId(documentSnapshot.getString("BookingId"));
-                    }
-                    if(documentSnapshot.get("PlaceId") != null) {
-                        booking.setPlaceId(documentSnapshot.getString("PlaceId"));
-                    }
-                    bookings.add(booking);
-                }
-                Log.e("Anne", "queryListenerRepo : bookings : " + bookings.toString());
-                mBookingList.setValue(bookings);
-            }
-        });*/
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void createBooking(String placeId, String placeName, String user, Context context) {
-
         instanceFirestore();
 
         //Create a new booking
@@ -131,82 +92,43 @@ public class BookingRepositoryImpl implements BookingRepository {
                 .addOnSuccessListener(documentReference -> mFirestore.collection(BOOKING_COLLECTION)
                         .document(documentReference.getId())
                         .update(BOOKING_ID, documentReference.getId())
-                        .addOnSuccessListener(unused -> {
-                            setNotificationTimeToSend(context);
-                            Log.e("Anne", "setCollectionOnSuccess");
-                        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Anne", "setCollectionOnFailure");
-                    }
-                }));
-    }
-
-    @Override
-    public void updateBooking() {
+                        .addOnSuccessListener(unused -> setNotificationTimeToSend(context))
+                        .addOnFailureListener(e -> Log.e("Anne", "setCollectionOnFailure")));
     }
 
     @Override
     public void deleteBooking(Booking booking) {
-        Log.e("Anne", booking.getBookingId());
         mFirestore.collection(BOOKING_COLLECTION).document(booking.getBookingId())
                 .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.e("Anne", "DocumentSnapshot successfully deleted!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Anne", "Error deleting document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.e("Anne", "DocumentSnapshot successfully deleted!"))
+                .addOnFailureListener(e -> Log.e("Anne", "Error deleting document", e));
     }
 
+    //To keep only bookings of the current day
     @Override
     public void deletePreviousBookings() {
         Calendar calendar = Calendar.getInstance();
         int currentDay = calendar.get(Calendar.DAY_OF_YEAR);
-        Log.e("Anne", "DeletePreviousBooking" + currentDay);
-        for(Booking booking : Objects.requireNonNull(mBookingList.getValue())) {
-            Log.e("Anne", "DeletePreviousBooking" + booking.getBookingDay());
-            if(booking.getBookingDay()!=currentDay) {
+        for (Booking booking : Objects.requireNonNull(mBookingList.getValue())) {
+            if (booking.getBookingDay() != currentDay) {
                 deleteBooking(booking);
             }
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    //To send notification at 12 o'clock
     @SuppressLint("MissingPermission")
     private void setNotificationTimeToSend(Context context) {
-        Log.e("Anne", "intentForNotif");
+        //Determine calendar time
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 48);
 
-        calendar.set(Calendar.HOUR_OF_DAY, 16);
-        calendar.set(Calendar.MINUTE, 18);
-
+        //Manage intent to send notification
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent alarmIntent = new Intent(context, NotificationReceiver.class);
-        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, ALARM_TYPE_RTC, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
-        //@SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmManager.INTERVAL_DAY, pendingIntent);
-
-        /**Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY,12);
-
-        //Setting intent to class where Alarm broadcast message will be handled
-        Intent intent = new Intent(mContext, AlarmReceiver.class);
-        //Setting alarm pending intent
-        alarmIntentRTC = PendingIntent.getBroadcast(mContext, ALARM_TYPE_RTC, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //getting instance of AlarmManager service
-        alarmManagerRTC = (AlarmManager) mContext.getSystemService(ALARM_SERVICE);
-
-        alarmManagerRTC.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntentRTC);*/
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, ALARM_TYPE_RTC, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 }

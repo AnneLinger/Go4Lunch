@@ -4,6 +4,7 @@ import static java.lang.String.format;
 
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.anne.linger.go4lunch.BuildConfig;
@@ -27,9 +29,10 @@ import model.nearbysearchpojo.Result;
 import ui.activities.PlaceDetailsActivity;
 
 /**
-*Adapter and ViewHolder to display a recycler view for the place list
-*/
+ * Adapter and ViewHolder to display a recycler view for the place list
+ */
 
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.ViewHolder> {
 
     private static List<Result> mPlaceList;
@@ -91,48 +94,39 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.View
             //For address
             address.setText(place.getVicinity());
             //For workmate number
-            if(mBookingList.isEmpty()) {
+            if (mBookingList.isEmpty()) {
                 workmateNumber.setText("0");
-            }
-            else{
+            } else {
                 int workmateNumberInt = 0;
-                for(Booking mBooking : mBookingList){
-                    if(Objects.equals(mBooking.getPlaceId(), place.getPlaceId())){
-                        //TODO manage numbers with joining workmates
-                        workmateNumberInt = workmateNumberInt+ 1;
+                for (Booking mBooking : mBookingList) {
+                    if (Objects.equals(mBooking.getPlaceId(), place.getPlaceId())) {
+                        workmateNumberInt = workmateNumberInt + 1;
                     }
                 }
                 workmateNumber.setText(format(Locale.getDefault(), "%d", workmateNumberInt));
             }
             //For open or closed
-            if(place.getOpeningHours()!=null) {
+            if (place.getOpeningHours() != null) {
                 open.setText(R.string.open_now);
-            }
-            else {
+            } else {
                 open.setText(R.string.closed);
             }
             //For rating
-            if(place.getRating()!=null){
-                float rating = (float) ((place.getRating()/5)*3);
+            if (place.getRating() != null) {
+                float rating = (float) ((place.getRating() / 5) * 3);
                 rate.setRating(rating);
             }
             //For place photo
-            if(place.getPhotos()==null){
+            if (place.getPhotos() == null) {
                 placeImage.setImageResource(R.drawable.ic_baseline_restaurant_24);
-            }
-            else {
+            } else {
                 String placePhoto = place.getPhotos().get(0).getPhotoReference();
                 Glide.with(itemView)
                         .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=90&photo_reference=" + placePhoto + "&key=" + BuildConfig.MAPS_API_KEY)
                         .into(placeImage);
             }
             //For navigate to details from itemView
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    navigateToPlaceDetails(place);
-                }
-            });
+            itemView.setOnClickListener(view -> navigateToPlaceDetails(place));
         }
 
         private void navigateToPlaceDetails(Result place) {

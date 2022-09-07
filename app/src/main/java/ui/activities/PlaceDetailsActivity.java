@@ -39,9 +39,10 @@ import viewmodel.PlaceDetailsViewModel;
 import viewmodel.UserViewModel;
 
 /**
-*Activity to display details of a place
-*/
+ * Activity to display details of a place
+ */
 
+@RequiresApi(api = Build.VERSION_CODES.M)
 @AndroidEntryPoint
 public class PlaceDetailsActivity extends AppCompatActivity {
 
@@ -62,12 +63,11 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     private final List<User> mJoiningWorkmatesUsers = new ArrayList<>();
     private Booking mUserBooking;
     private List<User> mUserList = new ArrayList<>();
-    private List<String> mUserLikedPlacesList = new ArrayList<>();
+    private final List<String> mUserLikedPlacesList = new ArrayList<>();
     private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.e("Anne", "onCreate");
         super.onCreate(savedInstanceState);
         initUi();
         configureActionBar();
@@ -79,35 +79,16 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         observeBookings();
     }
 
-    @Override
-    protected void onResume() {
-        Log.e("Anne", "onResume");
-        super.onResume();
-    }
-
-    @Override
-    protected void onStart() {
-        Log.e("Anne", "onStart");
-        super.onStart();
-    }
-
-    //Configure UI
     private void initUi() {
         mBinding = ActivityPlaceDetailsBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
     }
 
     private void configureActionBar() {
-        mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onClick(View view) {
-                navigateToPlacesActivity();
-            }
-        });
+        mBinding.toolbar.setNavigationOnClickListener(view -> navigateToPlacesActivity());
     }
+
     private void initRecyclerView() {
-        Log.e("Anne", "initRV");
         mRecyclerView = mBinding.rvDetailWorkmates;
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -129,12 +110,8 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void getCurrentUser(User user) {
         mUser = user;
-        Log.e("Anne", "GetCurrentUser : " + mUser.getName());
         assert mUser.getLikedPlaces() != null;
         mUserLikedPlacesList.addAll(mUser.getLikedPlaces());
-        if(!mUserLikedPlacesList.isEmpty()){
-            Log.e("Anne", "GetCurrentUser : " + mUser.getLikedPlaces().toString());
-        }
     }
 
     private void observeUsers() {
@@ -144,13 +121,9 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void getUsers(List<User> users) {
         mUserList = users;
-        Log.e("Anne", "getUserActivity : " + mUserList.toString());
-        Log.e("Anne", mUserList.get(0).getName());
-        Log.e("Anne", mUserList.get(0).toString());
     }
 
     private void getPlaceDetails() {
-        Log.e("Anne", "getPlaceDetails");
         Intent intent = getIntent();
         mPlaceId = intent.getStringExtra("place id");
         mPlaceDetailsViewModel.fetchPlaceDetails(mPlaceId);
@@ -158,81 +131,60 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void initDataPlaceDetails(Result result) {
-            //For place photo
-            if(result.getPhotos()==null){
-                mBinding.imDetailPlace.setImageResource(R.drawable.drawer_header_background);
+        //For place photo
+        if (result.getPhotos() == null) {
+            mBinding.imDetailPlace.setImageResource(R.drawable.drawer_header_background);
+        } else {
+            String placePhoto = result.getPhotos().get(0).getPhotoReference();
+            Glide.with(this)
+                    .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + placePhoto + "&key=" + BuildConfig.MAPS_API_KEY)
+                    .into(mBinding.imDetailPlace);
+        }
+        //For place name
+        mPlaceName = result.getName();
+        mBinding.tvDetailName.setText(mPlaceName);
+        //For place address
+        mPlaceAddress = result.getFormattedAddress();
+        mBinding.tvDetailAddress.setText(result.getFormattedAddress());
+        //For place rating
+        float rating = (float) ((result.getRating() / 5) * 3);
+        mBinding.rbDetailRate.setRating(rating);
+        //For booking
+        mBinding.fabDetailChoice.setOnClickListener(view -> manageBookingChoice());
+        //For place call
+        mBinding.btDetailCall.setOnClickListener(view -> {
+            if (result.getFormattedPhoneNumber() != null) {
+                String phoneNumber = String.format(getString(R.string.phone_number), result.getInternationalPhoneNumber());
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse(phoneNumber));
+                startActivity(callIntent);
+            } else {
+                Toast.makeText(PlaceDetailsActivity.this, R.string.phone_number_unknown, Toast.LENGTH_SHORT).show();
             }
-            else {
-                String placePhoto = result.getPhotos().get(0).getPhotoReference();
-                Glide.with(this)
-                        .load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=" + placePhoto + "&key=" + BuildConfig.MAPS_API_KEY)
-                        .into(mBinding.imDetailPlace);
+        });
+        //For place like
+        if (mUserLikedPlacesList.contains(mPlaceId)) {
+            mBinding.btDetailLike.setText(R.string.dislike);
+        }
+        mBinding.btDetailLike.setOnClickListener(view -> manageLikeButton());
+        //For place website
+        mBinding.btDetailWebsite.setOnClickListener(view -> {
+            if (result.getWebsite() != null) {
+                Uri uri = Uri.parse(result.getWebsite());
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(websiteIntent);
+            } else {
+                Toast.makeText(PlaceDetailsActivity.this, R.string.unknown_website, Toast.LENGTH_SHORT).show();
             }
-            //For place name
-            mPlaceName = result.getName();
-            mBinding.tvDetailName.setText(mPlaceName);
-            //For place address
-            mPlaceAddress = result.getFormattedAddress();
-            mBinding.tvDetailAddress.setText(result.getFormattedAddress());
-            //For place rating
-            float rating = (float) ((result.getRating()/5)*3);
-            mBinding.rbDetailRate.setRating(rating);
-            //For booking
-            mBinding.fabDetailChoice.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    manageBookingChoice();
-                }
-            });
-            //For place call
-            mBinding.btDetailCall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(result.getFormattedPhoneNumber()!=null) {
-                        String phoneNumber = String.format(getString(R.string.phone_number), result.getInternationalPhoneNumber());
-                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        callIntent.setData(Uri.parse(phoneNumber));
-                        startActivity(callIntent);
-                    }
-                    else{
-                        Toast.makeText(PlaceDetailsActivity.this, R.string.phone_number_unknown, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            //For place like
-            if(mUserLikedPlacesList.contains(mPlaceId)) {
-                mBinding.btDetailLike.setText(R.string.dislike);
-            }
-            mBinding.btDetailLike.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    manageLikeButton();
-                }
-            });
-            //For place website
-            mBinding.btDetailWebsite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(result.getWebsite()!=null) {
-                        Uri uri = Uri.parse(result.getWebsite());
-                        Intent websiteIntent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(websiteIntent);
-                    }
-                    else{
-                        Toast.makeText(PlaceDetailsActivity.this, R.string.unknown_website, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+        });
     }
 
     private void observeBookings() {
-        Log.e("Anne", "observeBookingsInPlaceDetails");
         mBookingViewModel.fetchBookingList();
         mBookingViewModel.getBookingListLiveData().observe(this, this::getBookings);
     }
 
     private void getBookings(List<Booking> bookings) {
-        Log.e("Anne", bookings.toString());
         mBookingList = bookings;
         manageFABColor();
         updateRecyclerView();
@@ -240,102 +192,69 @@ public class PlaceDetailsActivity extends AppCompatActivity {
 
     private void manageFABColor() {
         if (isUserHasBooking()) {
-            Log.e("Anne", mPlaceId);
-            Log.e("Anne", mUserBooking.getPlaceId());
-            if(mUserBooking.getPlaceId().equalsIgnoreCase(mPlaceId)) {
-                Log.e("Anne", "getUserBooking : userHasThisBooking");
-                manageBookingFAB(true);
-            }
-            else {
-                Log.e("Anne", "getUserBooking : userHasNOThisBooking");
-                manageBookingFAB(false);
-            }
-        }
-        else {
-            Log.e("Anne", "getUserBooking : userHasNOBooking");
+            manageBookingFAB(mUserBooking.getPlaceId().equalsIgnoreCase(mPlaceId));
+        } else {
             manageBookingFAB(false);
         }
     }
 
     private boolean isUserHasBooking() {
-        Log.e("Anne", "isUserHasBooking");
-        if(!mBookingList.isEmpty()) {
-            Log.e("Anne", "isUserHasBooking : listIsNOEmpty");
+        if (!mBookingList.isEmpty()) {
             for (Booking booking : mBookingList) {
-                Log.e("Anne", "getUserBooking : " + booking.getUser());
-                Log.e("Anne", "getUserBooking : " + mUser.getName());
                 if (booking.getUser().equalsIgnoreCase(mUser.getName())) {
-                    Log.e("Anne", "isUserHasBooking : userEqualsBookingUser");
                     mUserBooking = booking;
                     return true;
-                }
-                else {
+                } else {
                     Log.e("Anne", "isUserHasBooking : returnFalseUserNOEquals");
-                    //return false;
                 }
             }
         }
-        Log.e("Anne", "isUserHasBooking : returnFalseListEmpty");
         return false;
     }
 
-    private void updateRecyclerView(){
-        Log.e("Anne", "updateRV");
+    private void updateRecyclerView() {
         mJoiningWorkmatesString.clear();
         mJoiningWorkmatesUsers.clear();
-        if(!mBookingList.isEmpty()){
-            Log.e("Anne", "updateRV : bookingListIsNoEmpty");
-            for(Booking booking : mBookingList) {
-                if(mPlaceId.equals(booking.getPlaceId()))  {
-                    Log.e("Anne", "updateRV : getUserBookingForThisPlace");
+        if (!mBookingList.isEmpty()) {
+            for (Booking booking : mBookingList) {
+                if (mPlaceId.equals(booking.getPlaceId())) {
                     mJoiningWorkmatesString.add(booking.getUser());
                 }
             }
         }
-        if(!mJoiningWorkmatesString.isEmpty()) {
-            Log.e("Anne", "updateRV : thereAreUserBookingForThisPlace");
-            for(String userString : mJoiningWorkmatesString) {
-                for(User user : mUserList) {
-                    if(userString.equalsIgnoreCase(user.getName())){
-                        Log.e("Anne", "updateRV : UserBookingAddToUserList");
+        if (!mJoiningWorkmatesString.isEmpty()) {
+            for (String userString : mJoiningWorkmatesString) {
+                for (User user : mUserList) {
+                    if (userString.equalsIgnoreCase(user.getName())) {
                         mJoiningWorkmatesUsers.add(user);
                     }
                 }
             }
             mRecyclerView.setVisibility(View.VISIBLE);
             mRecyclerView.setAdapter(new JoiningWorkmatesListAdapter(mJoiningWorkmatesUsers));
-        }
-        else {
-            Log.e("Anne", "updateRV : NoUserBookingForThisPlace");
+        } else {
             mRecyclerView.setVisibility(View.GONE);
         }
     }
 
-    //To manage user booking wish
     private void manageBookingChoice() {
-        Log.e("Anne", "manageBookingChoice");
-        if(!(mUserBooking==null)) {
-            Log.e("Anne", "manageBookingChoice : UserHasABooking");
-            if(mUserBooking.getPlaceId().equalsIgnoreCase(mPlaceId)) {
+        if (!(mUserBooking == null)) {
+            if (mUserBooking.getPlaceId().equalsIgnoreCase(mPlaceId)) {
                 mBookingViewModel.deleteBooking(mUserBooking);
                 Toast.makeText(PlaceDetailsActivity.this, R.string.booking_delete, Toast.LENGTH_SHORT).show();
                 manageBookingFAB(false);
                 mUserBooking = null;
                 updateRecyclerView();
-            }
-            else {
+            } else {
                 mBookingViewModel.deleteBooking(mUserBooking);
                 createBooking();
             }
-        }
-        else {
-            Log.e("Anne", "manageBookingChoice : UserHasNOBooking");
+        } else {
             createBooking();
         }
     }
 
     private void createBooking() {
-        Log.e("Anne", "CreateBooking");
         mBookingViewModel.createBooking(mPlaceId, mPlaceName, mUser.getName(), this);
         Toast.makeText(PlaceDetailsActivity.this, R.string.booking_done, Toast.LENGTH_SHORT).show();
         manageBookingFAB(true);
@@ -345,55 +264,43 @@ public class PlaceDetailsActivity extends AppCompatActivity {
     }
 
     private void saveBookingDataForNotificationInSharedPreferences() {
-        Log.e("Anne", "SaveUserBookingInSP");
         mSharedPreferences = PlaceDetailsActivity.this.getSharedPreferences(getString(R.string.user_booking), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(this.getString(R.string.notification_place_name_key), mPlaceName);
         editor.putString(this.getString(R.string.notification_place_address_key), mPlaceAddress);
-        editor.putString(this.getString(R.string.notification_joining_workmates_key), manageJoiningWorkmatesForSharesPreferences().toString());
+        editor.putString(this.getString(R.string.notification_joining_workmates_key), manageJoiningWorkmatesForSharesPreferences());
         editor.apply();
     }
 
     private String manageJoiningWorkmatesForSharesPreferences() {
         List<User> joiningWorkmatesForNotification = mJoiningWorkmatesUsers;
-        Log.e("Anne", "ListUser = " + joiningWorkmatesForNotification.toString());
         joiningWorkmatesForNotification.remove(mUser);
         List<String> joiningWorkmatesForNotificationListString = new ArrayList<>();
-        for(User user : joiningWorkmatesForNotification) {
+        for (User user : joiningWorkmatesForNotification) {
             joiningWorkmatesForNotificationListString.add(user.getName());
         }
-        Log.e("Anne", "ListUserString = " + joiningWorkmatesForNotificationListString);
-        String joiningWorkmatesForNotificationString = Arrays.toString(joiningWorkmatesForNotificationListString.toArray()).replace("[", " ").replace("]", "  ");
-        Log.e("Anne", "ListUserString = " + joiningWorkmatesForNotificationString);
-        return joiningWorkmatesForNotificationString;
+        return Arrays.toString(joiningWorkmatesForNotificationListString.toArray()).replace("[", " ").replace("]", "  ");
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private void manageBookingFAB(boolean isBooking){
-        if(isBooking){
+    private void manageBookingFAB(boolean isBooking) {
+        if (isBooking) {
             mBinding.fabDetailChoice.setImageDrawable(getDrawable(R.drawable.ic_baseline_check_circle_24));
-        }
-        else {
+        } else {
             mBinding.fabDetailChoice.setImageDrawable(getDrawable(R.drawable.check_circle_grey));
         }
     }
 
     private void manageLikeButton() {
-        Log.e("Anne", "manageLikeButton");
-        if(mUserLikedPlacesList.contains(mPlaceId)) {
-            Log.e("Anne", "mUserLPLContainsThisPlace");
+        if (mUserLikedPlacesList.contains(mPlaceId)) {
             mBinding.btDetailLike.setText(R.string.like);
             mUserViewModel.removeALikedPlace(mPlaceId, mUser.getUserId());
-        }
-        else {
-            Log.e("Anne", "mUserLPLisDoesNOTContainsThisPlace");
+        } else {
             mBinding.btDetailLike.setText(R.string.dislike);
             mUserViewModel.addALikedPlace(mPlaceId, mUser.getUserId());
         }
     }
 
-    //When click on action bar for back
-    @RequiresApi(api = Build.VERSION_CODES.M)
     private void navigateToPlacesActivity() {
         Intent intent = new Intent(PlaceDetailsActivity.this, PlacesActivity.class);
         startActivity(intent);

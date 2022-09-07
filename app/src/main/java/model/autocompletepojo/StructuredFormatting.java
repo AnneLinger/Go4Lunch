@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- *Pojo model for structured formatting autocomplete
-*/
+ * Pojo model for structured formatting autocomplete
+ */
 
 public class StructuredFormatting {
 

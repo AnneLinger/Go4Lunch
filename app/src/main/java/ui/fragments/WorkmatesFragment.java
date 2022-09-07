@@ -1,13 +1,14 @@
 package ui.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -15,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.anne.linger.go4lunch.databinding.FragmentWorkmatesBinding;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +27,10 @@ import viewmodel.BookingViewModel;
 import viewmodel.UserViewModel;
 
 /**
-*Fragment to display workmates
-*/
+ * Fragment to display workmates
+ */
+
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class WorkmatesFragment extends Fragment {
 
     //For UI
@@ -40,7 +42,7 @@ public class WorkmatesFragment extends Fragment {
     private static List<Booking> mBookingList = new ArrayList<>();
     private UserViewModel mUserViewModel;
     private BookingViewModel mBookingViewModel;
-    private WorkmatesFragment mWorkmatesFragment = this;
+    private final WorkmatesFragment mWorkmatesFragment = this;
 
     public static WorkmatesFragment newInstance() {
         return new WorkmatesFragment();
@@ -67,7 +69,6 @@ public class WorkmatesFragment extends Fragment {
     }
 
     private void initRecyclerView() {
-        Log.e("Anne", "InitRVWorkmatesFragment");
         mRecyclerView = mBinding.rvWorkmatesListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mRecyclerView.setLayoutManager(layoutManager);
@@ -83,21 +84,16 @@ public class WorkmatesFragment extends Fragment {
 
     private void getUsers(List<User> users) {
         mUserList = users;
-        Log.e("Anne", "getUserActivity : " + mUserList.toString());
-        Log.e("Anne", mUserList.get(0).getName());
-        Log.e("Anne", mUserList.get(0).toString());
     }
 
     private void observeBookings() {
-        Log.e("Anne", "observeBookingsInPlaceDetails");
         mBookingViewModel.fetchBookingList();
         mBookingViewModel.getBookingListLiveData().observe(requireActivity(), this::getBookings);
     }
 
     private void getBookings(List<Booking> bookings) {
-        Log.e("Anne", bookings.toString());
         mBookingList = bookings;
-        if(mWorkmatesFragment.isVisible()){
+        if (mWorkmatesFragment.isVisible()) {
             initRecyclerView();
         }
     }

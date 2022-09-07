@@ -8,13 +8,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import model.autocompletepojo.AutocompleteResponse;
 import model.autocompletepojo.Prediction;
 import repositories.AutocompleteRepositoryImpl;
 
 /**
-*ViewModel for autocomplete
-*/
+ * ViewModel for autocomplete
+ */
 
 @HiltViewModel
 public class AutocompleteViewModel extends ViewModel {
@@ -22,13 +21,12 @@ public class AutocompleteViewModel extends ViewModel {
     //For data
     private final AutocompleteRepositoryImpl mAutocompleteRepositoryImpl;
 
-    //Constructor
     @Inject
-    public AutocompleteViewModel(AutocompleteRepositoryImpl autocompleteRepositoryImpl){
+    public AutocompleteViewModel(AutocompleteRepositoryImpl autocompleteRepositoryImpl) {
         mAutocompleteRepositoryImpl = autocompleteRepositoryImpl;
     }
 
-    public void fetchAutocomplete(String query, String location){
+    public void fetchAutocomplete(String query, String location) {
         mAutocompleteRepositoryImpl.fetchAutocomplete(query, location);
     }
 
@@ -36,7 +34,7 @@ public class AutocompleteViewModel extends ViewModel {
         return mAutocompleteRepositoryImpl.getAutocompleteLiveData();
     }
 
-    public void setAutocompleteToNull(){
+    public void setAutocompleteToNull() {
         mAutocompleteRepositoryImpl.setAutocompleteToNull();
     }
 }

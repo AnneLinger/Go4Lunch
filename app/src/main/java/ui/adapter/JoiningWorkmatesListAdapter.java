@@ -19,7 +19,7 @@ import java.util.List;
 import model.User;
 
 /**
- *Adapter and ViewHolder to display a recycler view for the place list
+ * Adapter and ViewHolder to display a recycler view for the place list
  */
 
 public class JoiningWorkmatesListAdapter extends RecyclerView.Adapter<JoiningWorkmatesListAdapter.ViewHolder> {
@@ -47,10 +47,9 @@ public class JoiningWorkmatesListAdapter extends RecyclerView.Adapter<JoiningWor
 
     @Override
     public int getItemCount() {
-        if(mJoiningWorkmatesList.isEmpty()) {
+        if (mJoiningWorkmatesList.isEmpty()) {
             return 0;
-        }
-        else {
+        } else {
             return mJoiningWorkmatesList.size();
         }
     }
@@ -69,11 +68,10 @@ public class JoiningWorkmatesListAdapter extends RecyclerView.Adapter<JoiningWor
         }
 
         private void displayWorkmates(User workmate) {
-            //avatar.set...
-            if(workmate.getPictureUrl()==null) {
+            assert avatar != null;
+            if (workmate.getPictureUrl() == null) {
                 avatar.setImageResource(R.drawable.ic_baseline_face_24);
-            }
-            else {
+            } else {
                 Glide.with(itemView)
                         .load(workmate.getPictureUrl())
                         .circleCrop()

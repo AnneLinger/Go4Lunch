@@ -5,10 +5,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
-
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
@@ -19,16 +16,16 @@ import model.Booking;
 import repositories.BookingRepositoryImpl;
 
 /**
-*ViewModel for bookings
-*/
+ * ViewModel for bookings
+ */
 
+@RequiresApi(api = Build.VERSION_CODES.M)
 @HiltViewModel
 public class BookingViewModel extends ViewModel {
 
     //For data
     private final BookingRepositoryImpl mBookingRepositoryImpl;
 
-    //Constructor
     @Inject
     public BookingViewModel(BookingRepositoryImpl bookingRepositoryImpl) {
         mBookingRepositoryImpl = bookingRepositoryImpl;
@@ -43,14 +40,9 @@ public class BookingViewModel extends ViewModel {
         return mBookingRepositoryImpl.getBookingListLiveData();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public void createBooking(String placeId, String placeName, String user, Context context) {
         mBookingRepositoryImpl.instanceFirestore();
         mBookingRepositoryImpl.createBooking(placeId, placeName, user, context);
-    }
-
-    public void updateBooking() {
-        mBookingRepositoryImpl.updateBooking();
     }
 
     public void deleteBooking(Booking booking) {

@@ -1,6 +1,7 @@
 package ui.adapter;
 
 import android.content.Intent;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,30 +9,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.anne.linger.go4lunch.R;
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
 import model.Booking;
 import model.User;
-import model.nearbysearchpojo.Result;
 import ui.activities.PlaceDetailsActivity;
-import ui.fragments.WorkmatesFragment;
 
 /**
-*Adapter and ViewHolder to display a recycler view for the workmates list
-*/
+ * Adapter and ViewHolder to display a recycler view for the workmates list
+ */
 
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdapter.ViewHolder> {
 
     private static List<User> mUserList;
     private static List<Booking> mBookingList;
 
-    //TODO Add booking list in constructor
     public WorkmatesListAdapter(List<User> userList, List<Booking> bookingList) {
         mUserList = userList;
         mBookingList = bookingList;
@@ -69,12 +68,11 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdap
             place = itemView.findViewById(R.id.tv_workmate_place);
         }
 
-        private void displayWorkmate(User user){
+        private void displayWorkmate(User user) {
             //For avatar
-            if(user.getPictureUrl()==null) {
+            if (user.getPictureUrl() == null) {
                 avatar.setImageResource(R.drawable.ic_baseline_face_24);
-            }
-            else {
+            } else {
                 Glide.with(itemView)
                         .load(user.getPictureUrl())
                         .circleCrop()
@@ -82,26 +80,19 @@ public class WorkmatesListAdapter extends RecyclerView.Adapter<WorkmatesListAdap
             }
             //For name
             name.setText(user.getName());
-
             //About booking
             Booking userBooking = null;
-            for(Booking booking : mBookingList) {
-                if(booking.getUser().equalsIgnoreCase(user.getName())) {
+            for (Booking booking : mBookingList) {
+                if (booking.getUser().equalsIgnoreCase(user.getName())) {
                     userBooking = booking;
                 }
             }
-            if(userBooking!=null){
+            if (userBooking != null) {
                 eating.setText(R.string.is_eating);
                 place.setText(userBooking.getPlaceName());
                 Booking finalUserBooking = userBooking;
-                place.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        navigateToPlaceDetails(finalUserBooking.getPlaceId());
-                    }
-                });
-            }
-            else {
+                place.setOnClickListener(view -> navigateToPlaceDetails(finalUserBooking.getPlaceId()));
+            } else {
                 eating.setText(R.string.not_decided);
             }
         }

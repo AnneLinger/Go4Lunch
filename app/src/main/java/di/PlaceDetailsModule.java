@@ -4,14 +4,12 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
-import repositories.NearbySearchRepository;
-import repositories.NearbySearchRepositoryImpl;
 import repositories.PlaceDetailsRepository;
 import repositories.PlaceDetailsRepositoryImpl;
 
 /**
-*Hilt module for injections for place details
-*/
+ * Hilt module for injections for place details
+ */
 
 @InstallIn(SingletonComponent.class)
 @Module

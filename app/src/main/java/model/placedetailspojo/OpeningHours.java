@@ -7,8 +7,8 @@ import java.time.Period;
 import java.util.List;
 
 /**
- *Pojo model for opening hours place details
-*/
+ * Pojo model for opening hours place details
+ */
 
 public class OpeningHours {
 

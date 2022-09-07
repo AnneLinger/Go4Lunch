@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- *Pojo model for southwest place details
-*/
+ * Pojo model for southwest place details
+ */
 
 public class Southwest {
 

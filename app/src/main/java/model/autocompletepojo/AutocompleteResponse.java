@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- *Pojo model for geometry autocomplete
-*/
+ * Pojo model for geometry autocomplete
+ */
 
 public class AutocompleteResponse {
 

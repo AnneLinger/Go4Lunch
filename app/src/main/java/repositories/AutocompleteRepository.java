@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import model.autocompletepojo.AutocompleteResponse;
 import model.autocompletepojo.Prediction;
 
 /**

@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
-*Pojo model for compound and global code of the place
-*/
+ * Pojo model for compound and global code of the place
+ */
 
 public class PlusCode {
 

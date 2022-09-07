@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- *Pojo model for address place details
-*/
+ * Pojo model for address place details
+ */
 
 public class AddressComponent {
 

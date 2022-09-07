@@ -3,11 +3,9 @@ package ui.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,57 +13,34 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.anne.linger.go4lunch.R;
 import com.anne.linger.go4lunch.databinding.ActivityAuthenticationBinding;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import model.User;
 import viewmodel.UserViewModel;
 
 /**
-*Activity for the authentication of the user
-*/
+ * Activity for the authentication of the user
+ */
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 @AndroidEntryPoint
 public class AuthenticationActivity extends AppCompatActivity {
+
     //For UI
     private ActivityAuthenticationBinding mBinding;
 
     //For data
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private UserViewModel mUserViewModel;
-    private List<User> mUserList = new ArrayList<>();
 
-    private static final int RC_SIGN_IN = 123;
-
-    CallbackManager mCallbackManager = CallbackManager.Factory.create();
-
+    //To get auth result
     private final ActivityResultLauncher<Intent> mIntentActivityResultLauncher = registerForActivityResult(
             new FirebaseAuthUIActivityResultContract(),
             this::onSignInResponse
@@ -74,88 +49,26 @@ public class AuthenticationActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
-        //initUi();
         configureViewModel();
-        //checkIfUserIsSignIn();
-        observeUsers();
         startSignInActivity();
     }
 
-    /**@Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-        this.responseAfterSignIn(requestCode, resultCode, data);
-    }*/
-
-    //Check if user is signed in
-     /**@RequiresApi(api = Build.VERSION_CODES.M)
-     @Override
-     public void onStart() {
-         super.onStart();
-         FirebaseUser currentUser = mUserViewModel.getCurrentUserFromFirebase();
-         if(currentUser!=null) {
-             navigateToPlacesActivity();
-         }
-     }*/
-
-    private void checkIfUserIsSignIn() {
-        FirebaseUser currentUser = mUserViewModel.getCurrentUserFromFirebase();
-        if(currentUser!=null) {
-            navigateToPlacesActivity();
-        }
-    }
-
-    //Configure the UI
-    private void initUi() {
-        mBinding = ActivityAuthenticationBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
-        //Objects.requireNonNull(getSupportActionBar()).hide();
-    }
-
-    //Configure data
     private void configureViewModel() {
         mUserViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
-    private void observeUsers() {
-        mUserViewModel.getUserListFromFirestore();
-        mUserViewModel.getUserListLiveData().observe(this, this::getUsers);
-    }
-
-    private void getUsers(List<User> users) {
-        mUserList = users;
-        Log.e("Anne", "getUserActivity : " + mUserList.toString());
-        //Log.e("Anne", mUserList.get(0).getName());
-        //Log.e("Anne", mUserList.get(0).toString());
-    }
-
     private void navigateToPlacesActivity() {
-        Log.e("Anne", "navigate");
-
         Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
-        //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-        //Intent intent = new Intent(AuthenticationActivity.this, PlacesActivity.class);
         startActivity(intent);
         finish();
-        /**try {
-            pendingIntent.send();
-        } catch (PendingIntent.CanceledException e) {
-            e.printStackTrace();
-        }
-        finish();*/
     }
 
-    // Show Snack Bar with a message
-    private void showSnackBar(String message) {
+    private void showSnackBarMessage(String message) {
         Snackbar.make(mBinding.getRoot(), message, Snackbar.LENGTH_SHORT).show();
     }
 
     private void startSignInActivity() {
-        // Choose authentication providers
+        //Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -163,7 +76,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                 new AuthUI.IdpConfig.TwitterBuilder().build()
         );
 
-        // Launch the activity
+        //Launch the activity
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setTheme(R.style.LoginTheme)
@@ -171,137 +84,30 @@ public class AuthenticationActivity extends AppCompatActivity {
                 .setIsSmartLockEnabled(false, true)
                 .build();
         mIntentActivityResultLauncher.launch(signInIntent);
-        /**startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setTheme(R.style.LoginTheme)
-                        .setAvailableProviders(providers)
-                        .setIsSmartLockEnabled(false, true)
-                        .build(),
-                RC_SIGN_IN);*/
-    }
-
-    private void responseAfterSignIn(int requestCode, int resultCode, Intent data) {
-        Log.e("Anne", "responseAfterSignIn");
-        IdpResponse idpResponse = IdpResponse.fromResultIntent(data);
-        if (requestCode == RC_SIGN_IN) {
-            // SUCCESS
-            if (resultCode == RESULT_OK) {
-                Log.e("Anne", "responseAfterSignInResultCodeOK");
-                createUser();
-                Toast.makeText(AuthenticationActivity.this, getString(R.string.successful_auth), Toast.LENGTH_SHORT).show();
-                navigateToPlacesActivity();
-                }
-            else {
-                // ERRORS
-                if (idpResponse == null) {
-                    showSnackBar(getString(R.string.canceled_authentication));
-                } else if (idpResponse.getError() != null) {
-                    if (idpResponse.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                        showSnackBar(getString(R.string.no_connection));
-                    } else if (idpResponse.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                        showSnackBar(getString(R.string.unknown_error));
-                    }
-                }
-            }
-        }
     }
 
     private void onSignInResponse(FirebaseAuthUIAuthenticationResult result) {
         IdpResponse idpResponse = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
-            Log.e("Anne", "responseAfterSignInResultCodeOK");
             createUser();
             Toast.makeText(AuthenticationActivity.this, getString(R.string.successful_auth), Toast.LENGTH_SHORT).show();
             navigateToPlacesActivity();
-        }
-        else {
-            if(idpResponse == null) {
-                showSnackBar(getString(R.string.canceled_authentication));
+        } else {
+            if (idpResponse == null) {
+                showSnackBarMessage(getString(R.string.canceled_authentication));
             } else if (idpResponse.getError() != null) {
-            if (idpResponse.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                showSnackBar(getString(R.string.no_connection));
-            } else if (idpResponse.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                showSnackBar(getString(R.string.unknown_error));
+                if (idpResponse.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    showSnackBarMessage(getString(R.string.no_connection));
+                } else if (idpResponse.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                    showSnackBarMessage(getString(R.string.unknown_error));
                 }
             }
         }
     }
 
-    private void signInWithTwitterResponse() {
-        Task<AuthResult> pendingResultTask = mAuth.getPendingAuthResult();
-        if(pendingResultTask!=null){
-            // There's something already here! Finish the sign-in for your user.
-            pendingResultTask
-                    .addOnSuccessListener(
-                            new OnSuccessListener<AuthResult>() {
-                                @Override
-                                public void onSuccess(AuthResult authResult) {
-                                    // User is signed in.
-                                    // IdP data available in
-                                    // authResult.getAdditionalUserInfo().getProfile().
-                                    // The OAuth access token can also be retrieved:
-                                    // authResult.getCredential().getAccessToken().
-                                    // The OAuth secret can be retrieved by calling:
-                                    // authResult.getCredential().getSecret().
-                                }
-                            })
-                    .addOnFailureListener(
-                            new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Handle failure.
-                                }
-                            });
-        } else {
-            // There's no pending result so you need to start the sign-in flow.
-            startSignInActivity();
-        }
-    }
-
-    /**private void listenerOnFacebookSignIn() {
-        List<String> permissions = Arrays.asList("public_profile");
-        mBinding.btFacebookLogin.setOnClickListener(view -> {
-            LoginManager.getInstance().logInWithReadPermissions(this, permissions);
-        });
-    }
-
-    private void responseAfterSignInFacebook() {
-        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                //facebookLogIn(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                showSnackBar(getString(R.string.canceled_authentication));
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                showSnackBar(getString(R.string.unknown_error));
-            }
-        });
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void facebookLogIn(AccessToken accessToken) {
-        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
-        createUser();
-        navigateToPlacesActivity();
-    }*/
-
     private void createUser() {
-        Log.e("Anne", "createUserInActivity");
         mUserViewModel.createUser();
     }
-
-    private FirebaseUser getCurrentUser() {
-        return mUserViewModel.getCurrentUserFromFirebase();
-    }
-
 }
 
 

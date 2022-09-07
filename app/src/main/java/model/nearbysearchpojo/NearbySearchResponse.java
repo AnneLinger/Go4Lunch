@@ -8,8 +8,8 @@ import java.util.List;
 
 
 /**
-*Pojo model for the places result
-*/
+ * Pojo model for the places result
+ */
 
 public class NearbySearchResponse {
 

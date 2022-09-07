@@ -8,8 +8,8 @@ import repositories.BookingRepository;
 import repositories.BookingRepositoryImpl;
 
 /**
-*Hilt module for injections for booking
-*/
+ * Hilt module for injections for booking
+ */
 
 @InstallIn(SingletonComponent.class)
 @Module

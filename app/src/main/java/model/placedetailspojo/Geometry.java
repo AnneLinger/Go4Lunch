@@ -8,8 +8,8 @@ import com.google.gson.annotations.SerializedName;
 import model.nearbysearchpojo.Viewport;
 
 /**
- *Pojo model for geometry place details
-*/
+ * Pojo model for geometry place details
+ */
 
 public class Geometry {
 

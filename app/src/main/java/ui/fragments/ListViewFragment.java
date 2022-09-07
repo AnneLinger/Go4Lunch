@@ -2,9 +2,9 @@ package ui.fragments;
 
 import android.annotation.SuppressLint;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -34,8 +35,10 @@ import viewmodel.PlacesViewModel;
 import viewmodel.UserViewModel;
 
 /**
-*Fragment to display a list of places
-*/
+ * Fragment to display a list of places
+ */
+
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class ListViewFragment extends Fragment {
 
     //For UI
@@ -44,14 +47,14 @@ public class ListViewFragment extends Fragment {
 
     //For data
     private static List<Result> mPlaceList;
-    private List<Result> mPlaceListAutocomplete = new ArrayList<>();
+    private final List<Result> mPlaceListAutocomplete = new ArrayList<>();
     private UserViewModel mUserViewModel;
     private PlacesViewModel mPlacesViewModel;
     private AutocompleteViewModel mAutocompleteViewModel;
     private BookingViewModel mBookingViewModel;
     private Location mLocation;
     private String mLocationString;
-    private ListViewFragment mListViewFragment = this;
+    private final ListViewFragment mListViewFragment = this;
     private List<Booking> mBookingList = new ArrayList<>();
 
     public static ListViewFragment newInstance() {
@@ -59,7 +62,7 @@ public class ListViewFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentListViewBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
@@ -71,17 +74,14 @@ public class ListViewFragment extends Fragment {
         observeBookings();
         observeLocation();
         observePlaces();
-        //initRecyclerView(mPlaceList);
         observeAutocomplete();
     }
 
     private void initRecyclerView(List<Result> list) {
-        Log.e("Anne", "initRVList");
         mRecyclerView = mBinding.rvListView;
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        Log.e("Anne", mBookingList.toString());
         mRecyclerView.setAdapter(new PlaceListAdapter(list, mLocation, mBookingList));
     }
 
@@ -92,7 +92,6 @@ public class ListViewFragment extends Fragment {
         mBookingViewModel = new ViewModelProvider(requireActivity()).get(BookingViewModel.class);
     }
 
-    //Get the user location
     @SuppressLint("MissingPermission")
     private void observeLocation() {
         mUserViewModel.getLivedataLocation().observe(requireActivity(), this::initLocation);
@@ -112,28 +111,26 @@ public class ListViewFragment extends Fragment {
     }
 
     private void observeBookings() {
-        Log.e("Anne", "observeBookingsInMapFragment");
         mBookingViewModel.fetchBookingList();
         mBookingViewModel.getBookingListLiveData().observe(getViewLifecycleOwner(), this::updateBookingList);
     }
 
     private void updateBookingList(List<Booking> bookings) {
-        Log.e("Anne", "updateBookingList");
         mBookingList = bookings;
         initRecyclerView(mPlaceList);
     }
 
     private void observeAutocomplete() {
-            mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::initAutocomplete);
+        mAutocompleteViewModel.getAutocompleteLiveData().observe(requireActivity(), this::initAutocomplete);
     }
 
-    private void initAutocomplete(List<Prediction> predictions){
+    private void initAutocomplete(List<Prediction> predictions) {
         //Clear previous predictions
         mPlaceListAutocomplete.clear();
 
-        if(mListViewFragment.isVisible()){
+        if (mListViewFragment.isVisible()) {
             //If no search is done
-            if(predictions.isEmpty()) {
+            if (predictions.isEmpty()) {
                 initRecyclerView(mPlaceList);
             }
             //If search occurs
@@ -150,12 +147,9 @@ public class ListViewFragment extends Fragment {
                     mBinding.rvListView.setVisibility(View.GONE);
                     Toast.makeText(requireActivity(), getString(R.string.no_search_result), Toast.LENGTH_LONG).show();
                     final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mBinding.rvListView.setVisibility(View.VISIBLE);
-                            initRecyclerView(mPlaceList);
-                        }
+                    handler.postDelayed(() -> {
+                        mBinding.rvListView.setVisibility(View.VISIBLE);
+                        initRecyclerView(mPlaceList);
                     }, 2000);
                 }
                 //If there are search results to display

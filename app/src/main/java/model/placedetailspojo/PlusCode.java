@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- *Pojo model for Pluscode place details
-*/
+ * Pojo model for Pluscode place details
+ */
 
 public class PlusCode {
 

@@ -19,16 +19,16 @@ import repositories.LocationRepositoryImpl;
 import repositories.UserRepositoryImpl;
 
 /**
-*ViewModel for users
-*/
+ * ViewModel for users
+ */
 
 @HiltViewModel
 public class UserViewModel extends ViewModel {
+
     //For data
     private final UserRepositoryImpl mUserRepositoryImpl;
     private final LocationRepositoryImpl mLocationRepositoryImpl;
 
-    //Constructor
     @Inject
     public UserViewModel(UserRepositoryImpl userRepositoryImpl, LocationRepositoryImpl locationRepositoryImpl) {
         mUserRepositoryImpl = userRepositoryImpl;
@@ -60,7 +60,7 @@ public class UserViewModel extends ViewModel {
 
     public void createUser() {
         mUserRepositoryImpl.instanceFirestore();
-        mUserRepositoryImpl.createUser();
+        mUserRepositoryImpl.createUserInFirestore();
     }
 
     public void logOut() {
@@ -75,7 +75,7 @@ public class UserViewModel extends ViewModel {
 
     @SuppressLint("MissingPermission")
     public void getUserLocation(Context context) {
-            mLocationRepositoryImpl.startLocationRequest(context);
+        mLocationRepositoryImpl.startLocationRequest(context);
     }
 
     public LiveData<Location> getLivedataLocation() {
@@ -88,14 +88,13 @@ public class UserViewModel extends ViewModel {
 
     //..........................For likes places...................................................
 
-    public void addALikedPlace(String placeId, String userId){
+    public void addALikedPlace(String placeId, String userId) {
         mUserRepositoryImpl.addALikedPlace(placeId, userId);
     }
 
     public void removeALikedPlace(String placeId, String userId) {
         mUserRepositoryImpl.removeALikedPlace(placeId, userId);
     }
-
 }
 
 
