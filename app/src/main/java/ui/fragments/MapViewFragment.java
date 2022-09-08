@@ -324,6 +324,9 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback, Loc
                 ContextCompat.checkSelfPermission(requireContext(),
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mPlacesViewModel.getNearbySearchResponseLiveData().removeObservers(this);
+            mAutocompleteViewModel.getAutocompleteLiveData().removeObservers(this);
+            mBookingViewModel.getBookingListLiveData().removeObservers(this);
+            mUserViewModel.stopLocationRequest();
         }
     }
 }

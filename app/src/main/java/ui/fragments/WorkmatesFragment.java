@@ -97,4 +97,11 @@ public class WorkmatesFragment extends Fragment {
             initRecyclerView();
         }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUserViewModel.getUserListLiveData().removeObservers(this);
+        mBookingViewModel.getBookingListLiveData().removeObservers(this);
+    }
 }

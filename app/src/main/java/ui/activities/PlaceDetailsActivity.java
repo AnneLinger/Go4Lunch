@@ -306,4 +306,12 @@ public class PlaceDetailsActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mUserViewModel.getUserListLiveData().removeObservers(this);
+        mPlaceDetailsViewModel.getPlaceDetailsLiveData().removeObservers(this);
+        mBookingViewModel.getBookingListLiveData().removeObservers(this);
+    }
 }

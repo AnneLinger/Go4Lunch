@@ -256,4 +256,11 @@ public class PlacesActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mUserViewModel.stopLocationRequest();
+        mBookingViewModel.getBookingListLiveData().removeObservers(this);
+    }
 }
