@@ -1,0 +1,78 @@
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:http="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/places_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ui.activities.PlacesActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_accent"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:titleTextColor="@color/white"
+            http:menu="@menu/toolbar_menu"
+            http:navigationIcon="@drawable/ic_baseline_menu_24"
+            http:title="@string/toolbar_title">
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/activity_places_frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            http:layout_constraintBottom_toTopOf="@id/bottom_nav"
+            http:layout_constraintEnd_toEndOf="parent"
+            http:layout_constraintStart_toStartOf="parent"
+            http:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav"
+            style="@style/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            http:layout_constraintBottom_toBottomOf="parent"
+            http:menu="@menu/bottom_nav_menu" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:backgroundTint="@color/color_accent"
+        app:headerLayout="@layout/drawer_layout"
+        app:menu="@menu/drawer_menu"
+        http:itemIconTint="@color/white"
+        http:itemTextColor="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="24dp"
+                android:src="@drawable/path826"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.navigation.NavigationView>
+
+</androidx.drawerlayout.widget.DrawerLayout>

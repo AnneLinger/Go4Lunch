@@ -1,3 +1,105 @@
 <resources>
-    <string name="app_name">Go4Lunch</string>
+    <string name="app_name" translatable="false">Go4Lunch</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_with_mail">Sign in with email</string>
+    <string name="sign_in_with_facebook">Sign in with Facebook</string>
+    <string name="sign_in_with_twitter">Sign in with Twitter</string>
+    <string name="authentication_mail_title">Please enter your mail and password to login</string>
+    <string name="authentication_new_mail_title">Please enter your name, mail and password to create a new account</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="register_new_user">New user ? Register here</string>
+    <string name="login">login</string>
+    <string name="register">register</string>
+    <string name="successful_auth">Successful authentication !</string>
+    <string name="name">Name</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bottom_nav_menu_map_view">Map View</string>
+    <string name="bottom_nav_menu_list_view">List View</string>
+    <string name="bottom_nav_menu_workmates">Workmates</string>
+    <string name="canceled_authentication">Authentication canceled</string>
+    <string name="no_connection">No internet connection</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="facebook_application_id" translatable="false">791619558748617</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb791619558748617</string>
+    <string name="facebook_client_token" translatable="false">67b251a6b2374b0b56740a1999f8fdb3</string>
+    <string name="toolbar_title">I\'m hungry!</string>
+    <string name="rationale_location">This app needs access to your location to know where you are</string>
+    <string name="returned_from_app_settings_to_activity">
+        Returned from app settings to MainActivity with the following permissions:
+        \nLocation: %s
+    </string>
+    <string name="location">Location</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="search_icon">Search icon</string>
+    <string name="search">Search</string>
+    <string name="open_drawer_menu">Open the menu</string>
+    <string name="close_drawer_menu">Close the menu</string>
+    <string name="your_lunch">YOUR LUNCH</string>
+    <string name="settings">SETTINGS</string>
+    <string name="settings_toolbar">Settings</string>
+    <string name="logout">LOGOUT</string>
+    <string name="john_smith" translatable="false">John SMITH</string>
+    <string name="john_smith_gmail_com" translatable="false">john.smith@gmail.com</string>
+    <string name="delete_my_account">Delete my account</string>
+    <string name="save_changes">Save changes</string>
+    <string name="delete">Delete</string>
+    <string name="allow_notifications">Allow notifications</string>
+    <string name="radius_used_in_the_map">Radius used in the map</string>
+    <string name="zoom_used_in_the_map">Zoom used in the map</string>
+    <string name="marker_title">My location</string>
+    <string name="access_denied_text">You can\'t access to Go4Lunch without your location permission !</string>
+    <string name="access_denied_title">Access denied</string>
+    <string name="allow">Allow</string>
+    <string name="close_go4lunch">Close Go4Lunch</string>
+    <string name="go_to_settings">Settings</string>
+    <string name="user_settings">User settings</string>
+    <string name="user_booking">User booking</string>
+    <string name="settings_saved">Settings saved !</string>
+    <string name="radius">Radius</string>
+    <string name="zoom" translatable="false">Zoom</string>
+    <string name="notifications" translatable="false">Notifications</string>
+    <string name="hyphen" translatable="false">-</string>
+    <string name="workmate_number" translatable="false">2</string>
+    <string name="call">call</string>
+    <string name="like">like</string>
+    <string name="dislike">dislike</string>
+    <string name="website">website</string>
+    <string name="button_to_save_place_choice">Button to save place choice</string>
+    <string name="place_image">Place image</string>
+    <string name="user_avatar">User avatar</string>
+    <string name="is_joining">\ is joining!</string>
+    <string name="search_menu">Search</string>
+    <string name="search_hint">Search a place to eat</string>
+    <string name="last_parenthesis" translatable="false">)</string>
+    <string name="first_parenthesis" translatable="false">(</string>
+    <string name="meter" translatable="false">m</string>
+    <string name="open_now">Open now</string>
+    <string name="closed">Closed</string>
+    <string name="phone_number_unknown">Phone number unknown for this place</string>
+    <string name="unknown_website">Website unknown for this place</string>
+    <string name="booking_done">Booking done for this place !</string>
+    <string name="booking_delete">Booking delete for this place !</string>
+    <string name="no_booking">You haven\'t yet chosen a place to eat !</string>
+    <string name="search_canceled">Search canceled</string>
+    <string name="no_search_result">Search canceled, there\'s no result for your search</string>
+    <string name="place_photo" translatable="false">place_photo</string>
+    <string name="phone_number" translatable="false">"tel:%s"</string>
+    <string name="default_notification_channel_id" translatable="false">com.google.firebase.messaging.default_notification_channel_id</string>
+    <string name="notification_title">Here is your lunch for today !</string>
+    <string name="available_workmates">Available workmates</string>
+    <string name="notification_with">\ with\ </string>
+    <string name="notification_alone">\ alone.</string>
+    <string name="workmate_place">\ this place</string>
+    <string name="is_eating">\ is eating at\ </string>
+    <string name="not_decided">\ hasn\'t decided yet</string>
+    <string name="are_you_sure">Are you sure ?</string>
+    <string name="confirm_delete">Yes, delete my account</string>
+    <string name="cancel_delete">No, keep my account</string>
+    <string name="notification_first_start">\"Your lunch will be in the place \"</string>
+    <string name="notification_second_start">\" at this address : \"</string>
+    <string name="notification_place_name_key" translatable="false">PlaceName</string>
+    <string name="notification_place_address_key" translatable="false">PlaceAddress</string>
+    <string name="notification_joining_workmates_key" translatable="false">JoiningWorkmates</string>
 </resources>

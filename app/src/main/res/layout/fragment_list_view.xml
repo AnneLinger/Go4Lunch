@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_list_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_list_view"
+        android:name="com.anne.linger.Go4Lunch.ui.fragments.ListViewFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="12dp"
+        android:backgroundTint="@color/white"
+        app:layoutManager="LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".ui.fragments.ListViewFragment"
+        tools:listitem="@layout/item_list_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
