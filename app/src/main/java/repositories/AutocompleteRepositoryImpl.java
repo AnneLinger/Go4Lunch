@@ -47,27 +47,21 @@ public class AutocompleteRepositoryImpl implements AutocompleteRepository {
 
     @Override
     public void fetchAutocomplete(String query, String location) {
-        AutocompleteResponse existing = mCache.get("autocomplete");
+        PlacesApi placesApi = mRetrofitBuilder.buildRetrofit();
+        Call<AutocompleteResponse> call = placesApi.getAutocompleteResponse(query, location, TYPE, GOOGLE_PLACE_API_KEY);
+        call.enqueue(new Callback<AutocompleteResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
+                mCache.put("autocomplete", response.body());
+                assert response.body() != null;
+                mAutocompleteLiveData.setValue(response.body().getPredictions());
+            }
 
-        if (existing != null) {
-            mAutocompleteLiveData.setValue(existing.getPredictions());
-        } else {
-            PlacesApi placesApi = mRetrofitBuilder.buildRetrofit();
-            Call<AutocompleteResponse> call = placesApi.getAutocompleteResponse(query, location, TYPE, GOOGLE_PLACE_API_KEY);
-            call.enqueue(new Callback<AutocompleteResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<AutocompleteResponse> call, @NonNull Response<AutocompleteResponse> response) {
-                    mCache.put("autocomplete", response.body());
-                    assert response.body() != null;
-                    mAutocompleteLiveData.setValue(response.body().getPredictions());
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<AutocompleteResponse> call, @NonNull Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-        }
+            @Override
+            public void onFailure(@NonNull Call<AutocompleteResponse> call, @NonNull Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     //To cancel search when user wants to stop it

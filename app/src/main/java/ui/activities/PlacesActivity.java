@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -89,13 +90,13 @@ public class PlacesActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                return false;
+                mAutocompleteViewModel.fetchAutocomplete(s, mLocationString);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                mAutocompleteViewModel.fetchAutocomplete(s, mLocationString);
-                return true;
+                return false;
             }
         });
 
