@@ -28,7 +28,7 @@ public class NearbySearchRepositoryImpl implements NearbySearchRepository {
 
     //For data
     private static final String GOOGLE_PLACE_API_KEY = BuildConfig.MAPS_API_KEY;
-    private final int radius = 8000;
+    private final int radius = 5000;
     final MutableLiveData<List<Result>> mNearbySearchResponseLiveData = new MutableLiveData<>();
     private final RetrofitBuilder mRetrofitBuilder = new RetrofitBuilder();
 
